@@ -1,0 +1,115 @@
+﻿#include "FireBall.h"
+#include "Game.h"
+
+CFireBall::CFireBall()
+{
+
+}
+
+CFireBall::CFireBall(float start_x, float start_y)
+{
+	//OutputDebugString(L"new fire ball\n");
+	vx = 0.35f;
+	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(55);
+	SetAnimationSet(ani_set);
+
+	SetPosition(start_x, start_y);
+}
+
+void CFireBall::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
+{
+	//OutputDebugString(L"update fire ball\n");
+
+	// Calculate dx, dy 
+	CGameObject::Update(dt, colliable_objects);
+
+	vy += FIRE_BALL_GRAVITY * dt;
+
+	vector<LPCOLLISIONEVENT> coEvents;
+	vector<LPCOLLISIONEVENT> coEventsResult;
+	coEvents.clear();
+
+	CalcPotentialCollisions(colliable_objects, coEvents);
+
+	// No collision occured, proceed normally
+	if (coEvents.size() == 0)
+	{
+
+		x += dx;
+		y += dy;
+	}
+	else
+	{
+		float min_tx, min_ty, nx = 0, ny;
+		float rdx = 0;
+		float rdy = 0;
+
+
+		// TODO: This is a very ugly designed function!!!!
+		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+
+		// block every object first!
+		x += min_tx * dx + nx * 0.4f;
+		y += min_ty * dy + ny * 0.4f;
+
+
+		
+		//
+		// Collision logic with other objects
+		//
+		for (UINT i = 0; i < coEventsResult.size(); i++)
+		{
+			LPCOLLISIONEVENT e = coEventsResult[i];
+			if (dynamic_cast<CBrick*>(e->obj)) {
+				//DebugOut(L"hi\n");
+				if (e->ny < 0) {
+					vy = -0.4f;
+				}
+			}
+
+		}
+
+		// clean up collision events
+		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+	}
+	
+}
+
+void CFireBall::Render()
+{
+	//OutputDebugString(L"render fire ball\n");
+	animation_set->at(0)->Render(x, y);
+	RenderBoundingBox();
+}
+
+void CFireBall::RenderBoundingBox()
+{
+	D3DXVECTOR3 p(x, y, 0);
+	RECT rect;
+
+	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(-100);
+
+	float l, t, r, b;
+
+	GetBoundingBox(l, t, r, b);
+	rect.left = 0;
+	rect.top = 0;
+	rect.right = (int)r - (int)l;
+	rect.bottom = (int)b - (int)t;
+
+	float draw_x = x - ((int)r - (int)l) / 2;
+	float draw_y = y - ((int)b - (int)t) / 2;
+
+	CGame::GetInstance()->Draw(draw_x, draw_y, bbox, rect.left, rect.top, rect.right, rect.bottom, 50);
+}
+
+void CFireBall::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)
+{
+	left = x - 12;
+	top = y - 12;
+	right = left + 24;
+	bottom = top + 24;
+
+	
+}

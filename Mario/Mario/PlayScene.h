@@ -1,0 +1,57 @@
+﻿#pragma once
+#include "Game.h"
+#include "Textures.h"
+#include "Scene.h"
+#include "GameObject.h"
+#include "Brick.h"
+#include "Mario.h"
+#include "Koopas.h"
+#include "Tiles.h"
+#include "Map.h"
+#include "FireBall.h"
+#include "InvisibleObject.h"
+
+#define DEFAULT_CAM_Y	720.0f
+class CPlayScene : public CScene
+{
+protected:
+	CMario* player;					// A play scene has to have player, right? 
+
+	// con trỏ đến tất cả đối tượng trong game
+	vector<LPGAMEOBJECT> objects;
+
+	
+	// data object for this scene
+	void _ParseSection_OBJECTS(string line);
+	void _ParseSection_MAP(string line);
+	void _ParseSection_TILESET(string line);
+	
+	int sceneWidth;
+	bool isMoved;
+	CTiles *tiles;
+	CMap* map;
+
+public:
+	CPlayScene(int id, LPCWSTR filePath);
+
+	virtual void LoadSceneResources();
+	virtual void Update(DWORD dt);
+	virtual void Render();
+	virtual void Unload();
+
+	CMario* GetPlayer() { return player; }
+
+	vector<LPGAMEOBJECT> GetObjectsInScene() { return objects; }
+	void AddObject(LPGAMEOBJECT obj) { objects.push_back(obj); }
+	//friend class CPlayScenceKeyHandler;
+};
+
+class CPlayScenceKeyHandler : public CScenceKeyHandler
+{
+public:
+	virtual void KeyState(BYTE* states);
+	virtual void OnKeyDown(int KeyCode);
+	virtual void OnKeyUp(int KeyCode);
+	CPlayScenceKeyHandler(CScene* s) :CScenceKeyHandler(s) {};
+};
+

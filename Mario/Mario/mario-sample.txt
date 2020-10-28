@@ -1,0 +1,8 @@
+[SETTINGS]
+start	1
+#scene list
+[SCENES]
+1	scene-test.txt
+#2	scene-world-map.txt
+[RESOURCES]
+Resources\textures\textures.txt
