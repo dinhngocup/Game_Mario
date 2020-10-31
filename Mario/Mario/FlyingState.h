@@ -1,18 +1,15 @@
 #pragma once
+#include "Mario.h"
 #include "PlayerState.h"
 #include "Game.h"
-#include "Mario.h"
 
-class CHighJumpingState : public CPlayerState
+class CFlyingState : public CPlayerState
 {
-	float acceleration;
-	bool is_spinning = true;
 public:
-	CHighJumpingState() {};
-	CHighJumpingState(int level);
+	CFlyingState() {};
+	CFlyingState(int level);
 
-	~CHighJumpingState() {};
-
+	~CFlyingState() {};
 	void Update(float dt);
 	void HandleKeyboard();
 	void SetAnimation(int level);
@@ -20,6 +17,5 @@ public:
 	void OnKeyDown(int KeyCode);
 	void OnKeyUp(int KeyCode);
 	void KeyState(BYTE* state);
-
 };
 

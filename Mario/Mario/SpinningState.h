@@ -4,7 +4,6 @@
 #include "Game.h"
 class CSpinningState : public CPlayerState
 {
-	bool is_done = false;
 public:
 	CSpinningState() {};
 	CSpinningState(int level);
@@ -18,6 +17,6 @@ public:
 	void OnKeyUp(int KeyCode) {};
 	void KeyState(BYTE* state);
 
-	void CheckState();
+	
 };
 

@@ -42,14 +42,18 @@ void CSpinningState::KeyState(BYTE* state)
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
 
-	CheckState();
-
-	if (is_done) {
+	//CheckState();
+	CPlayerState::CheckState();
+	//DebugOut(L"render %d\n", is_rendered_completely);
+	if (is_rendered_completely) {
 		// Đè nút A và phím qua trái phải thì chạy nhanh
 		if (game->IsKeyDown(DIK_A) && (game->IsKeyDown(DIK_RIGHT) || game->IsKeyDown(DIK_LEFT))) {
 			mario->ChangeState(new CRunningState(level));
 		}
 		else if (game->IsKeyDown(DIK_Z)) {
+			// Phải reset flag khi render completely
+			animation->ResetFlagLastFrame();
+			CPlayerState::SetAnimation(mario->animation_set->at(ani));
 			if (game->IsKeyDown(DIK_RIGHT)) {
 				mario->vx = MARIO_WALKING_SPEED;
 				mario->nx = 1;
@@ -70,22 +74,8 @@ void CSpinningState::KeyState(BYTE* state)
 	/*if (game->IsKeyDown(DIK_Z) && (game->IsKeyDown(DIK_RIGHT) || game->IsKeyDown(DIK_LEFT))) {
 		SetAnimation();
 	}*/
-	DebugOut(L"spinning%d\n", mario->is_attacking_by_spinning);
+	//DebugOut(L"spinning%d\n", mario->is_attacking_by_spinning);
 
 }
 
-void CSpinningState::CheckState()
-{
-	int current_frame = animation->GetCurrentFrame();
-	//DebugOut(L"crr %d\n", current_frame);
-	CMario* mario = CMario::GetInstance();
-	if (current_frame == 0 || current_frame == 4 || current_frame == 2)
-		mario->is_attacking_by_spinning = true;
-	else
-		mario->is_attacking_by_spinning = false;
-	if (!animation->NextIsLastFrame() && animation->IsLastFrame()) {
-		is_done = true;
-	}
-
-}
 

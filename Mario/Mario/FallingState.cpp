@@ -14,22 +14,21 @@ void CFallingState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
-	
-	
-	/*if (able_to_change && is_rendered_completely) {
-		mario->is_attacking_by_spinning = false;
-		if (mario->is_crouching)
-			mario->ChangeState(new CCrouchingState(level));
-		else
-			mario->ChangeState(new CStandingState(level));
-		return;
-	}*/
+
 	// chuyen trang thai standing
 	if (mario->vy == 0) {
-		if (ani == RACCOON_ANI_SPINNING_BIG && is_rendered_completely || ani != RACCOON_ANI_SPINNING_BIG) {
+		if ((mario->is_spinning && is_rendered_completely) || !mario->is_spinning) {
 			mario->is_attacking_by_spinning = false;
 			if (mario->is_crouching)
 				mario->ChangeState(new CCrouchingState(level));
+			else if (abs(mario->vx) > MARIO_WALKING_SPEED) {
+				DWORD time_end_jump = GetTickCount();
+				DWORD dt_from_jump_to_fall = time_end_jump - mario->time_start_jump;
+				float speed_x = abs(mario->vx);
+				mario->vx = (speed_x - MARIO_ACCELERATION * (dt_from_jump_to_fall/1000) * 2) * mario->nx;
+				mario->ChangeState(new CRunningState(level));
+
+			}
 			else
 				mario->ChangeState(new CStandingState(level));
 		}
@@ -73,14 +72,8 @@ void CFallingState::SetAnimation(int level)
 
 void CFallingState::OnKeyDown(int KeyCode)
 {
-	/*CMario* mario = CMario::GetInstance();
-	switch (KeyCode) {
-	case DIK_A:
-		if (level == RACCOON_LEVEL_BIG)
-			mario->ChangeState(new CSpinningState(RACCOON_LEVEL_BIG));
-		break;
-
-	}*/
+	CMario* mario = CMario::GetInstance();
+	CPlayerState::OnKeyDown(KeyCode);
 }
 
 void CFallingState::OnKeyUp(int KeyCode)
@@ -92,35 +85,15 @@ void CFallingState::KeyState(BYTE* state)
 {
 	CGame* game = CGame::GetInstance();
 	CMario* mario = CMario::GetInstance();
-
-	// Vẫn giữ nguyên state high jump nhưng chuyển ani
-	if (is_rendered_completely) {
-		if (game->IsKeyDown(DIK_Z) && level == RACCOON_LEVEL_BIG) {
-			ani = RACCOON_ANI_SPINNING_BIG;
-			mario->animation_set->at(ani)->ResetFlagLastFrame();
-			CPlayerState::SetAnimation(mario->animation_set->at(ani));
-		}
-		else if (!game->IsKeyDown(DIK_Z) && level == RACCOON_LEVEL_BIG)
-			ani = RACCOON_ANI_FALLING_BIG;
+	CPlayerState::KeyState(state);
+	if (game->IsKeyDown(DIK_RIGHT)) {
+		if (abs(mario->vx) <= MARIO_WALKING_SPEED)
+			mario->vx = MARIO_WALKING_SPEED;
+		mario->nx = 1;
 	}
-	if (ani == RACCOON_ANI_SPINNING_BIG) {
-		CheckState();
+	else if (game->IsKeyDown(DIK_LEFT)) {
+		if (abs(mario->vx) <= MARIO_WALKING_SPEED)
+			mario->vx = -MARIO_WALKING_SPEED;
+		mario->nx = -1;
 	}
-}
-
-void CFallingState::CheckState()
-{
-	int current_frame = animation->GetCurrentFrame();
-	CMario* mario = CMario::GetInstance();
-	DebugOut(L"current %d\n", current_frame);
-	if (current_frame == 0 || current_frame == 4 || current_frame == 2)
-		mario->is_attacking_by_spinning = true;
-	else
-		mario->is_attacking_by_spinning = false;
-
-	// phải render full frame mới được bật cờ is done
-	if (!animation->NextIsLastFrame() && animation->IsLastFrame()) {
-		is_rendered_completely = true;
-	}
-	else is_rendered_completely = false;
 }

@@ -142,6 +142,9 @@
     <ClCompile Include="InvisibleObject.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="FlyingState.cpp">
+      <Filter>Objects\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -245,6 +248,9 @@
     </ClInclude>
     <ClInclude Include="InvisibleObject.h">
       <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="FlyingState.h">
+      <Filter>Objects\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

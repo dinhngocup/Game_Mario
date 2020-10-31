@@ -7,30 +7,21 @@ CHighJumpingState::CHighJumpingState(int level)
 	CMario* mario = CMario::GetInstance();
 	mario->vy = -MARIO_JUMP_SPEED_Y;
 	SetAnimation(level);
+	DebugOut(L"vx truoc khi nhay %f\n", mario->vx);
 }
 
 void CHighJumpingState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
-	// phải ở trạng thái được rơi và render hết frame spinning
-	// phải có thêm cờ able_to_change là vì, nếu chỉ đơn giản là
-	//if (able_to_change && is_rendered_completely) {
-	//	// Frame cuối cùng render là frame 0, làm thế cho hiệu ứng đẹp á
-	//	// mà frame 0 thì nó tính collision => phải tắt cờ collision by spinning
-	//	mario->is_attacking_by_spinning = false;
-	//	//DebugOut(L"collision %d\n", mario->is_attacking_by_spinning);
-	//	mario->ChangeState(new CFallingState(level));
-	//	return;
-	//}
+
 	// chuyen trang thai falling
 	if (mario->vy >= 0) {
-		if (ani == RACCOON_ANI_SPINNING_BIG && is_rendered_completely || ani != RACCOON_ANI_SPINNING_BIG) {
+		// đáng lẽ phải rơi nhưng chưa render hết => bật cờ đc rơi đợi render hết mới chuyển qua state rơi
+		if (mario->is_spinning && is_rendered_completely || !mario->is_spinning) {
 			mario->is_attacking_by_spinning = false;
 			mario->ChangeState(new CFallingState(level));
 		}
-		// đáng lẽ phải rơi nhưng chưa render hết => bật cờ đc rơi đợi render hết mới rơi
-		/*else if (ani == RACCOON_ANI_SPINNING_BIG && !is_rendered_completely)
-			able_to_change = true;*/
+
 	}
 	//DebugOut(L"collision spinningggg %d\n", mario->is_attacking_by_spinning);
 }
@@ -71,21 +62,8 @@ void CHighJumpingState::SetAnimation(int level)
 void CHighJumpingState::OnKeyDown(int KeyCode)
 {
 	CMario* mario = CMario::GetInstance();
-	switch (KeyCode) {
-	case DIK_A:
-		if (level == RACCOON_LEVEL_BIG) {
-			if (is_rendered_completely && !able_to_change) {
-				ani = RACCOON_ANI_SPINNING_BIG;
-				mario->animation_set->at(ani)->ResetFlagLastFrame();
-				CPlayerState::SetAnimation(mario->animation_set->at(ani));
-			}
-			if (ani == RACCOON_ANI_SPINNING_BIG) {
-				CheckState();
-			}
+	CPlayerState::OnKeyDown(KeyCode);
 
-		}
-		break;
-	}
 }
 
 void CHighJumpingState::OnKeyUp(int KeyCode)
@@ -98,8 +76,6 @@ void CHighJumpingState::OnKeyUp(int KeyCode)
 			if (ani == RACCOON_ANI_SPINNING_BIG && is_rendered_completely || ani != RACCOON_ANI_SPINNING_BIG) {
 				mario->ChangeState(new CFallingState(level));
 			}
-			else if (ani == RACCOON_ANI_SPINNING_BIG && !is_rendered_completely)
-				able_to_change = true;
 		}
 		break;
 	}
@@ -109,51 +85,25 @@ void CHighJumpingState::KeyState(BYTE* state)
 {
 	CGame* game = CGame::GetInstance();
 	CMario* mario = CMario::GetInstance();
-	if (game->IsKeyDown(DIK_S)) {
 
-		DWORD time_press_s = GetTickCount();
+	if (game->IsKeyDown(DIK_S)) {
+		DWORD time_press_s = GetTickCount64();
 		if (time_press_s - mario->time_start_jump <= 300) {
 			mario->vy = -MARIO_JUMP_SPEED_Y;
 		}
 	}
 	if (game->IsKeyDown(DIK_RIGHT)) {
-		mario->vx = MARIO_WALKING_SPEED;
+		if (abs(mario->vx) <= MARIO_WALKING_SPEED)
+			mario->vx = 0.2f;
 		mario->nx = 1;
 	}
 	else if (game->IsKeyDown(DIK_LEFT)) {
-		mario->vx = -MARIO_WALKING_SPEED;
+		if (abs(mario->vx) <= MARIO_WALKING_SPEED)
+			mario->vx = -0.2f;
 		mario->nx = -1;
 	}
-	
-	// Vẫn giữ nguyên state high jump nhưng chuyển ani
-	if (is_rendered_completely) {
-		if (game->IsKeyDown(DIK_Z) && level == RACCOON_LEVEL_BIG) {
-			ani = RACCOON_ANI_SPINNING_BIG;
-			mario->animation_set->at(ani)->ResetFlagLastFrame();
-			CPlayerState::SetAnimation(mario->animation_set->at(ani));
-		}
-		else if (!game->IsKeyDown(DIK_Z) && level == RACCOON_LEVEL_BIG)
-			ani = RACCOON_ANI_BIG_JUMPING_RIGHT;
-	}
-	if (ani == RACCOON_ANI_SPINNING_BIG) {
-		CheckState();
-	}
+
+	CPlayerState::KeyState(state);
+	//DebugOut(L"is render %d\n", is_rendered_completely);
 }
 
-void CHighJumpingState::CheckState()
-{
-	int current_frame = animation->GetCurrentFrame();
-	CMario* mario = CMario::GetInstance();
-	//DebugOut(L"current %d\n", current_frame);
-	if (current_frame == 0 || current_frame == 4 || current_frame == 2)
-		mario->is_attacking_by_spinning = true;
-	else
-		mario->is_attacking_by_spinning = false;
-
-	// phải render full frame mới được bật cờ is done
-	if (!animation->NextIsLastFrame() && animation->IsLastFrame()) {
-		is_rendered_completely = true;
-	}
-	else is_rendered_completely = false;
-
-}

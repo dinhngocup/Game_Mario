@@ -4,7 +4,7 @@
 #include "Mario.h"
 #include "Game.h"
 
-#define DISPARITIES	27.0f
+
 
 class CCrouchingState : public CPlayerState
 {

@@ -27,6 +27,8 @@ public:
 	bool is_press_s = false;
 	bool is_attacking = false;
 	bool is_attacking_by_spinning = false;
+	bool is_spinning = false;
+	bool is_running = false;
 	
 	DWORD time_start_attack;
 

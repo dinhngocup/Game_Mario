@@ -9,15 +9,18 @@ CRunningState::CRunningState(int level)
 	}
 	else
 		SetAnimation(level);
-
+	CMario* mario = CMario::GetInstance();
 	acceleration = MARIO_ACCELERATION;
+
 }
 
 void CRunningState::Update(float dt)
 {
+	//DebugOut(L"update \n");
 	CMario* mario = CMario::GetInstance();
 
 	float speed_x = abs(mario->vx);
+	//DebugOut(L"vx khi running ne %f\n", speed_x);
 	// is speed low dùng để xác định lúc nào là lúc giảm tốc
 	/*
 	TH1: tốc độ chưa đạt tối đa thì rơi vô câu if(speed_x < 0.7)
@@ -34,24 +37,11 @@ void CRunningState::Update(float dt)
 		is_max_speed = true;
 	}
 
-	/*if (mario->vx > 0) mario->nx = 1;
-	else {
-		mario->nx = -1;
-	}*/
 
-	if (level != RACCOON_LEVEL_BIG || (!animation->NextIsLastFrame() && animation->IsLastFrame())) {
-		SetAnimation(level);
-	}
-	else
-		ani = RACCOON_ANI_SPINNING_BIG;
-
-
-	if (speed_x < MARIO_WALKING_SPEED && can_change_to_walking) {
+	if (speed_x < MARIO_WALKING_SPEED && can_change_to_walking && is_rendered_completely) {
 		DebugOut(L"change to walking\n");
-
 		is_speed_low = false;
 		is_max_speed = false;
-
 		mario->ChangeState(new CWalkingState(level));
 		return;
 
@@ -61,7 +51,7 @@ void CRunningState::Update(float dt)
 
 void CRunningState::HandleKeyboard()
 {
-	
+
 }
 
 void CRunningState::SetAnimation(int level)
@@ -108,47 +98,66 @@ void CRunningState::SetAnimation(int level)
 
 void CRunningState::OnKeyDown(int KeyCode)
 {
-	CPlayerState::OnKeyDown(KeyCode);
+	//DebugOut(L"key code %d\n", KeyCode);
+	CMario* mario = CMario::GetInstance();
 	switch (KeyCode) {
 	case DIK_A:
-		if (level == RACCOON_LEVEL_BIG) {
+		if (level == RACCOON_LEVEL_BIG && is_rendered_completely) {
 			ani = RACCOON_ANI_SPINNING_BIG;
 			animation->ResetFlagLastFrame();
+			CPlayerState::SetAnimation(animation);
+		}
+		break;
+	case DIK_S:
+		if (is_max_speed) {
+			mario->time_start_jump = GetTickCount();
+			DebugOut(L"change to flying\n");
+			mario->ChangeState(new CFlyingState(level));
+			return;
 		}
 		break;
 	}
+	CPlayerState::OnKeyDown(KeyCode);
 }
 
 void CRunningState::OnKeyUp(int KeyCode)
 {
-	CGame* game = CGame::GetInstance();
-	CMario* mario = CMario::GetInstance();
-	switch (KeyCode) {
-	case DIK_A:
-		//Nếu bỏ nút A thì ko xét hai nút trái phải, vì lúc này giảm tốc dần rồi chuyển qua walking
-		//DebugOut(L"stop A\n");
-		is_speed_low = true;
-		acceleration = -MARIO_ACCELERATION;
-		can_change_to_walking = true;
-		// bỏ nút A ra, nó chưa kịp chuyển về walking, bấm nút A tiếp,
-		// thì lúc này phải áp dụng logic code quay đầu chứ lúc này đâu phải
-		// state vừa bắt đầu chạy nhanh đâu
-		/*is_left = false;
-		is_right = false;*/
+	//CGame* game = CGame::GetInstance();
+	//CMario* mario = CMario::GetInstance();
+	//DebugOut(L"keycode %d\n", KeyCode);
+	//switch (KeyCode) {
+	//case DIK_A:
+	//	//Nếu bỏ nút A thì ko xét hai nút trái phải, vì lúc này giảm tốc dần rồi chuyển qua walking
+	//	DebugOut(L"stop A\n");
+	//	//if(is_rendered_completely)
+	//	//SetAnimation(level);
+	//	/*is_speed_low = true;
+	//	acceleration = -MARIO_ACCELERATION;
+	//	can_change_to_walking = true;*/
+	//	// bỏ nút A ra, nó chưa kịp chuyển về walking, bấm nút A tiếp,
+	//	// thì lúc này phải áp dụng logic code quay đầu chứ lúc này đâu phải
+	//	// state vừa bắt đầu chạy nhanh đâu
+	//	/*is_left = false;
+	//	is_right = false;*/
 
-		break;
-	}
+	//	break;
+	//}
 }
 
 void CRunningState::KeyState(BYTE* state)
 {
-
 	CGame* game = CGame::GetInstance();
 	CMario* mario = CMario::GetInstance();
+	if (ani == RACCOON_ANI_SPINNING_BIG) {
+		CheckState();
+		if (is_rendered_completely)
+			SetAnimation(level);
+	}
 	if (game->IsKeyDown(DIK_A)) {
 		// Bấm A và right left cùng lúc thì giảm gia tốc 
 		// Bấm A thả cả 2 nút l r thì giảm tốc
 		// ở đây ko reset 2 cờ left right, là vì nút A vẫn còn gi
+		//if(level != RACCOON_LEVEL_BIG || is_rendered_completely)
 		if ((game->IsKeyDown(DIK_RIGHT) && game->IsKeyDown(DIK_LEFT)) ||
 			!game->IsKeyDown(DIK_LEFT) && !game->IsKeyDown(DIK_RIGHT)) {
 			//DebugOut(L"stopppp\n");
@@ -159,7 +168,7 @@ void CRunningState::KeyState(BYTE* state)
 		else if (game->IsKeyDown(DIK_RIGHT))
 		{
 			// ko là bé chồn hoặc bé chồn đã hoàn thành việc xoay mới running
-			if (level != RACCOON_LEVEL_BIG || (!animation->NextIsLastFrame() && animation->IsLastFrame())) {
+			if (level != RACCOON_LEVEL_BIG || is_rendered_completely) {
 				SetAnimation(level);
 				is_right = true;
 				// chưa bấm nút left bao giờ, chỉ bấm right lần đầu => tăng tốc về bên phải
@@ -173,7 +182,7 @@ void CRunningState::KeyState(BYTE* state)
 					// bật cờ này để cho mario giảm hết tốc độ rồi quay đầu chứ hong chuyển về walking state
 					can_change_to_walking = false;
 					is_speed_low = true;
-					acceleration = -MARIO_ACCELERATION ;
+					acceleration = -MARIO_ACCELERATION;
 					is_skid = true;
 					// tăng tốc mario trở lại sau khi đã xả hết tốc độ
 					if (mario->vx >= 0) {
@@ -188,8 +197,9 @@ void CRunningState::KeyState(BYTE* state)
 			}
 		}
 		else if (game->IsKeyDown(DIK_LEFT)) {
-			if (level != RACCOON_LEVEL_BIG || (!animation->NextIsLastFrame() && animation->IsLastFrame())) {
+			if (level != RACCOON_LEVEL_BIG || is_rendered_completely) {
 				is_left = true;
+				SetAnimation(level);
 				if (!is_right) {
 					// right ko an
 					mario->nx = -1;
@@ -199,7 +209,7 @@ void CRunningState::KeyState(BYTE* state)
 				{
 					can_change_to_walking = false;
 					is_speed_low = true;
-					acceleration = -MARIO_ACCELERATION ;
+					acceleration = -MARIO_ACCELERATION;
 					is_skid = true;
 					if (mario->vx <= 0) {
 						mario->nx = -1;
@@ -212,6 +222,16 @@ void CRunningState::KeyState(BYTE* state)
 			}
 
 		}
+	}
+	else if(!game->IsKeyDown(DIK_A)) {
+		//DebugOut(L"bo A\n");
+		is_speed_low = true;
+		acceleration = -MARIO_ACCELERATION;
+		can_change_to_walking = true;
+	} 
+	if (game->IsKeyDown(DIK_X)) {
+		mario->time_start_jump = GetTickCount();
+		mario->ChangeState(new CJumpingState(level));
 	}
 }
 

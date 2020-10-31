@@ -133,7 +133,9 @@ int Run()
 		if (dt >= tickPerFrame)
 		{
 			frameStart = now;
+			//OutputDebugString(L"goi update\n");
 			game->ProcessKeyboard();
+
 			Update(dt);
 			Render();
 		}

@@ -2,6 +2,7 @@
 #include "PlayerState.h"
 #include "Game.h"
 #include "Mario.h"
+#include "FlyingState.h"
 
 class CRunningState : public CPlayerState
 {

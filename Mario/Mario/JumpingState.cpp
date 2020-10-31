@@ -20,7 +20,13 @@ void CJumpingState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
 
-	if (mario->vy > 0) mario->ChangeState(new CFallingState(level));
+	if (mario->vy >= 0) {
+		if ((mario->is_spinning && is_rendered_completely) || !mario->is_spinning) {
+			mario->is_attacking_by_spinning = false;
+			DebugOut(L"vx truoc khi nhay %f\n", mario->vx);
+			mario->ChangeState(new CFallingState(level));
+		}
+	}
 }
 
 void CJumpingState::HandleKeyboard()
@@ -60,32 +66,30 @@ void CJumpingState::SetAnimation(int level)
 void CJumpingState::OnKeyDown(int KeyCode)
 {
 	CMario* mario = CMario::GetInstance();
-	switch (KeyCode) {
-	case DIK_A:
-		if (level == RACCOON_LEVEL_BIG)
-			mario->ChangeState(new CSpinningState(RACCOON_LEVEL_BIG));
-		break;
+	CPlayerState::OnKeyDown(KeyCode);
 
-	}
 }
 
 void CJumpingState::KeyState(BYTE* state)
 {
 	CGame* game = CGame::GetInstance();
 	CMario* mario = CMario::GetInstance();
-	
+
+	CPlayerState::KeyState(state);
+
 	if (game->IsKeyDown(DIK_X)) {
 		if (game->IsKeyDown(DIK_RIGHT)) {
-			mario->vx = MARIO_WALKING_SPEED;
+			if (abs(mario->vx) <= MARIO_WALKING_SPEED)
+				mario->vx = MARIO_WALKING_SPEED;
 			mario->nx = 1;
 		}
 		else if (game->IsKeyDown(DIK_LEFT)) {
-			mario->vx = -MARIO_WALKING_SPEED;
+			if (abs(mario->vx) <= MARIO_WALKING_SPEED)
+				mario->vx = -MARIO_WALKING_SPEED;
 			mario->nx = -1;
 		}
 	}
-	else if (game->IsKeyDown(DIK_Z) && level == RACCOON_LEVEL_BIG) {
-		mario->ChangeState(new CSpinningState(level));
-	}
+
+
 }
 

@@ -7,9 +7,6 @@
 #include "Utils.h"
 class CFallingState : public CPlayerState
 {
-	bool is_done = false;
-	bool is_rendered_completely = true;
-	bool able_to_change = false;
 public:
 	CFallingState() {};
 	CFallingState(int level);
@@ -22,7 +19,5 @@ public:
 	void OnKeyDown(int KeyCode);
 	void OnKeyUp(int KeyCode);
 	void KeyState(BYTE* state);
-
-	void CheckState();
 };
 

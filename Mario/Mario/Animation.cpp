@@ -37,14 +37,15 @@ void CAnimation::Render(float x, float y, int alpha, int nx, int offset, bool sp
 		{
 			currentFrame++;
 			lastFrameTime = now;
-			if (currentFrame + 1 == frames.size()) {
+			/*if (currentFrame + 1 == frames.size()) {
 				nextIsLastFrame = true;
-			}
+			}*/
 			if (currentFrame == frames.size()) {
 				currentFrame = 0;
 				lastFrame = true;
-				nextIsLastFrame = false;
-			}
+				//nextIsLastFrame = false;
+			} else
+				lastFrame = false;
 		}
 	}
 	// set offset cho ani spinning
@@ -52,17 +53,12 @@ void CAnimation::Render(float x, float y, int alpha, int nx, int offset, bool sp
 	if (spinningFlag) {
 		if (currentFrame == 0 || currentFrame == 4) {
 			frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, offset);
-			mario->is_attacking_by_spinning = true;
 		}
 		else if (currentFrame == 2) {
 			frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, -offset);
-			mario->is_attacking_by_spinning = true;
-
 		}
 		else {
 			frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, 0);
-			mario->is_attacking_by_spinning = false;
-
 		}
 	}
 	else

@@ -159,6 +159,7 @@
     <ClCompile Include="CrouchingState.cpp" />
     <ClCompile Include="FallingState.cpp" />
     <ClCompile Include="FireBall.cpp" />
+    <ClCompile Include="FlyingState.cpp" />
     <ClCompile Include="HighJumpingState.cpp" />
     <ClCompile Include="InvisibleObject.cpp" />
     <ClCompile Include="JumpingState.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="DefineLibs.h" />
     <ClInclude Include="FallingState.h" />
     <ClInclude Include="FireBall.h" />
+    <ClInclude Include="FlyingState.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="HighJumpingState.h" />
     <ClInclude Include="InvisibleObject.h" />

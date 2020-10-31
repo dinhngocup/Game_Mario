@@ -75,6 +75,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CMario::Render()
 {
+	//player_state->SetAnimation(level);
 	this->ani = player_state->GetAnimation();
 
 	if (state == MARIO_STATE_DIE)
@@ -165,7 +166,7 @@ void CMario::ChangeState(CPlayerState* newState)
 
 	if (((dynamic_cast<CSpinningState*>(player_state) ||
 		dynamic_cast<CRunningState*>(player_state))) && level == RACCOON_LEVEL_BIG) {
-		ani = player_state->GetAnimation();
+		ani = RACCOON_ANI_SPINNING_BIG;
 		animation_set->at(ani)->ResetFlagLastFrame();
 		player_state->SetAnimation(animation_set->at(ani));
 	}
