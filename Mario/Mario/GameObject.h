@@ -41,6 +41,7 @@ public:
 	float x;
 	float y;
 
+	bool health = true;
 	/*float width;
 	float height;*/
 
@@ -68,6 +69,8 @@ public:
 
 	eTYPE GetType() { return this->type; }
 
+	void SetHealth(bool health) { this->health = health; }
+	bool GetHealth() { return this->health; }
 
 	void GetSpeed(float& vx, float& vy) { vx = this->vx; vy = this->vy; }
 

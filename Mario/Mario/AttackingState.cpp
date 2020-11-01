@@ -15,7 +15,7 @@ void CAttackingState::SetAnimation()
 void CAttackingState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
-	
+
 }
 
 void CAttackingState::HandleKeyboard()
@@ -27,16 +27,17 @@ void CAttackingState::KeyState(BYTE* state)
 {
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
-	if (!animation->NextIsLastFrame() && animation->IsLastFrame()) {
-		mario->is_attacking = true;
-		is_done = true;
-	}
-	if (is_done) {
-		
+	CheckState();
+	if (is_rendered_completely) {
+
 		if (game->IsKeyDown(DIK_A) && (game->IsKeyDown(DIK_LEFT) || game->IsKeyDown(DIK_RIGHT))) {
 			mario->ChangeState(new CRunningState(level));
 		}
+		else if (game->IsKeyDown(DIK_LEFT) || game->IsKeyDown(DIK_RIGHT))
+			mario->ChangeState(new CWalkingState(level));
 		else
 			mario->ChangeState(new CStandingState(level));
 	}
 }
+
+

@@ -75,12 +75,14 @@ void CStandingState::OnKeyDown(int KeyCode)
 			mario->number_attack++;
 			DWORD count = GetTickCount();
 			
-			if (count - mario->time_start_attack <= 5000 && mario->number_attack <= 2) {
+			if (count - mario->time_start_attack <= 1000 && mario->number_attack <= 2) {
 				mario->ChangeState(new CAttackingState(level));
+				
 			}
-			else if (count - mario->time_start_attack > 5000) {
+			else if (count - mario->time_start_attack > 1000) {
 				mario->number_attack = 1;
 				mario->ChangeState(new CAttackingState(level));
+				
 			}
 		}
 		break;

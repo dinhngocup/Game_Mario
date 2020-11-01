@@ -5,6 +5,7 @@ class CAttackingState : public CPlayerState
 {
 public:
 	bool is_done = false;
+	bool is_attacked = false;
 	CAttackingState() {};
 	CAttackingState(int level);
 
@@ -17,5 +18,6 @@ public:
 	void OnKeyUp(int KeyCode) {};
 	void OnKeyDown(int KeyCode) {};
 	void KeyState(BYTE* state);
+
 };
 

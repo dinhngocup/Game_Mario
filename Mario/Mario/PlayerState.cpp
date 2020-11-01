@@ -23,7 +23,7 @@ void CPlayerState::OnKeyDown(int KeyCode)
 		if (!dynamic_cast<CJumpingState*>(player_state) &&
 			!dynamic_cast<CHighJumpingState*>(player_state) &&
 			!dynamic_cast<CFallingState*>(player_state)) {
-			DebugOut(L"change to high jump\n");
+			DebugOut(L"vx truoc khi nhay %f\n", mario->vx);
 			mario->time_start_jump = GetTickCount();
 			mario->ChangeState(new CHighJumpingState(level));
 		}
@@ -39,6 +39,17 @@ void CPlayerState::OnKeyDown(int KeyCode)
 					CPlayerState::SetAnimation(mario->animation_set->at(ani));
 				}
 				if (ani == RACCOON_ANI_SPINNING_BIG) {
+					CheckState();
+				}
+			}
+			else if (level == FIRE_LEVEL) {
+				if (is_rendered_completely) {
+					ani = FIRE_ANI_FLYING_THROW;
+					mario->animation_set->at(ani)->ResetFlagLastFrame();
+					CPlayerState::SetAnimation(mario->animation_set->at(ani));
+
+				}
+				if (ani == FIRE_ANI_FLYING_THROW) {
 					CheckState();
 				}
 			}
@@ -95,7 +106,7 @@ void CPlayerState::KeyState(BYTE* states)
 					ani = RACCOON_ANI_BIG_JUMPING_RIGHT;
 			}
 		}
-		if (ani == RACCOON_ANI_SPINNING_BIG) {
+		if (ani == RACCOON_ANI_SPINNING_BIG || ani == FIRE_ANI_FLYING_THROW) {
 			CheckState();
 		}
 	}
@@ -106,22 +117,34 @@ void CPlayerState::CheckState()
 	int current_frame = animation->GetCurrentFrame();
 	CMario* mario = CMario::GetInstance();
 	//DebugOut(L"current %d\n", current_frame);
-	if (current_frame == 0 || current_frame == 4 || current_frame == 2)
-		mario->is_attacking_by_spinning = true;
-	else
-		mario->is_attacking_by_spinning = false;
+	if (level == RACCOON_LEVEL_BIG) {
+		if (current_frame == 0 || current_frame == 4 || current_frame == 2)
+			mario->is_attacking_by_spinning = true;
+		else
+			mario->is_attacking_by_spinning = false;
+
+	}
+	else if (level == FIRE_LEVEL) {
+		if (current_frame == 1 && !is_attacked) {
+			mario->is_attacking = true;
+			// allow throw only 1 fire ball
+			is_attacked = true;
+		} 
+	}
 
 	// phải render full frame mới được bật cờ render full ani
 	//if (!animation->NextIsLastFrame() && animation->IsLastFrame()) {
 	if (animation->IsLastFrame()) {
 		is_rendered_completely = true;
-		mario->is_spinning = false;
+		if (level == FIRE_LEVEL) {
+			is_attacked = false;
+		}
 	}
 	else {
 		is_rendered_completely = false;
-		mario->is_spinning = true;
 	}
-	//DebugOut(L"attacking %d\n", mario->is_attacking_by_spinning);
+	/*DebugOut(L"attacking %d\n", mario->is_attacking);
+	DebugOut(L"is_attacked %d\n", is_attacked);*/
 }
 
 

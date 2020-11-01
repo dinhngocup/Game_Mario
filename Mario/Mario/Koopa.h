@@ -4,7 +4,7 @@
 #include "Brick.h"
 #include "Utils.h"
 #include "Mario.h"
-
+#include "Game.h"
 
 #define KOOPA_WALKING_SPEED 0.08f;
 
@@ -15,11 +15,14 @@
 #define KOOPA_STATE_WALKING 100
 #define KOOPA_STATE_DIE 101
 #define KOOPA_STATE_WALKING_SWINGS 102
+#define KOOPA_STATE_DIE_BY_WEAPON 103
 
 #define KOOPA_ANI_WALKING 0
 #define KOOPA_ANI_DIE 1
 #define KOOPA_ANI_SPIN 2
 #define KOOPA_ANI_WALKING_SWINGS 3
+
+#define KOOPA_DISPARITIES 15
 
 
 #define KOOPA_GRAVITY 0.002f

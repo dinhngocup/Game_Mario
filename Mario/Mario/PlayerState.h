@@ -7,6 +7,7 @@ protected:
 	int level;
 	CAnimation* animation;
 	bool is_rendered_completely = true;
+	bool is_attacked = false;
 public:
 	CPlayerState() {};
 	CPlayerState(int level) {};

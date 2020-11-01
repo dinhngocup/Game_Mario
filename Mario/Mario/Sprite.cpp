@@ -18,7 +18,7 @@ void CSprite::Draw(float x, float y, int alpha)
 	game->Draw(x, y, texture, left, top, right, bottom, alpha);
 }
 
-void CSprite::DrawFlipX(float x, float y, int alpha, int nx, int offset)
+void CSprite::DrawFlipX(float x, float y, int alpha, int nx, int offset, int ny)
 {
 	LPD3DXSPRITE spriteHandler = CGame::GetInstance()->GetSpriteHandler();
 
@@ -47,7 +47,7 @@ void CSprite::DrawFlipX(float x, float y, int alpha, int nx, int offset)
 	các thông số còn lại dùng cho việc xoay góc bao nhiêu độ,... ở đây vẽ tile không cần
 	*/
 	D3DXMatrixTransformation2D(&middleTransform, &D3DXVECTOR2(p.x, p.y), 0,
-		&D3DXVECTOR2(3.0f * nx, 3.0f), NULL, 0.0f, NULL);
+		&D3DXVECTOR2(3.0f * nx, 3.0f * ny), NULL, 0.0f, NULL);
 
 	D3DXVECTOR3 center = D3DXVECTOR3((float)(right - left) / 2 + offset, (float)(bottom - top) / 2, 0);
 

@@ -6,10 +6,10 @@ CFireBall::CFireBall()
 
 }
 
-CFireBall::CFireBall(float start_x, float start_y)
+CFireBall::CFireBall(float start_x, float start_y, int nx)
 {
 	//OutputDebugString(L"new fire ball\n");
-	vx = 0.35f;
+	vx = 0.9f * nx;
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 	LPANIMATION_SET ani_set = animation_sets->Get(4);
 	SetAnimationSet(ani_set);
@@ -20,7 +20,7 @@ CFireBall::CFireBall(float start_x, float start_y)
 void CFireBall::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 {
 	//OutputDebugString(L"update fire ball\n");
-
+	CGame* game = CGame::GetInstance();
 	// Calculate dx, dy 
 	CGameObject::Update(dt, colliable_objects);
 
@@ -29,6 +29,12 @@ void CFireBall::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 	coEvents.clear();
+
+	// Fireball ra khoi cam 
+	if (GetX() >= game->GetCamX() + game->GetScreenWidth() || GetX() < 0) {
+		SetHealth(false);
+		return;
+	}
 
 	CalcPotentialCollisions(colliable_objects, coEvents);
 
@@ -54,18 +60,25 @@ void CFireBall::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		y += min_ty * dy + ny * 0.4f;
 
 
-		
+
 		//
 		// Collision logic with other objects
 		//
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<CBrick*>(e->obj)) {
-				//DebugOut(L"hi\n");
+			if (dynamic_cast<CBrick*>(e->obj) || dynamic_cast<CInvisibleObject*>(e->obj) || dynamic_cast<CBrickQuestion*>(e->obj)) {
 				if (e->ny < 0) {
 					vy = -0.4f;
 				}
+				if (e->nx != 0) {
+					SetHealth(false);
+				}
+			}
+			else if (dynamic_cast<CKoopa*>(e->obj)) {
+				CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+				SetHealth(false);
+				koopa->SetState(KOOPA_STATE_DIE_BY_WEAPON);
 			}
 
 		}
@@ -73,7 +86,7 @@ void CFireBall::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		// clean up collision events
 		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 	}
-	
+
 }
 
 void CFireBall::Render()

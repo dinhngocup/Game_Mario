@@ -14,22 +14,26 @@ void CFallingState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
-	if (is_falling_slowly) {
+	/*if (is_falling_slowly) {
 		mario->vy -= 0.02 * dt;
 		DebugOut(L"vy sau khi bam roi cham %f\n", mario->vy);
 		is_falling_slowly = false;
-	}
+	}*/
 	// chuyen trang thai standing
 	if (mario->vy == 0) {
-		if ((mario->is_spinning && is_rendered_completely) || !mario->is_spinning) {
-			mario->is_attacking_by_spinning = false;
+		//if ((mario->is_spinning && is_rendered_completely) || !mario->is_spinning) {
+		if (is_rendered_completely) {
+			if (level == RACCOON_LEVEL_BIG)
+				mario->is_attacking_by_spinning = false;
 			if (mario->is_crouching)
 				mario->ChangeState(new CCrouchingState(level));
-			else if (abs(mario->vx) > MARIO_WALKING_SPEED && level !=RACCOON_LEVEL_BIG) {
+			//else if (abs(mario->vx) > MARIO_WALKING_SPEED && level != RACCOON_LEVEL_BIG) {
+			else if (abs(mario->vx) > MARIO_WALKING_SPEED) {
 				DWORD time_end_jump = GetTickCount();
 				DWORD dt_from_jump_to_fall = time_end_jump - mario->time_start_jump;
 				float speed_x = abs(mario->vx);
-				mario->vx = (speed_x - MARIO_ACCELERATION * (dt_from_jump_to_fall/1000) * 2) * mario->nx;
+				mario->vx = (speed_x - MARIO_ACCELERATION * (dt_from_jump_to_fall / 1000) * 2) * mario->nx;
+				DebugOut(L"vx sau khi nhay %f\n", mario->vx);
 				mario->ChangeState(new CRunningState(level));
 
 			}
@@ -78,7 +82,7 @@ void CFallingState::OnKeyDown(int KeyCode)
 {
 	CMario* mario = CMario::GetInstance();
 	CPlayerState::OnKeyDown(KeyCode);
-	if (level == RACCOON_LEVEL_BIG) {
+	/*if (level == RACCOON_LEVEL_BIG) {
 		switch (KeyCode) {
 		case DIK_S:
 		case DIK_X:
@@ -86,7 +90,7 @@ void CFallingState::OnKeyDown(int KeyCode)
 			DebugOut(L"vy truoc khi bam roi cham %f\n", mario->vy);
 			break;
 		}
-	}
+	}*/
 }
 
 void CFallingState::OnKeyUp(int KeyCode)

@@ -7,7 +7,7 @@ CHighJumpingState::CHighJumpingState(int level)
 	CMario* mario = CMario::GetInstance();
 	mario->vy = -MARIO_JUMP_SPEED_Y;
 	SetAnimation(level);
-	
+
 }
 
 void CHighJumpingState::Update(float dt)
@@ -17,8 +17,10 @@ void CHighJumpingState::Update(float dt)
 	// chuyen trang thai falling
 	if (mario->vy >= 0) {
 		// đáng lẽ phải rơi nhưng chưa render hết => bật cờ đc rơi đợi render hết mới chuyển qua state rơi
-		if (mario->is_spinning && is_rendered_completely || !mario->is_spinning) {
-			mario->is_attacking_by_spinning = false;
+		//if (mario->is_spinning && is_rendered_completely || !mario->is_spinning) {
+		if (is_rendered_completely) {
+			if (level == RACCOON_LEVEL_BIG)
+				mario->is_attacking_by_spinning = false;
 			mario->ChangeState(new CFallingState(level));
 		}
 
@@ -73,7 +75,8 @@ void CHighJumpingState::OnKeyUp(int KeyCode)
 
 	case DIK_S:
 		if (mario->vy >= 0) {
-			if (ani == RACCOON_ANI_SPINNING_BIG && is_rendered_completely || ani != RACCOON_ANI_SPINNING_BIG) {
+			if ((ani == RACCOON_ANI_SPINNING_BIG || ani == FIRE_ANI_FLYING_THROW) && is_rendered_completely
+				|| (ani != RACCOON_ANI_SPINNING_BIG && ani != FIRE_ANI_FLYING_THROW)) {
 				mario->ChangeState(new CFallingState(level));
 			}
 		}

@@ -6,7 +6,7 @@
 class CHighJumpingState : public CPlayerState
 {
 	float acceleration;
-	bool is_spinning = true;
+	//bool is_spinning = true;
 public:
 	CHighJumpingState() {};
 	CHighJumpingState(int level);

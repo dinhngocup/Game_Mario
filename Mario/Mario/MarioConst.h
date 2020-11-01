@@ -61,6 +61,8 @@
 #define RACCOON_ANI_FLYING			32
 #define FIRE_ANI_FLYING			33
 
+#define FIRE_ANI_FLYING_THROW			34
+
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2

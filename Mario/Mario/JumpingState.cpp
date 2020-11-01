@@ -21,9 +21,11 @@ void CJumpingState::Update(float dt)
 	CMario* mario = CMario::GetInstance();
 
 	if (mario->vy >= 0) {
-		if ((mario->is_spinning && is_rendered_completely) || !mario->is_spinning) {
-			mario->is_attacking_by_spinning = false;
-			DebugOut(L"vx truoc khi nhay %f\n", mario->vx);
+		//if ((mario->is_spinning && is_rendered_completely) || !mario->is_spinning) {
+		if (is_rendered_completely) {
+			if (level == RACCOON_LEVEL_BIG)
+				mario->is_attacking_by_spinning = false;
+			//DebugOut(L"vx truoc khi nhay %f\n", mario->vx);
 			mario->ChangeState(new CFallingState(level));
 		}
 	}

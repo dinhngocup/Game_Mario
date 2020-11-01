@@ -13,7 +13,7 @@ private:
 	bool is_skid = false;
 	bool is_right = false;
 	bool is_left = false;
-	bool can_change_to_walking = true;
+	bool can_change_to_walking = false;
 public:
 	CRunningState() {};
 	CRunningState(int level);

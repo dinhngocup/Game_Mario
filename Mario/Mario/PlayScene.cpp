@@ -167,11 +167,15 @@ void CPlayScene::Update(DWORD dt)
 	// update fire ball
 	if (player->is_attacking) {
 		CGameObject* obj = NULL;
+		float x;
+		if (player->nx > 0) {
+			x = player->GetX() + MARIO_BIG_BBOX_WIDTH / 2;
+		} else 
+			x = player->GetX() - MARIO_BIG_BBOX_WIDTH / 2;
 
-		float x = player->GetX() + MARIO_BIG_BBOX_WIDTH / 2;
 		float y = player->GetY();
 
-		obj = new CFireBall(x, y);
+		obj = new CFireBall(x, y, player->nx);
 		//obj = new CFireBall(200, 1100);
 		obj->type = eTYPE::FIRE_BALL;
 		AddObject(obj);
@@ -205,19 +209,20 @@ void CPlayScene::Update(DWORD dt)
 	}
 	else if (cx >= sceneWidth - game->GetScreenWidth()) {
 		game->SetCamPos(sceneWidth - game->GetScreenWidth(), DEFAULT_CAM_Y);
-		
+
 	}
 	else
 	{
 		game->SetCamPos(cx, DEFAULT_CAM_Y);
 		isMoved = true;
 	}
-	
+
 
 	// need to custom
 	for (size_t i = 1; i < objects.size(); i++)
 	{
-		if (objects[i]->GetType() == eTYPE::FIRE_BALL && objects[i]->GetX() >= game->GetCamX() + game->GetScreenWidth()) {
+		//if (objects[i]->GetType() == eTYPE::FIRE_BALL && objects[i]->GetX() >= game->GetCamX() + game->GetScreenWidth()) {
+		if (!objects[i]->GetHealth()) {
 			objects.erase(objects.begin() + i);
 		}
 	}

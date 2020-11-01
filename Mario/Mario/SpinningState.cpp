@@ -44,7 +44,6 @@ void CSpinningState::KeyState(BYTE* state)
 
 	//CheckState();
 	CPlayerState::CheckState();
-	//DebugOut(L"render %d\n", is_rendered_completely);
 	if (is_rendered_completely) {
 		// Đè nút A và phím qua trái phải thì chạy nhanh
 		if (game->IsKeyDown(DIK_A) && (game->IsKeyDown(DIK_RIGHT) || game->IsKeyDown(DIK_LEFT))) {
@@ -63,6 +62,10 @@ void CSpinningState::KeyState(BYTE* state)
 				mario->nx = -1;
 			}
 		}
+		else if (game->IsKeyDown(DIK_LEFT) || game->IsKeyDown(DIK_RIGHT)) {
+			mario->is_attacking_by_spinning = false;
+			mario->ChangeState(new CWalkingState(level));
+		}
 		else {
 			// chuyển về standing
 			mario->is_attacking_by_spinning = false;
@@ -71,9 +74,7 @@ void CSpinningState::KeyState(BYTE* state)
 
 	}
 	// bấm phím Z thì xoay liên tục
-	/*if (game->IsKeyDown(DIK_Z) && (game->IsKeyDown(DIK_RIGHT) || game->IsKeyDown(DIK_LEFT))) {
-		SetAnimation();
-	}*/
+	
 	//DebugOut(L"spinning%d\n", mario->is_attacking_by_spinning);
 
 }

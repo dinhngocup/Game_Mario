@@ -22,7 +22,7 @@ void CAnimation::Add(int spriteId, DWORD time)
 	frames.push_back(frame);
 }
 
-void CAnimation::Render(float x, float y, int alpha, int nx, int offset, bool spinningFlag)
+void CAnimation::Render(float x, float y, int alpha, int nx, int offset, bool spinningFlag, int ny)
 {
 	DWORD now = GetTickCount();
 	if (currentFrame == -1)
@@ -39,11 +39,13 @@ void CAnimation::Render(float x, float y, int alpha, int nx, int offset, bool sp
 			lastFrameTime = now;
 			/*if (currentFrame + 1 == frames.size()) {
 				nextIsLastFrame = true;
+			}
+			else {
+				nextIsLastFrame = false;
 			}*/
 			if (currentFrame == frames.size()) {
 				currentFrame = 0;
 				lastFrame = true;
-				//nextIsLastFrame = false;
 			} else
 				lastFrame = false;
 		}
@@ -62,5 +64,5 @@ void CAnimation::Render(float x, float y, int alpha, int nx, int offset, bool sp
 		}
 	}
 	else
-		frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, offset);
+		frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, offset, ny);
 }

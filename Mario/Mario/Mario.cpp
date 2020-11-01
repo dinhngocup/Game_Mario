@@ -55,7 +55,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
-	
+		//DebugOut(L"y mario %f\n", y);
 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
@@ -66,69 +66,78 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else vy = 0;
 			}
 			else {
-				if (e->nx != 0) vx = 0;
+				if (e->nx != 0) {
+					vx = 0;
+				}
 				if (e->ny != 0)	vy = 0;
 			}
-			//if (dynamic_cast<CKoopa*>(e->obj)) {
-			//	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
-			//	// nhảy lên đầu koopa
-			//	DebugOut(L"hi\n");
-			//	if (e->ny < 0)
-			//	{
-			//		if (koopa->GetState() != KOOPA_STATE_DIE)
-			//		{
-			//			koopa->SetState(KOOPA_STATE_DIE);
-			//			vy = -MARIO_JUMP_DEFLECT_SPEED;
-			//		}
-			//		vy = 0;
-			//	}
-			//	// đụng bên hông koopa
-			//	else if (e->nx != 0)
-			//	{
-			//		//Mario đang trong tình trạng active
-			//		if (untouchable == 0)
-			//		{
-			//			// đụng ngang koopas còn đang sống
-			//			if (koopa->GetState() != KOOPA_STATE_DIE)
-			//			{
-			//				//DebugOut(L"mario dieeee \n");
-			//				if (level > MARIO_LEVEL_SMALL)
-			//				{
-			//					level = MARIO_LEVEL_SMALL;
-			//					player_state->SetLevel(level);
-			//					StartUntouchable();
-			//				}
-			//				// mario chết
-			//				else
-			//					SetState(MARIO_STATE_DIE);
-			//			}
-			//			else {
-			//				if (koopa->vx == 0) {
-			//					// đẩy vỏ rùa từ phải sang
-			//					if (e->nx == 1) {
-			//						koopa->SetSpeed(-0.06f, 0);
-			//					}
-			//					else {
-			//						koopa->SetSpeed(0.06f, 0);
-			//					}
-			//				}
-			//				else {
-			//					//DebugOut(L"mario dieee \n");
-			//					if (level > MARIO_LEVEL_SMALL)
-			//					{
-			//						level = MARIO_LEVEL_SMALL;
-			//						player_state->SetLevel(level);
-			//						StartUntouchable();
-			//					}
-			//					// mario chết
-			//					else
-			//						SetState(MARIO_STATE_DIE);
-			//				}
-			//			}
-			//		}
-			//	}
-			//	vx = 0;
-			//}
+			if (dynamic_cast<CKoopa*>(e->obj)) {
+				CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+				// nhảy lên đầu koopa
+				if (e->ny < 0)
+				{
+					DebugOut(L"va cham\n");
+					if (koopa->GetState() != KOOPA_STATE_DIE)
+					{
+						koopa->SetState(KOOPA_STATE_DIE);
+						vy = -MARIO_JUMP_DEFLECT_SPEED;
+					}
+					vy = 0;
+				}
+				// đụng bên hông koopa
+				else if (e->nx != 0)
+				{
+					//Mario đang trong tình trạng active
+					if (untouchable == 0)
+					{
+						// đụng ngang koopas còn đang sống
+						if (koopa->GetState() != KOOPA_STATE_DIE)
+						{
+							if (is_attacking_by_spinning) {
+								koopa->SetState(KOOPA_STATE_DIE_BY_WEAPON);
+							}
+							//else {
+							//	if (level > MARIO_LEVEL_SMALL)
+							//	{
+							//		level = MARIO_LEVEL_SMALL;
+							//		player_state->SetLevel(level);
+							//		StartUntouchable();
+							//	}
+							//	// mario chết
+							//	else
+							//		SetState(MARIO_STATE_DIE);
+							//}
+						}
+						else {
+							if (koopa->vx == 0) {
+								// đẩy vỏ rùa từ phải sang
+								if (e->nx == 1) {
+									koopa->SetSpeed(-0.5f, 0);
+								}
+								else {
+									koopa->SetSpeed(0.5f, 0);
+								}
+							}
+							else {
+								if (is_attacking_by_spinning)
+									koopa->SetState(KOOPA_STATE_DIE_BY_WEAPON);
+								else {
+									//if (level > MARIO_LEVEL_SMALL)
+									//{
+									//	level = MARIO_LEVEL_SMALL;
+									//	player_state->SetLevel(level);
+									//	StartUntouchable();
+									//}
+									//// mario chết
+									//else
+									//	SetState(MARIO_STATE_DIE);
+								}
+							}
+						}
+					}
+				}
+				vx = 0;
+			}
 		}
 		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 	}
@@ -179,6 +188,7 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 		top = y - MARIO_SMALL_BBOX_HEIGHT / 2;
 		right = left + MARIO_SMALL_BBOX_WIDTH;
 		bottom = top + MARIO_SMALL_BBOX_HEIGHT;
+		//DebugOut(L"b %f\n", bottom);
 
 	}
 }
@@ -229,8 +239,9 @@ void CMario::ChangeState(CPlayerState* newState)
 		animation_set->at(ani)->ResetFlagLastFrame();
 		player_state->SetAnimation(animation_set->at(ani));
 	}
-	else if (level == FIRE_LEVEL && dynamic_cast<CAttackingState*>(player_state)) {
-		ani = player_state->GetAnimation();
+	else if (level == FIRE_LEVEL && (dynamic_cast<CAttackingState*>(player_state) ||
+		dynamic_cast<CRunningState*>(player_state))) {
+		ani = FIRE_MARIO_ANI_THROW;
 		animation_set->at(ani)->ResetFlagLastFrame();
 		player_state->SetAnimation(animation_set->at(ani));
 	}

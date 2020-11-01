@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "DefineLibs.h"
 #include "AnimationFrame.h"
+#include "Utils.h"
 //#include "Mario.h"
 /*
 	Quản lý tất cả các frame (sprite + time display) của 1 animation
@@ -32,7 +33,7 @@ public:
 		lastFrame = false;
 		nextIsLastFrame = false;
 	}
-	void Render(float x, float y, int alpha = 255, int nx = 1, int offset = 0, bool spinningFlag = false);
+	void Render(float x, float y, int alpha = 255, int nx = 1, int offset = 0, bool spinningFlag = false, int ny = 1);
 };
 
 typedef CAnimation* LPANIMATION;

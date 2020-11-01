@@ -4,6 +4,10 @@
 #include "Utils.h"
 #include "Textures.h"
 #include "Game.h"
+#include "InvisibleObject.h"
+#include "Koopa.h"
+#include "BrickQuestion.h"
+
 #define FIRE_BALL_GRAVITY			0.002f
 
 
@@ -12,7 +16,7 @@ class CFireBall : public CGameObject
 	float collision_y;
 public:
 	CFireBall();
-	CFireBall(float start_x, float start_y);
+	CFireBall(float start_x, float start_y, int nx);
 	~CFireBall() { delete this; };
 
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
