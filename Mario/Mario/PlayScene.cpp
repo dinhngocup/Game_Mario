@@ -57,6 +57,14 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	case eTYPE::BRICK: obj = new CBrick(x, y, w, h); obj->type = eTYPE::BRICK;  break;
 	case eTYPE::INVISIBLE_OBJECT: obj = new CInvisibleObject(x, y, w, h); obj->type = eTYPE::INVISIBLE_OBJECT; break;
+	case eTYPE::BRICK_QUESTION: obj = new CBrickQuestion(); obj->type = eTYPE::BRICK_QUESTION; break;
+	case eTYPE::GOOMBA: obj = new CGoomba(); obj->type = eTYPE::GOOMBA; break;
+	case eTYPE::KOOPA: {
+		int state = atoi(tokens[6].c_str());
+		obj = new CKoopa(state);
+		obj->type = eTYPE::KOOPA;
+		break;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -106,6 +114,7 @@ void CPlayScene::_ParseSection_MAP(string line)
 	this->map = new CMap();
 	map->ReadMap(path.c_str());
 	sceneWidth = map->GetWidthScene();
+	sceneHeight = map->GetHeightScene();
 
 }
 
@@ -114,7 +123,7 @@ void CPlayScene::LoadSceneResources()
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
 
 	player = CMario::GetInstance();
-	player->SetStartPosition(0, 0);
+	player->SetPosition(0, 1000);
 	player->SetLevel(MARIO_LEVEL_SMALL);
 	player->ChangeState(new CStandingState(player->GetLevel()));
 
@@ -163,6 +172,7 @@ void CPlayScene::Update(DWORD dt)
 		float y = player->GetY();
 
 		obj = new CFireBall(x, y);
+		//obj = new CFireBall(200, 1100);
 		obj->type = eTYPE::FIRE_BALL;
 		AddObject(obj);
 		player->is_attacking = false;
@@ -188,19 +198,21 @@ void CPlayScene::Update(DWORD dt)
 	CGame* game = CGame::GetInstance();
 	cx -= game->GetScreenWidth() / 2;
 	cy -= game->GetScreenHeight() / 2;
-	
+
 	if (cx <= 0)
 	{
 		game->SetCamPos(0.0f, DEFAULT_CAM_Y);
 	}
 	else if (cx >= sceneWidth - game->GetScreenWidth()) {
 		game->SetCamPos(sceneWidth - game->GetScreenWidth(), DEFAULT_CAM_Y);
+		
 	}
 	else
 	{
 		game->SetCamPos(cx, DEFAULT_CAM_Y);
 		isMoved = true;
 	}
+	
 
 	// need to custom
 	for (size_t i = 1; i < objects.size(); i++)
@@ -250,9 +262,9 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 {
 	CMario* mario = ((CPlayScene*)scence)->GetPlayer();
-	
+
 	mario->OnKeyUp(KeyCode);
-	
+
 }
 
 void CPlayScenceKeyHandler::KeyState(BYTE* states)

@@ -105,7 +105,7 @@ void CPlayerState::CheckState()
 {
 	int current_frame = animation->GetCurrentFrame();
 	CMario* mario = CMario::GetInstance();
-	DebugOut(L"current %d\n", current_frame);
+	//DebugOut(L"current %d\n", current_frame);
 	if (current_frame == 0 || current_frame == 4 || current_frame == 2)
 		mario->is_attacking_by_spinning = true;
 	else
@@ -121,7 +121,7 @@ void CPlayerState::CheckState()
 		is_rendered_completely = false;
 		mario->is_spinning = true;
 	}
-	DebugOut(L"attacking %d\n", mario->is_attacking_by_spinning);
+	//DebugOut(L"attacking %d\n", mario->is_attacking_by_spinning);
 }
 
 

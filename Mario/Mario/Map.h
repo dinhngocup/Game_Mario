@@ -11,11 +11,13 @@ class CMap
 	int tile_map[500][500];
 
 	int width_scene;
+	int height_scene;
 
 public:
 	CMap();
 	void ReadMap(LPCWSTR filePath);
 	void DrawMap(float cam_x, float cam_y);
 	int GetWidthScene();
+	int GetHeightScene();
 };
 

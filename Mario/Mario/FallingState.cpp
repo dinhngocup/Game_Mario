@@ -14,14 +14,18 @@ void CFallingState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
-
+	if (is_falling_slowly) {
+		mario->vy -= 0.02 * dt;
+		DebugOut(L"vy sau khi bam roi cham %f\n", mario->vy);
+		is_falling_slowly = false;
+	}
 	// chuyen trang thai standing
 	if (mario->vy == 0) {
 		if ((mario->is_spinning && is_rendered_completely) || !mario->is_spinning) {
 			mario->is_attacking_by_spinning = false;
 			if (mario->is_crouching)
 				mario->ChangeState(new CCrouchingState(level));
-			else if (abs(mario->vx) > MARIO_WALKING_SPEED) {
+			else if (abs(mario->vx) > MARIO_WALKING_SPEED && level !=RACCOON_LEVEL_BIG) {
 				DWORD time_end_jump = GetTickCount();
 				DWORD dt_from_jump_to_fall = time_end_jump - mario->time_start_jump;
 				float speed_x = abs(mario->vx);
@@ -74,6 +78,15 @@ void CFallingState::OnKeyDown(int KeyCode)
 {
 	CMario* mario = CMario::GetInstance();
 	CPlayerState::OnKeyDown(KeyCode);
+	if (level == RACCOON_LEVEL_BIG) {
+		switch (KeyCode) {
+		case DIK_S:
+		case DIK_X:
+			is_falling_slowly = true;
+			DebugOut(L"vy truoc khi bam roi cham %f\n", mario->vy);
+			break;
+		}
+	}
 }
 
 void CFallingState::OnKeyUp(int KeyCode)

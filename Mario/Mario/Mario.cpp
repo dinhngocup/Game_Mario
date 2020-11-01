@@ -6,9 +6,6 @@
 #include "Game.h"
 
 
-#include "Koopas.h"
-#include "Brick.h"
-#include "MarioConst.h"
 CMario* CMario::__instance = NULL;
 CMario::CMario() : CGameObject()
 {
@@ -31,13 +28,16 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	coEvents.clear();
 
-
-
 	// turn off collision when die 
 	if (state != MARIO_STATE_DIE) {
 		CalcPotentialCollisions(coObjects, coEvents);
 	}
 
+	if (GetTickCount() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
+	{
+		untouchable_start = 0;
+		untouchable = 0;
+	}
 
 	if (coEvents.size() == 0)
 	{
@@ -55,6 +55,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
+	
 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
@@ -68,6 +69,66 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (e->nx != 0) vx = 0;
 				if (e->ny != 0)	vy = 0;
 			}
+			//if (dynamic_cast<CKoopa*>(e->obj)) {
+			//	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+			//	// nhảy lên đầu koopa
+			//	DebugOut(L"hi\n");
+			//	if (e->ny < 0)
+			//	{
+			//		if (koopa->GetState() != KOOPA_STATE_DIE)
+			//		{
+			//			koopa->SetState(KOOPA_STATE_DIE);
+			//			vy = -MARIO_JUMP_DEFLECT_SPEED;
+			//		}
+			//		vy = 0;
+			//	}
+			//	// đụng bên hông koopa
+			//	else if (e->nx != 0)
+			//	{
+			//		//Mario đang trong tình trạng active
+			//		if (untouchable == 0)
+			//		{
+			//			// đụng ngang koopas còn đang sống
+			//			if (koopa->GetState() != KOOPA_STATE_DIE)
+			//			{
+			//				//DebugOut(L"mario dieeee \n");
+			//				if (level > MARIO_LEVEL_SMALL)
+			//				{
+			//					level = MARIO_LEVEL_SMALL;
+			//					player_state->SetLevel(level);
+			//					StartUntouchable();
+			//				}
+			//				// mario chết
+			//				else
+			//					SetState(MARIO_STATE_DIE);
+			//			}
+			//			else {
+			//				if (koopa->vx == 0) {
+			//					// đẩy vỏ rùa từ phải sang
+			//					if (e->nx == 1) {
+			//						koopa->SetSpeed(-0.06f, 0);
+			//					}
+			//					else {
+			//						koopa->SetSpeed(0.06f, 0);
+			//					}
+			//				}
+			//				else {
+			//					//DebugOut(L"mario dieee \n");
+			//					if (level > MARIO_LEVEL_SMALL)
+			//					{
+			//						level = MARIO_LEVEL_SMALL;
+			//						player_state->SetLevel(level);
+			//						StartUntouchable();
+			//					}
+			//					// mario chết
+			//					else
+			//						SetState(MARIO_STATE_DIE);
+			//				}
+			//			}
+			//		}
+			//	}
+			//	vx = 0;
+			//}
 		}
 		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 	}
@@ -75,9 +136,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CMario::Render()
 {
-	//player_state->SetAnimation(level);
 	this->ani = player_state->GetAnimation();
-
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
 
@@ -187,26 +246,15 @@ void CMario::Reset()
 	ChangeState(new CStandingState(this->level));
 }
 
-void CMario::RenderBoundingBox()
-{
-	D3DXVECTOR3 p(x, y, 0);
-	RECT rect;
+void CMario::SetState(int state) {
+	CGameObject::SetState(state);
 
-	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(-100);
-
-	float l, t, r, b;
-
-	GetBoundingBox(l, t, r, b);
-	rect.left = 0;
-	rect.top = 0;
-	rect.right = (int)r - (int)l;
-	rect.bottom = (int)b - (int)t;
-
-	float draw_x = x - ((int)r - (int)l) / 2;
-	float draw_y = y - ((int)b - (int)t) / 2;
-
-
-	CGame::GetInstance()->Draw(draw_x, draw_y, bbox, rect.left, rect.top, rect.right, rect.bottom, 50);
+	switch (state)
+	{
+	case MARIO_STATE_DIE:
+		vy = -MARIO_DIE_DEFLECT_SPEED;
+		break;
+	}
 }
 
 

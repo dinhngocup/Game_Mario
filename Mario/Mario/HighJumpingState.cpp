@@ -7,7 +7,7 @@ CHighJumpingState::CHighJumpingState(int level)
 	CMario* mario = CMario::GetInstance();
 	mario->vy = -MARIO_JUMP_SPEED_Y;
 	SetAnimation(level);
-	DebugOut(L"vx truoc khi nhay %f\n", mario->vx);
+	
 }
 
 void CHighJumpingState::Update(float dt)
@@ -94,12 +94,12 @@ void CHighJumpingState::KeyState(BYTE* state)
 	}
 	if (game->IsKeyDown(DIK_RIGHT)) {
 		if (abs(mario->vx) <= MARIO_WALKING_SPEED)
-			mario->vx = 0.2f;
+			mario->vx = MARIO_WALKING_SPEED;
 		mario->nx = 1;
 	}
 	else if (game->IsKeyDown(DIK_LEFT)) {
 		if (abs(mario->vx) <= MARIO_WALKING_SPEED)
-			mario->vx = -0.2f;
+			mario->vx = -MARIO_WALKING_SPEED;
 		mario->nx = -1;
 	}
 

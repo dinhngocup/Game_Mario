@@ -8,6 +8,7 @@
 
 void CGameObject::RenderBoundingBox()
 {
+	
 	D3DXVECTOR3 p(x, y, 0);
 	RECT rect;
 
@@ -16,13 +17,15 @@ void CGameObject::RenderBoundingBox()
 	float l, t, r, b;
 
 	GetBoundingBox(l, t, r, b);
-
 	rect.left = 0;
 	rect.top = 0;
 	rect.right = (int)r - (int)l;
 	rect.bottom = (int)b - (int)t;
 
-	CGame::GetInstance()->Draw(x, y, bbox, rect.left, rect.top, rect.right, rect.bottom, 50);
+	float draw_x = x - ((int)r - (int)l) / 2;
+	float draw_y = y - ((int)b - (int)t) / 2;
+
+	CGame::GetInstance()->Draw(draw_x, draw_y, bbox, rect.left, rect.top, rect.right, rect.bottom, 50);
 
 }
 

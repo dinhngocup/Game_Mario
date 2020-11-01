@@ -5,6 +5,9 @@
 #include "HighJumpingState.h"
 #include "SpinningState.h"
 #include "InvisibleObject.h"
+#include "Brick.h"
+#include "MarioConst.h"
+#include "Koopa.h"
 class CMario : public CGameObject
 {
 	int level;
@@ -40,7 +43,7 @@ public:
 
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
 	virtual void Render();
-	virtual void RenderBoundingBox();
+	
 
 	
 	void SetLevel(int l) { level = l; }
@@ -60,6 +63,7 @@ public:
 	void OnKeyUp(int KeyCode);
 	void KeyState(BYTE* states);
 	void ChangeState(CPlayerState* newState);
+	void SetState(int state);
 
 	CPlayerState* GetState() { return player_state; }
 

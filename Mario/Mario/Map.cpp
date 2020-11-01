@@ -19,6 +19,7 @@ void CMap::ReadMap(LPCWSTR filePath)
 	}
 	f.close();
 	width_scene = CTiles::GetInstance()->GetFrameWidth() * column_map;
+	height_scene = CTiles::GetInstance()->GetFrameHeight() * row_map;
 	
 }
 
@@ -41,6 +42,8 @@ void CMap::DrawMap(float cam_x, float cam_y)
 		end_column = column_map;
 	if (end_row > row_map)
 		end_row = row_map;
+	if (begin_column < 0) begin_column = 0;
+	if (begin_row < 0) begin_row = 0;
 
 	vector<LPSPRITE> tiles = CTiles::GetInstance()->GetTiles();
 	for (int i = begin_row; i < end_row; i++) {
@@ -55,4 +58,9 @@ void CMap::DrawMap(float cam_x, float cam_y)
 int CMap::GetWidthScene()
 {
 	return width_scene;
+}
+
+int CMap::GetHeightScene()
+{
+	return height_scene;
 }

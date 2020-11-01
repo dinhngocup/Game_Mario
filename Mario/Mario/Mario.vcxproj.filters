@@ -91,9 +91,6 @@
     <ClCompile Include="Mario.cpp">
       <Filter>Objects\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Koopas.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
     <ClCompile Include="Brick.cpp">
       <Filter>Objects\Ground</Filter>
     </ClCompile>
@@ -145,6 +142,18 @@
     <ClCompile Include="FlyingState.cpp">
       <Filter>Objects\Player</Filter>
     </ClCompile>
+    <ClCompile Include="BrickQuestion.cpp">
+      <Filter>Objects\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="Goomba.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Koopa.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="RacconFallingState.cpp">
+      <Filter>Objects\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -191,9 +200,6 @@
     </ClInclude>
     <ClInclude Include="Mario.h">
       <Filter>Objects\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Koopas.h">
-      <Filter>Objects\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Brick.h">
       <Filter>Objects\Ground</Filter>
@@ -250,6 +256,18 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="FlyingState.h">
+      <Filter>Objects\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="BrickQuestion.h">
+      <Filter>Objects\Ground</Filter>
+    </ClInclude>
+    <ClInclude Include="Goomba.h">
+      <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Koopa.h">
+      <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="RacconFallingState.h">
       <Filter>Objects\Player</Filter>
     </ClInclude>
   </ItemGroup>

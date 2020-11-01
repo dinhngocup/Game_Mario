@@ -5,11 +5,13 @@
 #include "GameObject.h"
 #include "Brick.h"
 #include "Mario.h"
-#include "Koopas.h"
+#include "Koopa.h"
 #include "Tiles.h"
 #include "Map.h"
 #include "FireBall.h"
 #include "InvisibleObject.h"
+#include "BrickQuestion.h"
+#include "Goomba.h"
 
 #define DEFAULT_CAM_Y	720.0f
 class CPlayScene : public CScene
@@ -26,7 +28,7 @@ protected:
 	void _ParseSection_MAP(string line);
 	void _ParseSection_TILESET(string line);
 	
-	int sceneWidth;
+	int sceneWidth, sceneHeight;
 	bool isMoved;
 	CTiles *tiles;
 	CMap* map;

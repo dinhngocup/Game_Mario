@@ -11,7 +11,7 @@ CFireBall::CFireBall(float start_x, float start_y)
 	//OutputDebugString(L"new fire ball\n");
 	vx = 0.35f;
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(55);
+	LPANIMATION_SET ani_set = animation_sets->Get(4);
 	SetAnimationSet(ani_set);
 
 	SetPosition(start_x, start_y);
@@ -80,7 +80,7 @@ void CFireBall::Render()
 {
 	//OutputDebugString(L"render fire ball\n");
 	animation_set->at(0)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CFireBall::RenderBoundingBox()
@@ -110,6 +110,4 @@ void CFireBall::GetBoundingBox(float& left, float& top, float& right, float& bot
 	top = y - 12;
 	right = left + 24;
 	bottom = top + 24;
-
-	
 }

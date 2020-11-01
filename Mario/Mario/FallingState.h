@@ -7,6 +7,7 @@
 #include "Utils.h"
 class CFallingState : public CPlayerState
 {
+	bool is_falling_slowly = false;
 public:
 	CFallingState() {};
 	CFallingState(int level);
