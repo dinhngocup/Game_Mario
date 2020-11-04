@@ -25,7 +25,7 @@ void CGameObject::RenderBoundingBox()
 	float draw_x = x - ((int)r - (int)l) / 2;
 	float draw_y = y - ((int)b - (int)t) / 2;
 
-	CGame::GetInstance()->Draw(draw_x, draw_y, bbox, rect.left, rect.top, rect.right, rect.bottom, 50);
+	CGame::GetInstance()->Draw(draw_x, draw_y, bbox, rect.left, rect.top, rect.right, rect.bottom, 150);
 
 }
 
@@ -41,6 +41,13 @@ CGameObject::CGameObject()
 	x = y = 0;
 	vx = vy = 0;
 	nx = 1;
+}
+
+void CGameObject::IsCollisionWithGhostPlatform(LPCOLLISIONEVENT e)
+{
+	if (e->nx != 0) x += dx;
+	if (e->ny < 0) vy = 0;
+	else y += dy;
 }
 
 void CGameObject::SetAnimationSet(LPANIMATION_SET ani_set)

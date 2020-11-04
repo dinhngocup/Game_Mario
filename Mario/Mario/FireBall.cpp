@@ -19,24 +19,28 @@ CFireBall::CFireBall(float start_x, float start_y, int nx)
 
 void CFireBall::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 {
-	//OutputDebugString(L"update fire ball\n");
+	OutputDebugString(L"update fire ball\n");
 	CGame* game = CGame::GetInstance();
-	// Calculate dx, dy 
-	CGameObject::Update(dt, colliable_objects);
 
 	vy += FIRE_BALL_GRAVITY * dt;
+	CGameObject::Update(dt, colliable_objects);
+
+	vector<LPGAMEOBJECT>* bricks = game->GetCurrentScene()->GetGhostPlatformsInScene();
+	vector<LPGAMEOBJECT>* enemies = game->GetCurrentScene()->GetEnemiesInScene();
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 	coEvents.clear();
 
-	// Fireball ra khoi cam 
-	if (GetX() >= game->GetCamX() + game->GetScreenWidth() || GetX() < 0) {
+	// Fireball ra khoi cam còn thiếu cam y 
+	if (GetX() >= game->GetCamX() + game->GetScreenWidth() || GetX() < 0 ||
+		GetY() >= game->GetCamY() + game->GetScreenHeight()) {
 		SetHealth(false);
 		return;
 	}
 
-	CalcPotentialCollisions(colliable_objects, coEvents);
+	CalcPotentialCollisions(bricks, coEvents);
+	CalcPotentialCollisions(enemies, coEvents);
 
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
@@ -67,18 +71,14 @@ void CFireBall::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<CBrick*>(e->obj) || dynamic_cast<CInvisibleObject*>(e->obj) || dynamic_cast<CBrickQuestion*>(e->obj)) {
-				if (e->ny < 0) {
-					vy = -0.4f;
-				}
-				if (e->nx != 0) {
-					SetHealth(false);
-				}
+			if (dynamic_cast<CBrick*>(e->obj) || dynamic_cast<CBrickQuestion*>(e->obj)) {
+				IsCollisionWithBrick(e);
 			}
-			else if (dynamic_cast<CKoopa*>(e->obj)) {
-				CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
-				SetHealth(false);
-				koopa->SetState(KOOPA_STATE_DIE_BY_WEAPON);
+			else if (dynamic_cast<CInvisibleObject*>(e->obj)) {
+				IsCollisionWithGhostPlatform(e);
+			}
+			else if (dynamic_cast<CEnemy*>(e->obj)) {
+				IsCollisionWithEnemy(e);
 			}
 
 		}
@@ -123,4 +123,33 @@ void CFireBall::GetBoundingBox(float& left, float& top, float& right, float& bot
 	top = y - 12;
 	right = left + 24;
 	bottom = top + 24;
+}
+
+void CFireBall::IsCollisionWithBrick(LPCOLLISIONEVENT e)
+{
+	if (e->ny < 0) {
+		vy = -0.4f;
+	}
+	if (e->nx != 0) {
+		SetHealth(false);
+		vx = 0;
+	}
+}
+
+void CFireBall::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
+{
+	switch (e->obj->type) {
+	case eTYPE::KOOPA: {
+		CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+		SetHealth(false);
+		koopa->SetState(KOOPA_STATE_DIE_BY_WEAPON);
+		break;
+	}
+	case eTYPE::GOOMBA: {
+		CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+		SetHealth(false);
+		goomba->SetState(GOOMBA_STATE_DIE_BY_WEAPON);
+		break;
+	}
+	}
 }

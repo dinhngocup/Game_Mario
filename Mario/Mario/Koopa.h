@@ -1,10 +1,11 @@
 #pragma once
-#include "GameObject.h"
+#include "Enemy.h"
 #include "DefineLibs.h"
 #include "Brick.h"
 #include "Utils.h"
 #include "Mario.h"
 #include "Game.h"
+#include "Goomba.h"
 
 #define KOOPA_WALKING_SPEED 0.08f;
 
@@ -16,6 +17,7 @@
 #define KOOPA_STATE_DIE 101
 #define KOOPA_STATE_WALKING_SWINGS 102
 #define KOOPA_STATE_DIE_BY_WEAPON 103
+#define KOOPA_STATE_SPIN 104
 
 #define KOOPA_ANI_WALKING 0
 #define KOOPA_ANI_DIE 1
@@ -27,14 +29,18 @@
 
 #define KOOPA_GRAVITY 0.002f
 
-class CKoopa : public CGameObject
+class CKoopa : public CEnemy
 {
 public:
 	CKoopa(int state);
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx = 0, int dy = 0);
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
-	virtual void Render();
 	CKoopa();
-	virtual void SetState(int state);
+
+	void GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx = 0, int dy = 0);
+	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	void Render();
+	void SetState(int state);
+
+	void IsCollisionWithMario(LPCOLLISIONEVENT e);
+	void KillOtherEnemy(LPCOLLISIONEVENT e);
 };
 

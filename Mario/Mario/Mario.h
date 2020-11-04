@@ -8,6 +8,7 @@
 #include "Brick.h"
 #include "MarioConst.h"
 #include "Koopa.h"
+#include "Enemy.h"
 class CMario : public CGameObject
 {
 	int level;
@@ -66,5 +67,5 @@ public:
 	void SetState(int state);
 
 	CPlayerState* GetState() { return player_state; }
-
+	void IsCollisionWithBrick(LPCOLLISIONEVENT e);
 };

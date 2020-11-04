@@ -21,6 +21,14 @@ enum eTYPE {
 	//WEAPON
 	FIRE_BALL = 7,
 
+	
+
 	//SWITCH SCENE
 	PORTAL = 50,
+};
+
+enum eTYPE_OBJECT {
+	GHOST_PLATFORM = 1,
+	ENEMY = 2,
+	ITEM = 3,
 };

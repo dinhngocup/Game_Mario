@@ -36,7 +36,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 {
 	vector<string> tokens = split(line);
 
-	if (tokens.size() < 6) return;
+	if (tokens.size() < 7) return;
 
 	int object_type = atoi(tokens[0].c_str());
 
@@ -47,6 +47,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	float h = atof(tokens[4].c_str());
 
 	int ani_set_id = atoi(tokens[5].c_str());
+	int type = atoi(tokens[6].c_str());
 
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 
@@ -58,9 +59,13 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case eTYPE::BRICK: obj = new CBrick(x, y, w, h); obj->type = eTYPE::BRICK;  break;
 	case eTYPE::INVISIBLE_OBJECT: obj = new CInvisibleObject(x, y, w, h); obj->type = eTYPE::INVISIBLE_OBJECT; break;
 	case eTYPE::BRICK_QUESTION: obj = new CBrickQuestion(); obj->type = eTYPE::BRICK_QUESTION; break;
-	case eTYPE::GOOMBA: obj = new CGoomba(); obj->type = eTYPE::GOOMBA; break;
+	case eTYPE::GOOMBA: {
+		int state = atoi(tokens[7].c_str());
+		obj = new CGoomba(state);
+		obj->type = eTYPE::GOOMBA; 
+		break; }
 	case eTYPE::KOOPA: {
-		int state = atoi(tokens[6].c_str());
+		int state = atoi(tokens[7].c_str());
 		obj = new CKoopa(state);
 		obj->type = eTYPE::KOOPA;
 		break;
@@ -76,7 +81,22 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 
 	obj->SetAnimationSet(ani_set);
-	objects.push_back(obj);
+	switch (type) {
+	case eTYPE_OBJECT::ENEMY:
+		enemies.push_back(obj);
+		break;
+	case eTYPE_OBJECT::GHOST_PLATFORM:
+		ghost_platforms.push_back(obj);
+		break;
+	case eTYPE_OBJECT::ITEM:
+		items.push_back(obj);
+		break;
+	default:
+		DebugOut(L"ERROR type: %d\n", type);
+		break;
+	}
+
+	
 }
 
 void CPlayScene::_ParseSection_TILESET(string line)
@@ -123,15 +143,14 @@ void CPlayScene::LoadSceneResources()
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
 
 	player = CMario::GetInstance();
-	player->SetPosition(0, 1000);
+	player->SetPosition(100, 1000);
 	player->SetLevel(MARIO_LEVEL_SMALL);
 	player->ChangeState(new CStandingState(player->GetLevel()));
 
 	LPANIMATION_SET ani_set = CAnimationSets::GetInstance()->Get(1);
 
 	player->SetAnimationSet(ani_set);
-	objects.push_back(player);
-
+	
 	ifstream f;
 	f.open(sceneFilePath);
 
@@ -164,34 +183,35 @@ void CPlayScene::LoadSceneResources()
 
 void CPlayScene::Update(DWORD dt)
 {
-	// update fire ball
 	if (player->is_attacking) {
 		CGameObject* obj = NULL;
 		float x;
 		if (player->nx > 0) {
 			x = player->GetX() + MARIO_BIG_BBOX_WIDTH / 2;
-		} else 
+		}
+		else
 			x = player->GetX() - MARIO_BIG_BBOX_WIDTH / 2;
 
 		float y = player->GetY();
 
 		obj = new CFireBall(x, y, player->nx);
-		//obj = new CFireBall(200, 1100);
+		
 		obj->type = eTYPE::FIRE_BALL;
-		AddObject(obj);
+		items.push_back(obj);
 		player->is_attacking = false;
 	}
 
-	vector<LPGAMEOBJECT> coObjects;
-	for (size_t i = 1; i < objects.size(); i++)
+	
+	
+	for (size_t i = 0; i < enemies.size(); i++)
 	{
-		coObjects.push_back(objects[i]);
+		enemies[i]->Update(dt);
 	}
-
-	for (size_t i = 0; i < objects.size(); i++)
+	for (size_t i = 0; i < items.size(); i++)
 	{
-		objects[i]->Update(dt, &coObjects);
+		items[i]->Update(dt);
 	}
+	player->Update(dt);
 
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
@@ -218,12 +238,16 @@ void CPlayScene::Update(DWORD dt)
 	}
 
 
-	// need to custom
-	for (size_t i = 1; i < objects.size(); i++)
+	for (size_t i = 0; i < enemies.size(); i++)
 	{
-		//if (objects[i]->GetType() == eTYPE::FIRE_BALL && objects[i]->GetX() >= game->GetCamX() + game->GetScreenWidth()) {
-		if (!objects[i]->GetHealth()) {
-			objects.erase(objects.begin() + i);
+		if (!enemies[i]->GetHealth()) {
+			enemies.erase(enemies.begin() + i);
+		}
+	}
+	for (size_t i = 0; i < items.size(); i++)
+	{
+		if (!items[i]->GetHealth()) {
+			items.erase(items.begin() + i);
 		}
 	}
 
@@ -236,11 +260,25 @@ void CPlayScene::Render()
 	else {
 		float cx, cy;
 		CGame::GetInstance()->GetCamPos(cx, cy);
-		map->DrawMap(cx, DEFAULT_CAM_Y);
+		map->DrawMap(cx, cy);
 	}
+	
+	
+	player->Render();
+	for (size_t i = 0; i < enemies.size(); i++)
+	{
+		enemies[i]->Render();
+	}
+	for (size_t i = 0; i < ghost_platforms.size(); i++)
+	{
+		ghost_platforms[i]->Render();
+	}
+	for (size_t i = 0; i < items.size(); i++)
+	{
+		items[i]->Render();
+	}
+	
 
-	for (int i = 0; i < objects.size(); i++)
-		objects[i]->Render();
 }
 
 /*
@@ -248,10 +286,18 @@ void CPlayScene::Render()
 */
 void CPlayScene::Unload()
 {
-	for (int i = 0; i < objects.size(); i++)
+	/*for (int i = 0; i < objects.size(); i++)
 		delete objects[i];
 
-	objects.clear();
+	objects.clear();*/
+	for (LPGAMEOBJECT obj : enemies)
+		delete obj;
+	enemies.clear();
+
+	for (LPGAMEOBJECT obj : items)
+		delete obj;
+	items.clear();
+
 	player = NULL;
 	map = NULL;
 	tiles = NULL;

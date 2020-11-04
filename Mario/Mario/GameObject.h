@@ -85,6 +85,8 @@ public:
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects = NULL);
 	virtual void Render() = 0;
 	virtual void SetState(int state) { this->state = state; }
+	virtual void IsCollisionWithMario(LPCOLLISIONEVENT e) {};
+	virtual void IsCollisionWithGhostPlatform(LPCOLLISIONEVENT e);
 
 	void SetAnimationSet(LPANIMATION_SET ani_set);
 

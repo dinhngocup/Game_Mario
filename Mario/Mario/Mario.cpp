@@ -15,12 +15,14 @@ CMario::CMario() : CGameObject()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	// Calculate dx, dy 
-	CGameObject::Update(dt);
+	
 	player_state->Update(dt);
-	// Simple fall down
 	vy += MARIO_GRAVITY * dt;
-
+	CGameObject::Update(dt);
+	
+	CGame* game = CGame::GetInstance();
+	vector<LPGAMEOBJECT>* bricks = game->GetCurrentScene()->GetGhostPlatformsInScene();
+	vector<LPGAMEOBJECT>* enemies = game->GetCurrentScene()->GetEnemiesInScene();
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -30,7 +32,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	// turn off collision when die 
 	if (state != MARIO_STATE_DIE) {
-		CalcPotentialCollisions(coObjects, coEvents);
+		CalcPotentialCollisions(bricks, coEvents);
+		CalcPotentialCollisions(enemies, coEvents);
 	}
 
 	if (GetTickCount() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
@@ -55,88 +58,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
-		//DebugOut(L"y mario %f\n", y);
 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (dynamic_cast<CInvisibleObject*>(e->obj)) {
-				if (e->nx != 0) x += dx;
-				if (e->ny > 0) y += dy;
-				else vy = 0;
+				IsCollisionWithGhostPlatform(e);
+			}
+			else if (dynamic_cast<CEnemy*>(e->obj)) {
+				e->obj->IsCollisionWithMario(e);
 			}
 			else {
-				if (e->nx != 0) {
-					vx = 0;
-				}
-				if (e->ny != 0)	vy = 0;
-			}
-			if (dynamic_cast<CKoopa*>(e->obj)) {
-				CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
-				// nhảy lên đầu koopa
-				if (e->ny < 0)
-				{
-					DebugOut(L"va cham\n");
-					if (koopa->GetState() != KOOPA_STATE_DIE)
-					{
-						koopa->SetState(KOOPA_STATE_DIE);
-						vy = -MARIO_JUMP_DEFLECT_SPEED;
-					}
-					vy = 0;
-				}
-				// đụng bên hông koopa
-				else if (e->nx != 0)
-				{
-					//Mario đang trong tình trạng active
-					if (untouchable == 0)
-					{
-						// đụng ngang koopas còn đang sống
-						if (koopa->GetState() != KOOPA_STATE_DIE)
-						{
-							if (is_attacking_by_spinning) {
-								koopa->SetState(KOOPA_STATE_DIE_BY_WEAPON);
-							}
-							//else {
-							//	if (level > MARIO_LEVEL_SMALL)
-							//	{
-							//		level = MARIO_LEVEL_SMALL;
-							//		player_state->SetLevel(level);
-							//		StartUntouchable();
-							//	}
-							//	// mario chết
-							//	else
-							//		SetState(MARIO_STATE_DIE);
-							//}
-						}
-						else {
-							if (koopa->vx == 0) {
-								// đẩy vỏ rùa từ phải sang
-								if (e->nx == 1) {
-									koopa->SetSpeed(-0.5f, 0);
-								}
-								else {
-									koopa->SetSpeed(0.5f, 0);
-								}
-							}
-							else {
-								if (is_attacking_by_spinning)
-									koopa->SetState(KOOPA_STATE_DIE_BY_WEAPON);
-								else {
-									//if (level > MARIO_LEVEL_SMALL)
-									//{
-									//	level = MARIO_LEVEL_SMALL;
-									//	player_state->SetLevel(level);
-									//	StartUntouchable();
-									//}
-									//// mario chết
-									//else
-									//	SetState(MARIO_STATE_DIE);
-								}
-							}
-						}
-					}
-				}
-				vx = 0;
+				IsCollisionWithBrick(e);
 			}
 		}
 		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
@@ -266,6 +199,12 @@ void CMario::SetState(int state) {
 		vy = -MARIO_DIE_DEFLECT_SPEED;
 		break;
 	}
+}
+
+void CMario::IsCollisionWithBrick(LPCOLLISIONEVENT e)
+{
+	if (e->nx != 0) vx = 0;
+	if (e->ny != 0)	vy = 0;
 }
 
 

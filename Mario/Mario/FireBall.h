@@ -6,6 +6,7 @@
 #include "Game.h"
 #include "InvisibleObject.h"
 #include "Koopa.h"
+#include "Goomba.h"
 #include "BrickQuestion.h"
 
 #define FIRE_BALL_GRAVITY			0.002f
@@ -13,17 +14,18 @@
 
 class CFireBall : public CGameObject
 {
-	float collision_y;
 public:
 	CFireBall();
 	CFireBall(float start_x, float start_y, int nx);
-	~CFireBall() { delete this; };
+	~CFireBall() {};
 
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
-	virtual void Render();
-	virtual void RenderBoundingBox();
+	void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
+	void Render();
+	void RenderBoundingBox();
+	void GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx = 0, int dy = 0);
 
+	void IsCollisionWithBrick(LPCOLLISIONEVENT e);
+	void IsCollisionWithEnemy(LPCOLLISIONEVENT e);
 
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx = 0, int dy = 0);
 };
 

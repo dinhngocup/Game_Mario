@@ -157,6 +157,8 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationSets.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="RacconFallingState.cpp" />
     <ClCompile Include="CrouchingState.cpp" />
     <ClCompile Include="FallingState.cpp" />
@@ -196,6 +198,7 @@
     <ClInclude Include="AnimationSets.h" />
     <ClInclude Include="CrouchingState.h" />
     <ClInclude Include="DefineLibs.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="FallingState.h" />
     <ClInclude Include="FireBall.h" />
     <ClInclude Include="FlyingState.h" />
@@ -224,6 +227,7 @@
     <ClInclude Include="Tiles.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="WalkingState.h" />
+    <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
