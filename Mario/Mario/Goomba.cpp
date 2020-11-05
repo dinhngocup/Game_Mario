@@ -18,8 +18,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vy += GOOMBA_GRAVITY * dt;
 
 	CGameObject::Update(dt);
-
-
+	
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -29,7 +28,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	coEvents.clear();
 
-	if (state != GOOMBA_STATE_DIE_BY_WEAPON) {
+	if (state != STATE_DIE_BY_WEAPON) {
 		CalcPotentialCollisions(bricks, coEvents);
 		CalcPotentialCollisions(enemies, coEvents);
 
@@ -37,6 +36,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (coEvents.size() == 0)
 	{
+		
 		x += dx;
 		y += dy;
 	}
@@ -56,22 +56,29 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
+			if (state != STATE_DIE_BY_WEAPON) {
+				if (dynamic_cast<CBrick*>(e->obj)) {
+					IsCollisionWithBrick(e);
+				}
+				else if (dynamic_cast<CInvisibleObject*>(e->obj)) {
+					IsCollisionWithGhostPlatform(e);
+				}
+				else if (dynamic_cast<CEnemy*>(e->obj)) {
+					IsCollisionWithEnemy(e);
+				}
 
-			if (dynamic_cast<CBrick*>(e->obj)) {
-				IsCollisionWithBrick(e);
-			}
-			else if (dynamic_cast<CInvisibleObject*>(e->obj)) {
-				IsCollisionWithGhostPlatform(e);
-			}
-			else if (dynamic_cast<CEnemy*>(e->obj)) {
-				DebugOut(L"nam\n");
-
-				IsCollisionWithEnemy(e);
 			}
 		}
 
 		// clean up collision events
 		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+	}
+
+	if (state == STATE_DIE_BY_WEAPON || state == STATE_DIE) {
+		if (y > game->GetCamY() + game->GetScreenHeight() ||
+			x > game->GetCamX() + game->GetScreenWidth() ||
+			x < game->GetCamX())
+			SetHealth(false);
 	}
 }
 
@@ -79,13 +86,13 @@ void CGoomba::Render()
 {
 	int ani = 0;
 	int ny = 1;
-	if (state == GOOMBA_STATE_DIE)
+	if (state == STATE_DIE)
 		ani = GOOMBA_ANI_DIE;
-	else if (state == GOOMBA_STATE_WALKING)
+	else if (state == STATE_WALKING)
 		ani = GOOMBA_ANI_WALKING;
-	else if (state == GOOMBA_STATE_WALKING_SWINGS)
+	else if (state == STATE_WALKING_SWINGS)
 		ani = GOOMBA_ANI_WALKING_SWINGS;
-	else if (state == GOOMBA_STATE_DIE_BY_WEAPON) {
+	else if (state == STATE_DIE_BY_WEAPON) {
 		ani = GOOMBA_ANI_DIE_BY_WEAPON;
 		ny = -1;
 	}
@@ -104,21 +111,21 @@ void CGoomba::SetState(int state)
 	CGameObject::SetState(state);
 	switch (state)
 	{
-	case GOOMBA_STATE_WALKING:
+	case STATE_WALKING:
 		vx = 0;
 		vx = -GOOMBA_WALKING_SPEED;
 		break;
-	case GOOMBA_STATE_DIE:
+	case STATE_DIE:
 		y += GOOMBA_DISPARITIES;
 		vx = 0;
 		vy = 0;
 		break;
-	case GOOMBA_STATE_DIE_BY_WEAPON:
+	case STATE_DIE_BY_WEAPON:
 		y += GOOMBA_DISPARITIES;
-		vx = 0.2f;
+		vx = 0.4f * nx;
 		vy = -0.5f;
 		break;
-	case GOOMBA_STATE_WALKING_SWINGS:
+	case STATE_WALKING_SWINGS:
 		vx = -GOOMBA_WALKING_SPEED;
 		break;
 	}
@@ -126,14 +133,14 @@ void CGoomba::SetState(int state)
 
 void CGoomba::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
-	DebugOut(L"hi\n");
+
 	CMario* mario = CMario::GetInstance();
 	// nhảy lên đầu nấm
 	if (e->ny < 0)
 	{
-		if (state != GOOMBA_STATE_DIE)
+		if (state != STATE_DIE)
 		{
-			SetState(GOOMBA_STATE_DIE);
+			SetState(STATE_DIE);
 			mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
 		else {
@@ -147,10 +154,16 @@ void CGoomba::IsCollisionWithMario(LPCOLLISIONEVENT e)
 		mario->vx = 0;
 
 		// đụng ngang nấm còn đang sống
-		if (state != GOOMBA_STATE_DIE)
+		if (state != STATE_DIE)
 		{
 			if (mario->is_attacking_by_spinning) {
-				SetState(GOOMBA_STATE_DIE_BY_WEAPON);
+				// đụng bên phải
+				if (e->nx > 0) {
+					e->obj->nx = -1;
+				}
+				else
+					e->obj->nx = 1;
+				SetState(STATE_DIE_BY_WEAPON);
 			}
 			else {
 				DebugOut(L"xu ly mario giam level hay chet\n");
@@ -164,6 +177,30 @@ void CGoomba::IsCollisionWithMario(LPCOLLISIONEVENT e)
 				//else
 				//	SetState(MARIO_STATE_DIE);
 			}
+		}
+	}
+}
+
+void CGoomba::AttackedByShell()
+{
+	SetState(STATE_DIE_BY_WEAPON);
+}
+
+void CGoomba::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
+{
+	// đụng trúng rùa đang spin
+	if (e->obj->state == STATE_SPIN) {
+		if (state != STATE_DIE_BY_WEAPON)
+			AttackedByShell();
+		e->obj->x += dx;
+	}
+	else if (e->obj->state == STATE_DIE) {
+		vx *= -1;
+	}
+	else {
+		if (e->nx != 0) {
+			vx *= -1;
+			e->obj->vx *= -1;
 		}
 	}
 }

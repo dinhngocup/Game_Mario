@@ -7,6 +7,7 @@ CKoopa::CKoopa()
 CKoopa::CKoopa(int state)
 {
 	SetState(state);
+	//SetState(STATE_SPIN);
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)
@@ -14,7 +15,7 @@ void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom
 	left = x - KOOPA_BBOX_WIDTH / 2;
 	right = left + KOOPA_BBOX_WIDTH;
 
-	if (state == KOOPA_STATE_DIE || state == KOOPA_STATE_DIE_BY_WEAPON) {
+	if (state == STATE_DIE || state == STATE_DIE_BY_WEAPON || state == STATE_SPIN) {
 		top = y - KOOPA_BBOX_HEIGHT_DIE / 2;
 		bottom = top + KOOPA_BBOX_HEIGHT_DIE;
 	}
@@ -37,10 +38,10 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGame* game = CGame::GetInstance();
 	vector<LPGAMEOBJECT>* enemies = game->GetCurrentScene()->GetEnemiesInScene();
 	vector<LPGAMEOBJECT>* bricks = game->GetCurrentScene()->GetGhostPlatformsInScene();
-	
+
 	coEvents.clear();
 
-	if (state != KOOPA_STATE_DIE_BY_WEAPON) {
+	if (state != STATE_DIE_BY_WEAPON) {
 		CalcPotentialCollisions(bricks, coEvents);
 		CalcPotentialCollisions(enemies, coEvents);
 
@@ -76,36 +77,37 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<CEnemy*>(e->obj)) {
 				DebugOut(L"rua\n");
-				if (state == KOOPA_STATE_SPIN) {
-					KillOtherEnemy(e);
-				}
-				else {
-					IsCollisionWithEnemy(e);
-				}
+				IsCollisionWithEnemy(e);
+
 			}
 		}
-		
+
 		// clean up collision events
 		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 	}
+
 	
-	// còn thiếu đk nó đã chết
-	/*if (GetY() > game->GetCamY() + game->GetScreenHeight()) {
-		SetHealth(false);
-	}*/
+	if (state == STATE_SPIN || state == STATE_DIE_BY_WEAPON) {
+		if (y > game->GetCamY() + game->GetScreenHeight() ||
+			x > game->GetCamX() + game->GetScreenWidth() ||
+			x < game->GetCamX())
+			SetHealth(false);
+	}
 }
 
 void CKoopa::Render()
 {
 	int ani = 0;
 	int ny = 1;
-	if (state == KOOPA_STATE_DIE)
+	if (state == STATE_DIE)
 		ani = KOOPA_ANI_DIE;
-	else if (state == KOOPA_STATE_WALKING)
+	else if (state == STATE_WALKING)
 		ani = KOOPA_ANI_WALKING;
-	else if (state == KOOPA_STATE_WALKING_SWINGS)
+	else if (state == STATE_WALKING_SWINGS)
 		ani = KOOPA_ANI_WALKING_SWINGS;
-	else if (state == KOOPA_STATE_DIE_BY_WEAPON) {
+	else if (state == STATE_SPIN)
+		ani = KOOPA_ANI_SPIN;
+	else if (state == STATE_DIE_BY_WEAPON) {
 		ani = KOOPA_ANI_DIE;
 		ny = -1;
 	}
@@ -122,22 +124,28 @@ void CKoopa::SetState(int state)
 	CGameObject::SetState(state);
 	switch (state)
 	{
-	case KOOPA_STATE_WALKING:
+	case STATE_WALKING:
 		vx = 0;
 		vx = KOOPA_WALKING_SPEED;
 		break;
-	case KOOPA_STATE_DIE:
+	case STATE_DIE:
 		y += KOOPA_DISPARITIES;
 		vx = 0;
 		vy = 0;
 		break;
-	case KOOPA_STATE_DIE_BY_WEAPON:
+	case STATE_DIE_BY_WEAPON:
 		y += KOOPA_DISPARITIES;
-		vx = 0.2f;
+		vx = 0.2f * nx;
 		vy = -0.5f;
 		break;
-	case KOOPA_STATE_WALKING_SWINGS:
+	case STATE_WALKING_SWINGS:
 		vx = -KOOPA_WALKING_SPEED;
+		break;
+
+	case STATE_SPIN:
+		//y -= 10;
+		vx = nx * KOOPA_SPIN_SPEED;
+		vy = 0;
 		break;
 	}
 
@@ -145,14 +153,14 @@ void CKoopa::SetState(int state)
 
 void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
-	
+
 	CMario* mario = CMario::GetInstance();
 	// nhảy lên đầu koopa
 	if (e->ny < 0)
 	{
-		if (state != KOOPA_STATE_DIE)
+		if (state != STATE_DIE)
 		{
-			SetState(KOOPA_STATE_DIE);
+			SetState(STATE_DIE);
 			mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
 		else {
@@ -166,10 +174,10 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 		mario->vx = 0;
 
 		// đụng ngang koopas còn đang sống
-		if (state != KOOPA_STATE_DIE)
+		if (state != STATE_DIE)
 		{
 			if (mario->is_attacking_by_spinning) {
-				SetState(KOOPA_STATE_DIE_BY_WEAPON);
+				SetState(STATE_DIE_BY_WEAPON);
 			}
 			else {
 				DebugOut(L"xu ly mario giam level hay chet\n");
@@ -188,17 +196,27 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 			// mai rùa đang đứng yên
 			if (vx == 0) {
 				// đẩy vỏ rùa từ phải sang
-				if (e->nx == 1) {
-					SetSpeed(-0.5f, 0);
+				if (e->nx > 0) {
+					nx = -1;
+					// set trạng thái mario kick
+					SetState(STATE_SPIN);
 				}
 				else {
-					SetSpeed(0.5f, 0);
+					nx = 1;
+					SetState(STATE_SPIN);
 				}
 			}
 			// mai rùa di chuyển
 			else {
-				if (mario->is_attacking_by_spinning)
-					SetState(KOOPA_STATE_DIE_BY_WEAPON);
+				if (mario->is_attacking_by_spinning) {
+					// đụng bên phải
+					if (e->nx > 0) {
+						e->obj->nx = -1;
+					}
+					else
+						e->obj->nx = 1;
+					SetState(STATE_DIE_BY_WEAPON);
+				}
 				else {
 					DebugOut(L"xu ly mario giam level hay chet\n");
 					//if (level > MARIO_LEVEL_SMALL)
@@ -216,10 +234,24 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 	}
 }
 
-void CKoopa::KillOtherEnemy(LPCOLLISIONEVENT e)
+void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 {
-	switch (e->obj->type) {
-	case eTYPE::GOOMBA:
-		e->obj->SetState(GOOMBA_STATE_DIE_BY_WEAPON);
+	if (state == STATE_SPIN) {
+		CEnemy* enemy = dynamic_cast<CEnemy*>(e->obj);
+		if (enemy->state != STATE_DIE_BY_WEAPON) {
+			DebugOut(L"hi\n");
+			enemy->AttackedByShell();
+		}
+		x += dx;
+	}
+	else if(state == STATE_DIE){
+		e->obj->vx *= -1;
+	}
+	else {
+		if (e->nx != 0) {
+			vx *= -1;
+			e->obj->vx *= -1;
+		}
 	}
 }
+

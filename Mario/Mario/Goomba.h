@@ -10,10 +10,10 @@
 #define GOOMBA_WALKING_SPEED 0.08f;
 
 
-#define GOOMBA_STATE_WALKING 100
-#define GOOMBA_STATE_DIE 101
-#define GOOMBA_STATE_WALKING_SWINGS 102
-#define GOOMBA_STATE_DIE_BY_WEAPON 103
+#define STATE_WALKING 100
+#define STATE_DIE 101
+#define STATE_WALKING_SWINGS 102
+#define STATE_DIE_BY_WEAPON 103
 
 #define GOOMBA_ANI_WALKING 0
 #define GOOMBA_ANI_DIE 1
@@ -35,5 +35,7 @@ public:
 	void Render();
 	void SetState(int state);
 	void IsCollisionWithMario(LPCOLLISIONEVENT e);
+	void AttackedByShell();
+	void IsCollisionWithEnemy(LPCOLLISIONEVENT e);
 };
 

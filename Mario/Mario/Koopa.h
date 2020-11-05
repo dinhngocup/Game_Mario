@@ -8,16 +8,17 @@
 #include "Goomba.h"
 
 #define KOOPA_WALKING_SPEED 0.08f;
+#define KOOPA_SPIN_SPEED 0.5f;
 
 #define KOOPA_BBOX_WIDTH 48
 #define KOOPA_BBOX_HEIGHT 78
 #define KOOPA_BBOX_HEIGHT_DIE 48
 
-#define KOOPA_STATE_WALKING 100
-#define KOOPA_STATE_DIE 101
-#define KOOPA_STATE_WALKING_SWINGS 102
-#define KOOPA_STATE_DIE_BY_WEAPON 103
-#define KOOPA_STATE_SPIN 104
+#define STATE_WALKING 100
+#define STATE_DIE 101
+#define STATE_WALKING_SWINGS 102
+#define STATE_DIE_BY_WEAPON 103
+#define STATE_SPIN 104
 
 #define KOOPA_ANI_WALKING 0
 #define KOOPA_ANI_DIE 1
@@ -41,6 +42,8 @@ public:
 	void SetState(int state);
 
 	void IsCollisionWithMario(LPCOLLISIONEVENT e);
-	void KillOtherEnemy(LPCOLLISIONEVENT e);
+	void IsCollisionWithEnemy(LPCOLLISIONEVENT e);
+	void AttackedByShell() {};
+	
 };
 
