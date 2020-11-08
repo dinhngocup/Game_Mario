@@ -9,6 +9,7 @@
 #include "MarioConst.h"
 #include "Koopa.h"
 #include "Enemy.h"
+#include "KickingState.h"
 class CMario : public CGameObject
 {
 	int level;
@@ -33,7 +34,9 @@ public:
 	bool is_attacking_by_spinning = false;
 	bool is_spinning = false;
 	bool is_running = false;
-	
+	bool is_collisionX_with_brick = false;
+	bool is_skid = false;
+	bool is_holding = true;
 	DWORD time_start_attack;
 
 	int number_attack = 0;

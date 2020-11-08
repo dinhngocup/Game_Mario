@@ -158,6 +158,8 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationSets.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="HoldingState.cpp" />
+    <ClCompile Include="KickingState.cpp" />
     <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="RacconFallingState.cpp" />
     <ClCompile Include="CrouchingState.cpp" />
@@ -205,8 +207,10 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Goomba.h" />
     <ClInclude Include="HighJumpingState.h" />
+    <ClInclude Include="HoldingState.h" />
     <ClInclude Include="InvisibleObject.h" />
     <ClInclude Include="JumpingState.h" />
+    <ClInclude Include="KickingState.h" />
     <ClInclude Include="Koopa.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Mario.h" />

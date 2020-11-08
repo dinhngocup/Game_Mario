@@ -264,11 +264,11 @@ void CPlayScene::Render()
 	}
 	
 	
-	player->Render();
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
 		enemies[i]->Render();
 	}
+	player->Render();
 	for (size_t i = 0; i < ghost_platforms.size(); i++)
 	{
 		ghost_platforms[i]->Render();

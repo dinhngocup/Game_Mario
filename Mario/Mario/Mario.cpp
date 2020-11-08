@@ -178,6 +178,11 @@ void CMario::ChangeState(CPlayerState* newState)
 		animation_set->at(ani)->ResetFlagLastFrame();
 		player_state->SetAnimation(animation_set->at(ani));
 	}
+	else if (dynamic_cast<CKickingState*>(player_state)) {
+		ani = player_state->GetAnimation();
+		animation_set->at(ani)->ResetFlagLastFrame();
+		player_state->SetAnimation(animation_set->at(ani));
+	}
 }
 
 /*
@@ -203,7 +208,12 @@ void CMario::SetState(int state) {
 
 void CMario::IsCollisionWithBrick(LPCOLLISIONEVENT e)
 {
-	if (e->nx != 0) vx = 0;
+	if (e->nx != 0) {
+		vx = 0;
+		is_collisionX_with_brick = true;
+	}
+	else
+		is_collisionX_with_brick = false;
 	if (e->ny != 0)	vy = 0;
 }
 

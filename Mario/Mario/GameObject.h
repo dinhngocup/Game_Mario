@@ -42,8 +42,7 @@ public:
 	float y;
 
 	bool health = true;
-	/*float width;
-	float height;*/
+	
 
 	float dx;	// dx = vx*dt
 	float dy;	// dy = vy*dt
@@ -58,6 +57,7 @@ public:
 	DWORD dt;
 
 	LPANIMATION_SET animation_set;
+	bool ableToCheckCollision = true;
 public:
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
@@ -71,7 +71,7 @@ public:
 
 	void SetHealth(bool health) { this->health = health; }
 	bool GetHealth() { return this->health; }
-
+	bool GetStatusCollision() { return this->ableToCheckCollision; }
 	void GetSpeed(float& vx, float& vy) { vx = this->vx; vy = this->vy; }
 
 	int GetState() { return this->state; }

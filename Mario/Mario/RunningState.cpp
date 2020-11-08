@@ -39,6 +39,7 @@ void CRunningState::Update(float dt)
 		DebugOut(L"change to walking\n");
 		is_speed_low = false;
 		is_max_speed = false;
+		mario->is_attacking_by_spinning = false;
 		mario->ChangeState(new CWalkingState(level));
 		return;
 
@@ -91,7 +92,6 @@ void CRunningState::SetAnimation(int level)
 			ani = FIRE_MARIO_ANI_WALKING_RIGHT;
 		break;
 	}
-
 }
 
 void CRunningState::OnKeyDown(int KeyCode)
@@ -143,26 +143,6 @@ void CRunningState::OnKeyDown(int KeyCode)
 
 void CRunningState::OnKeyUp(int KeyCode)
 {
-	//CGame* game = CGame::GetInstance();
-	//CMario* mario = CMario::GetInstance();
-	//DebugOut(L"keycode %d\n", KeyCode);
-	//switch (KeyCode) {
-	//case DIK_A:
-	//	//Nếu bỏ nút A thì ko xét hai nút trái phải, vì lúc này giảm tốc dần rồi chuyển qua walking
-	//	DebugOut(L"stop A\n");
-	//	//if(is_rendered_completely)
-	//	//SetAnimation(level);
-	//	/*is_speed_low = true;
-	//	acceleration = -MARIO_ACCELERATION;
-	//	can_change_to_walking = true;*/
-	//	// bỏ nút A ra, nó chưa kịp chuyển về walking, bấm nút A tiếp,
-	//	// thì lúc này phải áp dụng logic code quay đầu chứ lúc này đâu phải
-	//	// state vừa bắt đầu chạy nhanh đâu
-	//	/*is_left = false;
-	//	is_right = false;*/
-
-	//	break;
-	//}
 }
 
 void CRunningState::KeyState(BYTE* state)

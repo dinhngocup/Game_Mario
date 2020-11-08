@@ -37,12 +37,14 @@ void CAnimation::Render(float x, float y, int alpha, int nx, int offset, bool sp
 		{
 			currentFrame++;
 			lastFrameTime = now;
-			/*if (currentFrame + 1 == frames.size()) {
+
+			if (currentFrame + 1 == frames.size()) {
 				nextIsLastFrame = true;
 			}
 			else {
 				nextIsLastFrame = false;
-			}*/
+			}
+
 			if (currentFrame == frames.size()) {
 				currentFrame = 0;
 				lastFrame = true;

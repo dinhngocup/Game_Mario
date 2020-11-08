@@ -8,7 +8,7 @@
 
 void CGameObject::RenderBoundingBox()
 {
-	
+
 	D3DXVECTOR3 p(x, y, 0);
 	RECT rect;
 
@@ -25,11 +25,11 @@ void CGameObject::RenderBoundingBox()
 	float draw_x = x - ((int)r - (int)l) / 2;
 	float draw_y = y - ((int)b - (int)t) / 2;
 
-	CGame::GetInstance()->Draw(draw_x, draw_y, bbox, rect.left, rect.top, rect.right, rect.bottom, 150);
+	CGame::GetInstance()->Draw(draw_x, draw_y, bbox, rect.left, rect.top, rect.right, rect.bottom, 80);
 
 }
 
-void CGameObject::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
+void CGameObject::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	this->dt = dt;
 	dx = vx * dt;
@@ -46,8 +46,10 @@ CGameObject::CGameObject()
 void CGameObject::IsCollisionWithGhostPlatform(LPCOLLISIONEVENT e)
 {
 	if (e->nx != 0) x += dx;
-	if (e->ny < 0) vy = 0;
-	else y += dy;
+	if (e->ny < 0)
+		vy = 0;
+	else if (e->ny > 0)
+		y += dy;
 }
 
 void CGameObject::SetAnimationSet(LPANIMATION_SET ani_set)
@@ -78,7 +80,7 @@ LPCOLLISIONEVENT CGameObject::SweptAABBEx(LPGAMEOBJECT coO, int horizontal, int 
 
 	float sdx = svx * dt;
 	float sdy = svy * dt;
-	
+
 	// (rdx, rdy) is RELATIVE movement distance/velocity 
 	float rdx = this->dx - sdx;
 	float rdy = this->dy - sdy;
@@ -118,12 +120,16 @@ void CGameObject::CalcPotentialCollisions(
 
 	for (UINT i = 0; i < coObjects->size(); i++)
 	{
-		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i), dx, dy);
+		if (coObjects->at(i)->ableToCheckCollision) {
 
-		if (e->t > 0 && e->t <= 1.0f)
-			coEvents.push_back(e);
-		else
-			delete e;
+			LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i), dx, dy);
+
+			if (e->t > 0 && e->t <= 1.0f)
+				coEvents.push_back(e);
+			else
+				delete e;
+		}
+		
 	}
 
 	std::sort(coEvents.begin(), coEvents.end(), CCollisionEvent::compare);
@@ -160,7 +166,7 @@ void CGameObject::FilterCollision(
 	if (min_ix >= 0) {
 		coEventsResult.push_back(coEvents[min_ix]);
 	}
-	
+
 	if (min_iy >= 0) {
 		coEventsResult.push_back(coEvents[min_iy]);
 	}

@@ -56,6 +56,9 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
+			// nấm vc rùa và viên gạch, sau khi vc với rùa
+			// biến thành die by weapon, xong nó xét vc tiếp với gạch
+			// làm reset vy của nấm => khi thành die by weapon thì mấy e tiếp theo pass luôn
 			if (state != STATE_DIE_BY_WEAPON) {
 				if (dynamic_cast<CBrick*>(e->obj)) {
 					IsCollisionWithBrick(e);
@@ -64,6 +67,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					IsCollisionWithGhostPlatform(e);
 				}
 				else if (dynamic_cast<CEnemy*>(e->obj)) {
+					//DebugOut(L"nam\n");
 					IsCollisionWithEnemy(e);
 				}
 
@@ -124,6 +128,7 @@ void CGoomba::SetState(int state)
 		y += GOOMBA_DISPARITIES;
 		vx = 0.4f * nx;
 		vy = -0.5f;
+		ableToCheckCollision = false;
 		break;
 	case STATE_WALKING_SWINGS:
 		vx = -GOOMBA_WALKING_SPEED;
@@ -188,9 +193,11 @@ void CGoomba::AttackedByShell()
 
 void CGoomba::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 {
+	//DebugOut(L"state %d\n", state);
+	//DebugOut(L"e state %d\n", e->obj->state);
 	// đụng trúng rùa đang spin
 	if (e->obj->state == STATE_SPIN) {
-		if (state != STATE_DIE_BY_WEAPON)
+		//if (state != STATE_DIE_BY_WEAPON)
 			AttackedByShell();
 		e->obj->x += dx;
 	}

@@ -23,7 +23,7 @@ void CPlayerState::OnKeyDown(int KeyCode)
 		if (!dynamic_cast<CJumpingState*>(player_state) &&
 			!dynamic_cast<CHighJumpingState*>(player_state) &&
 			!dynamic_cast<CFallingState*>(player_state)) {
-			DebugOut(L"vx truoc khi nhay %f\n", mario->vx);
+			//DebugOut(L"vx truoc khi nhay %f\n", mario->vx);
 			mario->time_start_jump = GetTickCount();
 			mario->ChangeState(new CHighJumpingState(level));
 		}
@@ -117,6 +117,15 @@ void CPlayerState::CheckState()
 	int current_frame = animation->GetCurrentFrame();
 	CMario* mario = CMario::GetInstance();
 	//DebugOut(L"current %d\n", current_frame);
+	CPlayerState* player_state = mario->GetState();
+	if (dynamic_cast<CKickingState*>(player_state)) {
+		if (animation->NextIsLastFrame()) {
+			is_rendered_completely = true;
+		}
+		else
+			is_rendered_completely = false;
+		return;
+	}
 	if (level == RACCOON_LEVEL_BIG) {
 		if (current_frame == 0 || current_frame == 4 || current_frame == 2)
 			mario->is_attacking_by_spinning = true;
@@ -129,8 +138,9 @@ void CPlayerState::CheckState()
 			mario->is_attacking = true;
 			// allow throw only 1 fire ball
 			is_attacked = true;
-		} 
+		}
 	}
+	
 
 	// phải render full frame mới được bật cờ render full ani
 	//if (!animation->NextIsLastFrame() && animation->IsLastFrame()) {
