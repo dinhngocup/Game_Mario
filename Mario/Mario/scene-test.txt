@@ -6,13 +6,9 @@
 # file_path
 Resources\map\map.txt
 
-
-[OBJECTS]
-# type	x	y	w	h	ani_set_id	extra_settings per object type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = Groom, 5 = invisible object, 6 = brick question
-
-# BRICK 
-1	-48	1200	48	48	3	1	
+[STATIC_OBJECTS]
+# BRICK
+1	-48	1200	48	48	3	1
 1	0	1248	1872	48	3	1
 1	1872	1200	1392	96	3	1
 1	3456	1248	768	48	3	1
@@ -66,42 +62,8 @@ Resources\map\map.txt
 5	4224	576	192	48	3	1
 5	4464	528	624	48	3	1
 
+[OBJECTS]
+# file_path
+Resources\object\object_scene_1.txt
 
-# brick question
-6	552	1080	0	0	2	1
-6	600	1080	0	0	2	1
-6	696	936	0	0	2	1
-6	744	936	0	0	2	1
-
-6	1272	984	0	0	2	1
-
-6	1992	1176	0	0	2	1
-6	2136	1080	0	0	2	1
-
-6	4440	1128	0	0	2	1
-
-# goomba
-#2	450	1200	0	0	5	2	100
-
-#2	1608	1224	0	0	5	2
-#2	2520	1176	0	0	5	2
-#2	2664	1176	0	0	5	2
-#2	2856	1176	0	0	5	2
-# koopa
-#3	1752	1110	0	0	7	2	100
-
-3	4008	915	0	0	8	2	102
-3	4152	915	0	0	8	2	102
-3	4296	915	0	0	8	2	102
-3	4440	1200	0	0	8	2	100
-
-#3	6312	1104	0	0	7	2	100
-
-# obj thử nghiệm
-3	300	1200	0	0	7	2	102
-#2	450	1200	0	0	5	2	100
-
-# --- SCENE PORTAL ----
-# type	l	t	ani_set_id	r	b	scene_id
-#50	115	98	0	148	150	1
 

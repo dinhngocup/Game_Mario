@@ -82,15 +82,14 @@ void CFallingState::OnKeyDown(int KeyCode)
 {
 	CMario* mario = CMario::GetInstance();
 	CPlayerState::OnKeyDown(KeyCode);
-	/*if (level == RACCOON_LEVEL_BIG) {
-		switch (KeyCode) {
-		case DIK_S:
-		case DIK_X:
-			is_falling_slowly = true;
-			DebugOut(L"vy truoc khi bam roi cham %f\n", mario->vy);
-			break;
-		}
-	}*/
+	switch (KeyCode)
+	{
+	case DIK_S:
+	case DIK_X:
+		time_start_to_press = GetTickCount();
+		break;
+	
+	}
 }
 
 void CFallingState::OnKeyUp(int KeyCode)
@@ -112,5 +111,12 @@ void CFallingState::KeyState(BYTE* state)
 		if (abs(mario->vx) <= MARIO_WALKING_SPEED)
 			mario->vx = -MARIO_WALKING_SPEED;
 		mario->nx = -1;
+	}
+	if (level == RACCOON_LEVEL_BIG) {
+		if (game->IsKeyDown(DIK_S) || game->IsKeyDown(DIK_X)) {
+			DWORD now = GetTickCount();
+			if (mario->vy > 0 && now - time_start_to_press < 300)
+				mario->vy += -mario->vy * 0.5f;
+		}
 	}
 }

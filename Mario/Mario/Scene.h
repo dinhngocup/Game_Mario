@@ -25,7 +25,11 @@ public:
 
 	virtual vector<LPGAMEOBJECT>* GetEnemiesInScene() { return NULL; }
 	virtual vector<LPGAMEOBJECT>* GetGhostPlatformsInScene() { return NULL; }
-	virtual vector<LPGAMEOBJECT>* GetItemsInScene() {return NULL;};
+	virtual vector<LPGAMEOBJECT>* GetItemsInScene() {return NULL;}
+
+	virtual void SetEnemiesInScene(vector<LPGAMEOBJECT> listEnemy) {}
+	virtual void SetGhostPlatformsInScene(vector<LPGAMEOBJECT> listGhostPlatform) {}
+	virtual void SetItemsInScene(vector<LPGAMEOBJECT> listItem) {}
 
 };
 typedef CScene* LPSCENE;

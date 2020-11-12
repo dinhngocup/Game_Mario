@@ -37,6 +37,7 @@ class CGameObject
 public:
 	
 	eTYPE type;
+	int type_object;
 
 	float x;
 	float y;

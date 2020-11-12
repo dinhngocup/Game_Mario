@@ -15,17 +15,17 @@ void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& botto
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	DebugOut(L"update goomba\n");
 	vy += GOOMBA_GRAVITY * dt;
-
+	//DebugOut(L"y %f\n", y);
 	CGameObject::Update(dt);
-	
+
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	CGame* game = CGame::GetInstance();
 	vector<LPGAMEOBJECT>* enemies = game->GetCurrentScene()->GetEnemiesInScene();
 	vector<LPGAMEOBJECT>* bricks = game->GetCurrentScene()->GetGhostPlatformsInScene();
-
 	coEvents.clear();
 
 	if (state != STATE_DIE_BY_WEAPON) {
@@ -36,7 +36,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (coEvents.size() == 0)
 	{
-		
+
 		x += dx;
 		y += dy;
 	}
@@ -67,7 +67,6 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					IsCollisionWithGhostPlatform(e);
 				}
 				else if (dynamic_cast<CEnemy*>(e->obj)) {
-					//DebugOut(L"nam\n");
 					IsCollisionWithEnemy(e);
 				}
 
@@ -193,21 +192,115 @@ void CGoomba::AttackedByShell()
 
 void CGoomba::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 {
-	//DebugOut(L"state %d\n", state);
-	//DebugOut(L"e state %d\n", e->obj->state);
-	// đụng trúng rùa đang spin
-	if (e->obj->state == STATE_SPIN) {
-		//if (state != STATE_DIE_BY_WEAPON)
-			AttackedByShell();
-		e->obj->x += dx;
-	}
-	else if (e->obj->state == STATE_DIE) {
-		vx *= -1;
-	}
-	else {
+	if (e->obj->type == eTYPE::GOOMBA) {
+		CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 		if (e->nx != 0) {
 			vx *= -1;
-			e->obj->vx *= -1;
+			goomba->vx *= -1;
 		}
+	}
+	else if (e->obj->type == eTYPE::KOOPA) {
+		CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+		if (e->ny != 0) {
+			if (koopa->state == STATE_SPIN) {
+				AttackedByShell();
+				koopa->x += dx;
+			}
+			else if (koopa->state == STATE_DIE) {
+				if (e->ny > 0)
+					SetState(STATE_DIE);
+				else {
+					vy = -GOOMBA_JUMP_SPEED_Y;
+					koopa->AttackedByShell();
+				}
+			}
+			else if (koopa->state == STATE_WALKING_SWINGS || koopa->state == STATE_WALKING) {
+				if (e->ny > 0) {
+					SetState(STATE_DIE);
+				}
+				else {
+					koopa->SetState(STATE_DIE);
+					vy = -GOOMBA_JUMP_SPEED_Y;
+				}
+			}
+		}
+		
+		if (e->nx != 0) {
+			if (koopa->state == STATE_SPIN) {
+				AttackedByShell();
+				koopa->x += dx;
+			}
+			else if (koopa->state == STATE_DIE) {
+				vx *= -1;
+			}
+			else if (koopa->state == STATE_WALKING_SWINGS || koopa->state == STATE_WALKING) {
+				if (nx * e->nx > 0) {
+					vx *= -1;
+					nx *= -1;
+					koopa->vx *= -1;
+					koopa->nx *= -1;
+				}
+				else {
+					koopa->vx *= -1;
+					koopa->nx *= -1;
+				}
+			}
+		}
+		
+		// đụng trúng rùa đang spin
+		//if (koopa->state == STATE_SPIN) {
+		//	AttackedByShell();
+		//	koopa->x += dx;
+		//}
+		//else if (koopa->state == STATE_DIE) {
+		//	vx *= -1;
+		//}
+		//else if (koopa->state == STATE_WALKING_SWINGS) {
+		//	if (e->ny != 0)
+		//		// đụng phía dưới rùa
+		//		if (e->ny > 0) {
+		//			koopa->vy = -KOOPA_JUMP_SPEED_Y;
+		//			koopa->vx = koopa->nx * KOOPA_JUMP_SPEED_X;
+		//			y -= dy;
+		//		}
+		//		else {
+		//			koopa->vy = 0;
+		//		}
+		//	if (e->nx != 0) {
+		//		if (nx * e->nx > 0) {
+		//			vx *= -1;
+		//			nx *= -1;
+		//			koopa->vx *= -1;
+		//			koopa->nx *= -1;
+		//		}
+		//		else {
+		//			koopa->vx *= -1;
+		//			koopa->nx *= -1;
+		//		}
+		//	}
+		//}
+		//else {
+		//	if (e->ny != 0)
+		//		// đụng phía dưới rùa
+		//		if (e->ny > 0) {
+		//			koopa->vx = koopa->nx * KOOPA_JUMP_SPEED_X;
+		//			y -= dy;
+		//		}
+		//		else {
+		//			koopa->vy = 0;
+		//		}
+		//	if (e->nx != 0) {
+		//		if (nx * e->nx > 0) {
+		//			vx *= -1;
+		//			nx *= -1;
+		//			koopa->vx *= -1;
+		//			koopa->nx *= -1;
+		//		}
+		//		else {
+		//			koopa->vx *= -1;
+		//			koopa->nx *= -1;
+		//		}
+		//	}
+		//}
 	}
 }

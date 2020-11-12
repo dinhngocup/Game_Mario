@@ -25,7 +25,8 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define SCENE_SECTION_UNKNOWN -1
 #define SCENE_SECTION_TILESET	1
 #define SCENE_SECTION_MAP	2
-#define SCENE_SECTION_OBJECTS	3
+#define SCENE_SECTION_STATIC_OBJECTS	3
+#define SCENE_SECTION_OBJECTS	4
 
 #define MAX_SCENE_LINE 1024
 
@@ -34,69 +35,10 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 */
 void CPlayScene::_ParseSection_OBJECTS(string line)
 {
-	vector<string> tokens = split(line);
-
-	if (tokens.size() < 7) return;
-
-	int object_type = atoi(tokens[0].c_str());
-
-	float x = atof(tokens[1].c_str());
-	float y = atof(tokens[2].c_str());
-
-	float w = atof(tokens[3].c_str());
-	float h = atof(tokens[4].c_str());
-
-	int ani_set_id = atoi(tokens[5].c_str());
-	int type = atoi(tokens[6].c_str());
-
-	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-
-	CGameObject* obj = NULL;
-
-	switch (object_type)
-	{
-
-	case eTYPE::BRICK: obj = new CBrick(x, y, w, h); obj->type = eTYPE::BRICK;  break;
-	case eTYPE::INVISIBLE_OBJECT: obj = new CInvisibleObject(x, y, w, h); obj->type = eTYPE::INVISIBLE_OBJECT; break;
-	case eTYPE::BRICK_QUESTION: obj = new CBrickQuestion(); obj->type = eTYPE::BRICK_QUESTION; break;
-	case eTYPE::GOOMBA: {
-		int state = atoi(tokens[7].c_str());
-		obj = new CGoomba(state);
-		obj->type = eTYPE::GOOMBA; 
-		break; }
-	case eTYPE::KOOPA: {
-		int state = atoi(tokens[7].c_str());
-		obj = new CKoopa(state);
-		obj->type = eTYPE::KOOPA;
-		break;
-	}
-	default:
-		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
-		return;
-	}
-
-	// General object setup
-	obj->SetPosition(x, y);
-
-	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
-
-	obj->SetAnimationSet(ani_set);
-	switch (type) {
-	case eTYPE_OBJECT::ENEMY:
-		enemies.push_back(obj);
-		break;
-	case eTYPE_OBJECT::GHOST_PLATFORM:
-		ghost_platforms.push_back(obj);
-		break;
-	case eTYPE_OBJECT::ITEM:
-		items.push_back(obj);
-		break;
-	default:
-		DebugOut(L"ERROR type: %d\n", type);
-		break;
-	}
-
-	
+	if (line == "") return;
+	wstring path = ToWSTR(line);
+	grid = new CGrid(path.c_str());
+	grid->ReadFileObj();
 }
 
 void CPlayScene::_ParseSection_TILESET(string line)
@@ -111,7 +53,6 @@ void CPlayScene::_ParseSection_TILESET(string line)
 
 	// Hàm chuyển đổi chuỗi ToWSTR
 	wstring path = ToWSTR(tokens[1]);
-	DebugOut(L"path ", path);
 	int R = atoi(tokens[2].c_str());
 	int G = atoi(tokens[3].c_str());
 	int B = atoi(tokens[4].c_str());
@@ -138,6 +79,49 @@ void CPlayScene::_ParseSection_MAP(string line)
 
 }
 
+void CPlayScene::_ParseSection_STATIC_OBJECTS(string line)
+{
+	vector<string> tokens = split(line);
+
+	if (tokens.size() < 7) return;
+
+	int object_type = atoi(tokens[0].c_str());
+
+	float x = atof(tokens[1].c_str());
+	float y = atof(tokens[2].c_str());
+
+	float w = atof(tokens[3].c_str());
+	float h = atof(tokens[4].c_str());
+
+	int ani_set_id = atoi(tokens[5].c_str());
+	int type = atoi(tokens[6].c_str());
+
+	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+
+	CGameObject* obj = NULL;
+
+	switch (object_type)
+	{
+
+	case eTYPE::BRICK: obj = new CBrick(x, y, w, h); obj->type = eTYPE::BRICK;  break;
+	case eTYPE::INVISIBLE_OBJECT: obj = new CInvisibleObject(x, y, w, h); obj->type = eTYPE::INVISIBLE_OBJECT; break;
+	default:
+		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
+		return;
+	}
+
+	// General object setup
+	obj->SetPosition(x, y);
+
+	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+
+	obj->SetAnimationSet(ani_set);
+
+	ghost_platforms.push_back(obj);
+
+
+}
+
 void CPlayScene::LoadSceneResources()
 {
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
@@ -150,7 +134,7 @@ void CPlayScene::LoadSceneResources()
 	LPANIMATION_SET ani_set = CAnimationSets::GetInstance()->Get(1);
 
 	player->SetAnimationSet(ani_set);
-	
+
 	ifstream f;
 	f.open(sceneFilePath);
 
@@ -163,11 +147,13 @@ void CPlayScene::LoadSceneResources()
 		if (line[0] == '#') continue;
 		if (line == "[TILESET]") { section = SCENE_SECTION_TILESET; continue; }
 		if (line == "[MAP]") { section = SCENE_SECTION_MAP; continue; }
+		if (line == "[STATIC_OBJECTS]") { section = SCENE_SECTION_STATIC_OBJECTS; continue; }
 		if (line == "[OBJECTS]") { section = SCENE_SECTION_OBJECTS; continue; }
 
 		switch (section) {
 		case SCENE_SECTION_TILESET:_ParseSection_TILESET(line); break;
 		case SCENE_SECTION_MAP: {_ParseSection_MAP(line); break; }
+		case SCENE_SECTION_STATIC_OBJECTS: {_ParseSection_STATIC_OBJECTS(line); break; }
 		case SCENE_SECTION_OBJECTS:_ParseSection_OBJECTS(line); break;
 		}
 	}
@@ -178,7 +164,8 @@ void CPlayScene::LoadSceneResources()
 
 
 	DebugOut(L"[INFO] Done loading resources of this scene %s\n", sceneFilePath);
-
+	/*CGame* game = CGame::GetInstance();
+	grid->GetListObjInGrid(game->GetCamX(), game->GetCamY());*/
 }
 
 void CPlayScene::Update(DWORD dt)
@@ -195,14 +182,16 @@ void CPlayScene::Update(DWORD dt)
 		float y = player->GetY();
 
 		obj = new CFireBall(x, y, player->nx);
-		
+
 		obj->type = eTYPE::FIRE_BALL;
 		items.push_back(obj);
 		player->is_attacking = false;
 	}
 
-	
-	
+	CGame* game = CGame::GetInstance();
+	grid->GetListObjInGrid(game->GetCamX(), game->GetCamY());
+
+	//DebugOut(L"size %d\n", enemies.size());
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
 		enemies[i]->Update(dt);
@@ -219,7 +208,6 @@ void CPlayScene::Update(DWORD dt)
 	// Update camera to follow mario
 	float cx, cy;
 	player->GetPosition(cx, cy);
-	CGame* game = CGame::GetInstance();
 	cx -= game->GetScreenWidth() / 2;
 	cy -= game->GetScreenHeight() / 2;
 
@@ -237,6 +225,7 @@ void CPlayScene::Update(DWORD dt)
 		isMoved = true;
 	}
 
+	
 
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
@@ -250,7 +239,6 @@ void CPlayScene::Update(DWORD dt)
 			items.erase(items.begin() + i);
 		}
 	}
-
 }
 
 void CPlayScene::Render()
@@ -262,8 +250,9 @@ void CPlayScene::Render()
 		CGame::GetInstance()->GetCamPos(cx, cy);
 		map->DrawMap(cx, cy);
 	}
-	
-	
+	CGame* game = CGame::GetInstance();
+
+
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
 		enemies[i]->Render();
@@ -277,7 +266,7 @@ void CPlayScene::Render()
 	{
 		items[i]->Render();
 	}
-	
+
 
 }
 

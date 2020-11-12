@@ -37,8 +37,11 @@ void CHoldingState::Update(float dt)
 	for (int i = 0; i < enemies->size(); i++) {
 		if (dynamic_cast<CKoopa*>(enemies->at(i)) && enemies->at(i)->state == STATE_HOLD) {
 			//enemies->at(i)->vx = mario->vx;
+
 			enemies->at(i)->nx = mario->nx;
+
 			enemies->at(i)->x += (mario->vx - enemies->at(i)->vx) * dt;
+
 			//DebugOut(L"mario %f\n", mario->vx);
 			//DebugOut(L"rua %f\n", enemies->at(i)->vx);
 			break;

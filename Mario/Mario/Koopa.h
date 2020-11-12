@@ -8,7 +8,7 @@
 #include "Goomba.h"
 #include "HoldingState.h"
 
-#define KOOPA_WALKING_SPEED 0.08f;
+#define KOOPA_WALKING_SPEED 0.09f;
 #define KOOPA_SPIN_SPEED 0.5f;
 #define KOOPA_JUMP_SPEED_Y 0.5f;
 #define KOOPA_JUMP_SPEED_X 0.2f;

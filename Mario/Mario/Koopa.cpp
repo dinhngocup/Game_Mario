@@ -7,7 +7,7 @@ CKoopa::CKoopa()
 CKoopa::CKoopa(int state)
 {
 	SetState(state);
-	//SetState(STATE_SPIN);
+	nx = -1;
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)
@@ -27,6 +27,8 @@ void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	DebugOut(L"update koopa\n");
+
 	CMario* mario = CMario::GetInstance();
 	vy += KOOPA_GRAVITY * dt;
 	if (state == STATE_HOLD) {
@@ -35,12 +37,13 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			SetState(STATE_SPIN);
 		}
 		else {
-			if (mario->is_skid) {
+			if (mario->is_skid ||  vx == 0) {
 				x = mario->x + 30.0f * mario->nx;
 				mario->is_skid = false;
 			}
-			else
+			else {
 				vx = mario->vx;
+			}
 			vy = mario->vy;
 		}
 	}
@@ -109,6 +112,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (state == STATE_WALKING_SWINGS) {
 						if (e->ny != 0) {
 							if (e->ny < 0) {
+								DebugOut(L"nxxxx %d\n", this->nx);
 								vy = -KOOPA_JUMP_SPEED_Y;
 								vx = this->nx * KOOPA_JUMP_SPEED_X;
 							}
@@ -170,8 +174,8 @@ void CKoopa::SetState(int state)
 	switch (state)
 	{
 	case STATE_WALKING:
-		vx = KOOPA_WALKING_SPEED;
 		vx = 0;
+		vx = nx * KOOPA_WALKING_SPEED;
 		break;
 	case STATE_DIE:
 		//y += KOOPA_DISPARITIES;
@@ -185,7 +189,7 @@ void CKoopa::SetState(int state)
 		ableToCheckCollision = false;
 		break;
 	case STATE_WALKING_SWINGS:
-		vx = -KOOPA_WALKING_SPEED;
+		vx = nx * -KOOPA_WALKING_SPEED;
 		vx = 0;
 		break;
 
@@ -215,8 +219,9 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 		if (state != STATE_DIE)
 		{
 			// rùa có cánh
-			if (state == STATE_WALKING_SWINGS)
+			if (state == STATE_WALKING_SWINGS) {
 				SetState(STATE_WALKING);
+			}
 			// rùa ko cánh, rùa spin
 			else
 				SetState(STATE_DIE);
@@ -316,38 +321,109 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 
 void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 {
+	
 	/*DebugOut(L"state %d\n", state);
 	DebugOut(L"e state %d\n", e->obj->state);
 	DebugOut(L"e ableToCheckCollision %d\n", e->obj->ableToCheckCollision);*/
+	if (e->obj->type == eTYPE::GOOMBA) {
+		CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 
-	if (state == STATE_SPIN || state == STATE_HOLD) {
-		CEnemy* enemy = dynamic_cast<CEnemy*>(e->obj);
-		enemy->AttackedByShell();
-		x += dx;
-	}
-	else if (state == STATE_DIE) {
-		// đụng bên hông mai
-		if (e->nx != 0) {
-			e->obj->vx *= -1;
-			e->obj->nx *= -1;
-
-		}
-		// đụng phía trên mai
 		if (e->ny != 0) {
-			e->obj->x += dx;
-			e->obj->vy = 0;
+			if (state == STATE_SPIN) {
+				goomba->AttackedByShell();
+				x += dx;
+			}
+			else if (state == STATE_DIE) {
+				if (e->ny < 0) {
+					goomba->SetState(STATE_DIE);
+				}
+				else {
+					goomba->vy = -GOOMBA_JUMP_SPEED_Y;
+					AttackedByShell();
+				}
+			}
+			else if (state == STATE_WALKING_SWINGS ||state == STATE_WALKING) {
+				if (e->ny < 0) {
+					goomba->SetState(STATE_DIE);
+				}
+				else {
+					SetState(STATE_DIE);
+					goomba->vy = -GOOMBA_JUMP_SPEED_Y;
+				}
+			}
+		}
+
+		if (e->nx != 0) {
+			if (state == STATE_SPIN) {
+				goomba->AttackedByShell();
+				x += dx;
+			}
+			else if (state == STATE_DIE) {
+				goomba->vx *= -1;
+			}
+			else if (state == STATE_WALKING_SWINGS || state == STATE_WALKING) {
+				if (nx * e->nx > 0) {
+					vx *= -1;
+					nx *= -1;
+					goomba->vx *= -1;
+					goomba->nx *= -1;
+				}
+				else {
+					vx *= -1;
+					nx *= -1;
+				}
+			}
+		}
+
+
+
+
+
+		if (state == STATE_SPIN || state == STATE_HOLD) {
+			CEnemy* enemy = dynamic_cast<CEnemy*>(e->obj);
+			enemy->AttackedByShell();
+			x += dx;
+		}
+		else if (state == STATE_WALKING_SWINGS) {
+			vy = -KOOPA_JUMP_SPEED_Y;
+			vx = nx * KOOPA_JUMP_SPEED_X;
+			goomba->y -= dy;
+		}
+		else {
+			if (e->nx != 0 || e->ny != 0) {
+				if (nx * e->nx > 0) {
+					vx *= -1;
+					nx *= -1;
+					goomba->vx *= -1;
+					goomba->nx *= -1;
+				}
+				else {
+					goomba->vx *= -1;
+					goomba->nx *= -1;
+				}
+			}
 		}
 	}
-	else {
-		if (e->obj->state == STATE_SPIN || e->obj->state == STATE_HOLD) {
-			AttackedByShell();
-			e->obj->x += dx;
+	else if (e->obj->type == eTYPE::KOOPA) {
+		CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+		if (state == STATE_SPIN || state == STATE_HOLD) {
+			CEnemy* enemy = dynamic_cast<CEnemy*>(e->obj);
+			enemy->AttackedByShell();
+			x += dx;
 		}
-		else
-			if (e->nx != 0) {
-				vx *= -1;
-				e->obj->vx *= -1;
+		else {
+			// những state còn lại đụng phải spin hoặc hold
+			if (koopa->state == STATE_SPIN || koopa->state == STATE_HOLD) {
+				AttackedByShell();
+				koopa->x += dx;
 			}
+			else {
+				if (e->nx != 0) {
+					vx *= -1;
+					koopa->vx *= -1;
+				}
+			}
+		}
 	}
 }
 

@@ -131,7 +131,6 @@ void CGameObject::CalcPotentialCollisions(
 		}
 		
 	}
-
 	std::sort(coEvents.begin(), coEvents.end(), CCollisionEvent::compare);
 }
 

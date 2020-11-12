@@ -50,6 +50,9 @@
     <Filter Include="Objects\Weapon">
       <UniqueIdentifier>{75c46307-32b2-4e0a-9a21-01eea99d30f2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\Grid">
+      <UniqueIdentifier>{ce28836c-ee50-4791-bb48-3ea5b71f4d58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -165,6 +168,9 @@
     </ClCompile>
     <ClCompile Include="HoldingState.cpp">
       <Filter>Objects\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid.cpp">
+      <Filter>Framework\Grid</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -293,6 +299,12 @@
     </ClInclude>
     <ClInclude Include="HoldingState.h">
       <Filter>Objects\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>Framework\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="GameConst.h">
+      <Filter>Framework\Const</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -158,6 +158,7 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationSets.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Grid.cpp" />
     <ClCompile Include="HoldingState.cpp" />
     <ClCompile Include="KickingState.cpp" />
     <ClCompile Include="Weapon.cpp" />
@@ -206,6 +207,8 @@
     <ClInclude Include="FlyingState.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Goomba.h" />
+    <ClInclude Include="Grid.h" />
+    <ClInclude Include="GameConst.h" />
     <ClInclude Include="HighJumpingState.h" />
     <ClInclude Include="HoldingState.h" />
     <ClInclude Include="InvisibleObject.h" />

@@ -12,6 +12,7 @@
 #include "InvisibleObject.h"
 #include "BrickQuestion.h"
 #include "Goomba.h"
+#include "Grid.h"
 
 #define DEFAULT_CAM_Y	720.0f
 class CPlayScene : public CScene
@@ -31,12 +32,14 @@ protected:
 	// data object for this scene
 	void _ParseSection_OBJECTS(string line);
 	void _ParseSection_MAP(string line);
+	void _ParseSection_STATIC_OBJECTS(string line);
 	void _ParseSection_TILESET(string line);
 	
 	int sceneWidth, sceneHeight;
 	bool isMoved;
 	CTiles *tiles;
 	CMap* map;
+	CGrid* grid;
 
 public:
 	CPlayScene(int id, LPCWSTR filePath);
@@ -50,6 +53,9 @@ public:
 	//vector<LPGAMEOBJECT> GetObjectsInScene() { return objects; }
 	vector<LPGAMEOBJECT>* GetEnemiesInScene() { return &enemies; }
 	vector<LPGAMEOBJECT>* GetGhostPlatformsInScene() { return &ghost_platforms; }
+
+	void SetEnemiesInScene(vector<LPGAMEOBJECT> listEnemy) { enemies.clear(); enemies = listEnemy; }
+	void SetGhostPlatformsInScene(vector<LPGAMEOBJECT> listGhostPlatform) { ghost_platforms = listGhostPlatform; }
 
 	//vector<LPGAMEOBJECT>* GetItemsInScene() { return &objects; }
 	//void AddObject(LPGAMEOBJECT obj) { objects.push_back(obj); }
