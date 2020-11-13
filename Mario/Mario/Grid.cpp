@@ -8,17 +8,14 @@ CGrid::CGrid(LPCWSTR objFilePath)
 
 void CGrid::AddObjectIntoGrid(int object_type, float x, float y, float w, float h, int ani_id, int type, int state)
 {
-	
-	x -= w / 2;
-	y -= h / 2;
-
 	int top = (int)(y / CELL_HEIGHT);
 	int bottom = (int)((y + h) / CELL_HEIGHT);
 	int left = (int)(x / CELL_WIDTH);
 	int right = (int)((x + w) / CELL_WIDTH);
+	
 	LPGAMEOBJECT obj = CreateNewObj(object_type, x, y, w, h, ani_id, type, state);
 
-	
+
 
 	for (int i = top; i <= bottom; i++)
 		for (int j = left; j <= right; j++) {
@@ -39,21 +36,33 @@ void CGrid::GetListObjInGrid(float cam_x, float cam_y)
 	int left = (int)((cam_x) / CELL_WIDTH);
 	int right = (int)((cam_x + SCREEN_WIDTH) / CELL_WIDTH);
 
-	/*DebugOut(L"left %d\n", left);
-	DebugOut(L"right %d\n", right);*/
 
+
+	if (current != right) {
+		for (int i = top; i <= bottom; i++)
+			for (int k = 0; k < cells[i][right].size(); k++)
+				if (cells[i][right].at(k)->GetHealth()) {
+					cells[i][right].at(k)->ResetPosition();
+				}
+		current = right;
+	}
+	//DebugOut(L"right %d\n", right);
 	for (int i = top; i <= bottom; i++)
-		for (int j = left; j <= right; j++) {
+		for (int j = left - 1; j <= right; j++) {
+			if (left < 0) left = 0;
 			for (int k = 0; k < cells[i][j].size(); k++) {
-				// obj is still alive
 				if (cells[i][j].at(k)->GetHealth()) {
 					Classify(cells[i][j].at(k));
 				}
 			}
+			/*DebugOut(L"left %d\n", j);
+			DebugOut(L"right %d\n", right);*/
 		}
+
 	CGame* game = CGame::GetInstance();
 
 	game->GetCurrentScene()->SetEnemiesInScene(enemies);
+	game->GetCurrentScene()->SetItemsInScene(items);
 
 }
 
@@ -66,17 +75,19 @@ LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, flo
 	{
 	case eTYPE::BRICK_QUESTION:
 		obj = new CBrickQuestion();
+		obj->SetStartPosition(x, y);
 		obj->type = eTYPE::BRICK_QUESTION;
 
 		break;
 	case eTYPE::GOOMBA: {
 		obj = new CGoomba(state);
-		DebugOut(L"y %f\n", y);
+		obj->SetStartPosition(x, y);
 		obj->type = eTYPE::GOOMBA;
 		break; }
 	case eTYPE::KOOPA: {
-		DebugOut(L"new koopa\n");
+		//DebugOut(L"new koopa\n");
 		obj = new CKoopa(state);
+		obj->SetStartPosition(x, y);
 		obj->type = eTYPE::KOOPA;
 		break;
 	}
@@ -145,7 +156,8 @@ void CGrid::ReadFileObj()
 
 void CGrid::ReloadGrid()
 {
-	//DebugOut(L"reload grid\n");
+	DebugOut(L"reload grid\n");
+	current = -1;
 	for (int i = 0; i < MAX_ROW; i++)
 		for (int j = 0; j < MAX_COLUMN; j++)
 			cells[i][j].clear();

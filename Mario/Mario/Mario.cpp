@@ -15,14 +15,15 @@ CMario::CMario() : CGameObject()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	
+
 	player_state->Update(dt);
 	vy += MARIO_GRAVITY * dt;
 	CGameObject::Update(dt);
-	
+
 	CGame* game = CGame::GetInstance();
 	vector<LPGAMEOBJECT>* bricks = game->GetCurrentScene()->GetGhostPlatformsInScene();
 	vector<LPGAMEOBJECT>* enemies = game->GetCurrentScene()->GetEnemiesInScene();
+	vector<LPGAMEOBJECT>* items = game->GetCurrentScene()->GetItemsInScene();
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -34,6 +35,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (state != MARIO_STATE_DIE) {
 		CalcPotentialCollisions(bricks, coEvents);
 		CalcPotentialCollisions(enemies, coEvents);
+		CalcPotentialCollisions(items, coEvents);
 	}
 
 	if (GetTickCount() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
@@ -67,6 +69,16 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<CEnemy*>(e->obj)) {
 				e->obj->IsCollisionWithMario(e);
+			}
+			else if (dynamic_cast<CBrickQuestion*>(e->obj)) {
+				if (e->ny != 0) {
+					if (e->ny > 0) {
+						CBrickQuestion* brick = dynamic_cast<CBrickQuestion*>(e->obj);
+						brick->SetState(STATE_EMPTY);
+					}
+					vy = 0;
+				}
+				if (e->nx != 0) vx = 0;
 			}
 			else {
 				IsCollisionWithBrick(e);
@@ -103,25 +115,23 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 
 	if (level == MARIO_LEVEL_BIG || level == FIRE_LEVEL || level == RACCOON_LEVEL_BIG)
 	{
-
-		left = x - MARIO_BIG_BBOX_WIDTH / 2;
+		left = x;
 		right = left + MARIO_BIG_BBOX_WIDTH;
 		if (!is_crouching) {
-			top = y - MARIO_BIG_BBOX_HEIGHT / 2;
+			top = y;
 			bottom = top + MARIO_BIG_BBOX_HEIGHT;
 		}
 		else {
-			top = y - MARIO_CROUCH_BBOX_HEIGHT / 2;
+			top = y;
 			bottom = top + MARIO_CROUCH_BBOX_HEIGHT;
 		}
 	}
 	else
 	{
-		left = x - MARIO_SMALL_BBOX_WIDTH / 2;
-		top = y - MARIO_SMALL_BBOX_HEIGHT / 2;
+		left = x;
+		top = y;
 		right = left + MARIO_SMALL_BBOX_WIDTH;
 		bottom = top + MARIO_SMALL_BBOX_HEIGHT;
-		//DebugOut(L"b %f\n", bottom);
 
 	}
 }
@@ -208,12 +218,7 @@ void CMario::SetState(int state) {
 
 void CMario::IsCollisionWithBrick(LPCOLLISIONEVENT e)
 {
-	if (e->nx != 0) {
-		vx = 0;
-		is_collisionX_with_brick = true;
-	}
-	else
-		is_collisionX_with_brick = false;
+	if (e->nx != 0) vx = 0;
 	if (e->ny != 0)	vy = 0;
 }
 

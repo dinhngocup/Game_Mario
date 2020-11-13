@@ -6,6 +6,7 @@
 #include "SpinningState.h"
 #include "InvisibleObject.h"
 #include "Brick.h"
+#include "BrickQuestion.h"
 #include "MarioConst.h"
 #include "Koopa.h"
 #include "Enemy.h"
@@ -41,7 +42,6 @@ public:
 
 	int number_attack = 0;
 
-	float current_y = 27;
 
 	CMario();
 

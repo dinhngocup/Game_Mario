@@ -25,6 +25,9 @@ void CSprite::DrawFlipX(float x, float y, int alpha, int nx, int offset, int ny)
 	float cam_x, cam_y;
 	CGame::GetInstance()->GetCamPos(cam_x, cam_y);
 
+	x += (right - left)*3 / 2;
+	y += (bottom - top)*3 / 2;
+
 	// tọa độ của sprite trên màn hình
 	D3DXVECTOR3 p(floor(x - cam_x), floor(y - cam_y), 0);
 

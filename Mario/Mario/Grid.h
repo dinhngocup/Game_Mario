@@ -21,6 +21,7 @@ class CGrid
 	vector<LPGAMEOBJECT> cells[MAX_ROW][MAX_COLUMN];
 
 	LPCWSTR objFilePath;
+	int current = 4;
 public:
 	CGrid(LPCWSTR objFilePath);
 	~CGrid() {};

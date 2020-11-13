@@ -38,5 +38,6 @@ public:
 	void IsCollisionWithMario(LPCOLLISIONEVENT e);
 	void AttackedByShell();
 	void IsCollisionWithEnemy(LPCOLLISIONEVENT e);
+	//void RenderBoundingBox();
 };
 

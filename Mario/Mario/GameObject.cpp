@@ -22,10 +22,7 @@ void CGameObject::RenderBoundingBox()
 	rect.right = (int)r - (int)l;
 	rect.bottom = (int)b - (int)t;
 
-	float draw_x = x - ((int)r - (int)l) / 2;
-	float draw_y = y - ((int)b - (int)t) / 2;
-
-	CGame::GetInstance()->Draw(draw_x, draw_y, bbox, rect.left, rect.top, rect.right, rect.bottom, 80);
+	CGame::GetInstance()->Draw(x, y, bbox, rect.left, rect.top, rect.right, rect.bottom, 100);
 
 }
 

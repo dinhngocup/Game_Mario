@@ -7,15 +7,16 @@ CGoomba::CGoomba(int state)
 
 void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)
 {
-	left = x - GOOMBA_BBOX_WIDTH / 2;
-	top = y - GOOMBA_BBOX_HEIGHT / 2;
+	left = x;
+	top = y;
+	
 	right = left + GOOMBA_BBOX_WIDTH;
 	bottom = top + GOOMBA_BBOX_HEIGHT;
 }
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	DebugOut(L"update goomba\n");
+	//DebugOut(L"update goomba\n");
 	vy += GOOMBA_GRAVITY * dt;
 	//DebugOut(L"y %f\n", y);
 	CGameObject::Update(dt);
@@ -115,8 +116,8 @@ void CGoomba::SetState(int state)
 	switch (state)
 	{
 	case STATE_WALKING:
-		vx = 0;
 		vx = -GOOMBA_WALKING_SPEED;
+		vx = 0;
 		break;
 	case STATE_DIE:
 		y += GOOMBA_DISPARITIES;
@@ -304,3 +305,24 @@ void CGoomba::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 		//}
 	}
 }
+
+//void CGoomba::RenderBoundingBox()
+//{
+//	D3DXVECTOR3 p(x, y, 0);
+//	RECT rect;
+//
+//	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(-100);
+//
+//	float l, t, r, b;
+//
+//	GetBoundingBox(l, t, r, b);
+//	rect.left = 0;
+//	rect.top = 0;
+//	rect.right = (int)r - (int)l;
+//	rect.bottom = (int)b - (int)t;
+//
+//	//float draw_x = x - ((int)r - (int)l) / 2;
+//	//float draw_y = y - ((int)b - (int)t) / 2;
+//
+//	CGame::GetInstance()->Draw(x, y, bbox, rect.left, rect.top, rect.right, rect.bottom, 80);
+//}

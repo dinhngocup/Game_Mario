@@ -12,15 +12,15 @@ CKoopa::CKoopa(int state)
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)
 {
-	left = x - KOOPA_BBOX_WIDTH / 2;
+	left = x;
 	right = left + KOOPA_BBOX_WIDTH;
 
 	if (state == STATE_DIE || state == STATE_DIE_BY_WEAPON || state == STATE_SPIN || state == STATE_HOLD) {
-		top = y - KOOPA_BBOX_HEIGHT_DIE / 2;
+		top = y;
 		bottom = top + KOOPA_BBOX_HEIGHT_DIE;
 	}
 	else {
-		top = y - KOOPA_BBOX_HEIGHT / 2;
+		top = y;
 		bottom = top + KOOPA_BBOX_HEIGHT;
 	}
 }
@@ -174,8 +174,8 @@ void CKoopa::SetState(int state)
 	switch (state)
 	{
 	case STATE_WALKING:
-		vx = 0;
 		vx = nx * KOOPA_WALKING_SPEED;
+		vx = 0;
 		break;
 	case STATE_DIE:
 		//y += KOOPA_DISPARITIES;

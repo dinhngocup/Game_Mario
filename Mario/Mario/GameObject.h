@@ -59,6 +59,8 @@ public:
 
 	LPANIMATION_SET animation_set;
 	bool ableToCheckCollision = true;
+	
+	float start_x, start_y;
 public:
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
@@ -79,6 +81,10 @@ public:
 
 	virtual void RenderBoundingBox();
 
+	void SetStartPosition(float start_x, float start_y) {
+		this->start_x = start_x;
+		this->start_y = start_y;
+	}
 	
 	CGameObject();
 
@@ -88,7 +94,7 @@ public:
 	virtual void SetState(int state) { this->state = state; }
 	virtual void IsCollisionWithMario(LPCOLLISIONEVENT e) {};
 	virtual void IsCollisionWithGhostPlatform(LPCOLLISIONEVENT e);
-
+	virtual void ResetPosition() {};
 	void SetAnimationSet(LPANIMATION_SET ani_set);
 
 	~CGameObject();

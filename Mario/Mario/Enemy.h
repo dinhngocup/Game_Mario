@@ -18,5 +18,10 @@ public:
 
 	virtual void AttackedByShell() {};
 	
+	void ResetPosition() {
+		DebugOut(L"reset\n");
+		this->x = start_x;
+		this->y = start_y;
+	}
 };
 

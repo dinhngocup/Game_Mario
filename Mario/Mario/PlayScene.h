@@ -28,6 +28,7 @@ protected:
 	vector<LPGAMEOBJECT> items;
 
 
+
 	
 	// data object for this scene
 	void _ParseSection_OBJECTS(string line);
@@ -50,12 +51,15 @@ public:
 	virtual void Unload();
 
 	CMario* GetPlayer() { return player; }
-	//vector<LPGAMEOBJECT> GetObjectsInScene() { return objects; }
+	
 	vector<LPGAMEOBJECT>* GetEnemiesInScene() { return &enemies; }
 	vector<LPGAMEOBJECT>* GetGhostPlatformsInScene() { return &ghost_platforms; }
+	vector<LPGAMEOBJECT>* GetItemsInScene() { return &items; }
+
 
 	void SetEnemiesInScene(vector<LPGAMEOBJECT> listEnemy) { enemies.clear(); enemies = listEnemy; }
 	void SetGhostPlatformsInScene(vector<LPGAMEOBJECT> listGhostPlatform) { ghost_platforms = listGhostPlatform; }
+	void SetItemsInScene(vector<LPGAMEOBJECT> listItem) { items = listItem; }
 
 	//vector<LPGAMEOBJECT>* GetItemsInScene() { return &objects; }
 	//void AddObject(LPGAMEOBJECT obj) { objects.push_back(obj); }
