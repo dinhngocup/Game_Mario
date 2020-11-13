@@ -21,7 +21,9 @@ enum eTYPE {
 	//WEAPON
 	FIRE_BALL = 7,
 
-	
+	//BONUS
+	COIN = 8,
+
 
 	//SWITCH SCENE
 	PORTAL = 50,

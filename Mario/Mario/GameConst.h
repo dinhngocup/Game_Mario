@@ -7,5 +7,8 @@
 #define SCREEN_WIDTH 760
 #define SCREEN_HEIGHT 630
 
+#define SCENE_WIDTH 8448
+#define SCENE_HEIGHT 1968
+
 
 #define MAX_FRAME_RATE 120

@@ -53,6 +53,9 @@
     <Filter Include="Framework\Grid">
       <UniqueIdentifier>{ce28836c-ee50-4791-bb48-3ea5b71f4d58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Objects\Bonus">
+      <UniqueIdentifier>{53b97ed6-a8d7-408a-8955-fcc39e05dfc4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -145,9 +148,6 @@
     <ClCompile Include="FlyingState.cpp">
       <Filter>Objects\Player</Filter>
     </ClCompile>
-    <ClCompile Include="BrickQuestion.cpp">
-      <Filter>Objects\Ground</Filter>
-    </ClCompile>
     <ClCompile Include="Goomba.cpp">
       <Filter>Objects\Enemies</Filter>
     </ClCompile>
@@ -171,6 +171,15 @@
     </ClCompile>
     <ClCompile Include="Grid.cpp">
       <Filter>Framework\Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="BrickQuestion.cpp">
+      <Filter>Objects\Bonus</Filter>
+    </ClCompile>
+    <ClCompile Include="Coin.cpp">
+      <Filter>Objects\Bonus</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -276,9 +285,6 @@
     <ClInclude Include="FlyingState.h">
       <Filter>Objects\Player</Filter>
     </ClInclude>
-    <ClInclude Include="BrickQuestion.h">
-      <Filter>Objects\Ground</Filter>
-    </ClInclude>
     <ClInclude Include="Goomba.h">
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
@@ -305,6 +311,13 @@
     </ClInclude>
     <ClInclude Include="GameConst.h">
       <Filter>Framework\Const</Filter>
+    </ClInclude>
+    <ClInclude Include="BrickQuestion.h">
+      <Filter>Objects\Bonus</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="Coin.h">
+      <Filter>Objects\Bonus</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

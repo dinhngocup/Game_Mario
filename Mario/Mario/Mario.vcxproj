@@ -157,6 +157,8 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationSets.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Coin.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="HoldingState.cpp" />
@@ -199,6 +201,7 @@
     <ClInclude Include="BrickQuestion.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="AnimationSets.h" />
+    <ClInclude Include="Coin.h" />
     <ClInclude Include="CrouchingState.h" />
     <ClInclude Include="DefineLibs.h" />
     <ClInclude Include="Enemy.h" />
@@ -212,6 +215,7 @@
     <ClInclude Include="HighJumpingState.h" />
     <ClInclude Include="HoldingState.h" />
     <ClInclude Include="InvisibleObject.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="JumpingState.h" />
     <ClInclude Include="KickingState.h" />
     <ClInclude Include="Koopa.h" />

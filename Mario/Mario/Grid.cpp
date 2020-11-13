@@ -73,22 +73,28 @@ LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, flo
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 	switch (object_type)
 	{
-	case eTYPE::BRICK_QUESTION:
+	case eTYPE::BRICK_QUESTION: {
 		obj = new CBrickQuestion();
 		obj->SetStartPosition(x, y);
 		obj->type = eTYPE::BRICK_QUESTION;
-
-		break;
+		break; 
+	}
 	case eTYPE::GOOMBA: {
 		obj = new CGoomba(state);
 		obj->SetStartPosition(x, y);
 		obj->type = eTYPE::GOOMBA;
-		break; }
+		break; 
+	}
 	case eTYPE::KOOPA: {
-		//DebugOut(L"new koopa\n");
 		obj = new CKoopa(state);
 		obj->SetStartPosition(x, y);
 		obj->type = eTYPE::KOOPA;
+		break;
+	}
+	case eTYPE::COIN: {
+		obj = new CCoin();
+		obj->SetStartPosition(x, y);
+		obj->type = eTYPE::COIN;
 		break;
 	}
 	default:

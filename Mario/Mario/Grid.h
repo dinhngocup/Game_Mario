@@ -6,12 +6,15 @@
 #include "Goomba.h"
 #include "InvisibleObject.h"
 #include "GameConst.h"
+#include "Coin.h"
 
-#define MAX_ROW 15
-#define MAX_COLUMN 50
 
-#define CELL_WIDTH (SCREEN_WIDTH/4.0f)
 #define CELL_HEIGHT (SCREEN_HEIGHT/4.0f)
+#define CELL_WIDTH (SCREEN_WIDTH/4.0f)
+
+#define MAX_ROW (int)(SCENE_HEIGHT/CELL_HEIGHT) + 1
+#define MAX_COLUMN (int)(SCENE_WIDTH/CELL_WIDTH) + 1
+
 class CGrid
 {
 	vector<LPGAMEOBJECT> enemies;

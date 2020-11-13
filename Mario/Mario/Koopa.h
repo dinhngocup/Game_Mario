@@ -48,6 +48,8 @@ public:
 
 	void IsCollisionWithMario(LPCOLLISIONEVENT e);
 	void IsCollisionWithEnemy(LPCOLLISIONEVENT e);
+	void IsCollisionWithBrickSpecially(LPCOLLISIONEVENT e);
+	void IsCollisionWithGhostPlatformSpecially(LPCOLLISIONEVENT e);
 	void AttackedByShell();
 	
 };

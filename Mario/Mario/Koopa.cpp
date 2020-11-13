@@ -27,7 +27,7 @@ void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	DebugOut(L"update koopa\n");
+	//DebugOut(L"update koopa\n");
 
 	CMario* mario = CMario::GetInstance();
 	vy += KOOPA_GRAVITY * dt;
@@ -37,7 +37,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			SetState(STATE_SPIN);
 		}
 		else {
-			if (mario->is_skid ||  vx == 0) {
+			if (mario->is_skid || vx == 0) {
 				x = mario->x + 30.0f * mario->nx;
 				mario->is_skid = false;
 			}
@@ -54,12 +54,14 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGame* game = CGame::GetInstance();
 	vector<LPGAMEOBJECT>* enemies = game->GetCurrentScene()->GetEnemiesInScene();
 	vector<LPGAMEOBJECT>* bricks = game->GetCurrentScene()->GetGhostPlatformsInScene();
+	vector<LPGAMEOBJECT>* items = game->GetCurrentScene()->GetItemsInScene();
 
 	coEvents.clear();
 
 	if (state != STATE_DIE_BY_WEAPON) {
 		CalcPotentialCollisions(bricks, coEvents);
 		CalcPotentialCollisions(enemies, coEvents);
+		CalcPotentialCollisions(items, coEvents);
 	}
 
 	if (coEvents.size() == 0)
@@ -85,48 +87,31 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (state != STATE_DIE_BY_WEAPON) {
 				if (dynamic_cast<CBrick*>(e->obj)) {
-					if (state == STATE_HOLD) {
-						if (e->nx != 0) x += dx;
-						if (e->ny != 0) vy = 0;
-					}
-					else if (state == STATE_WALKING_SWINGS) {
-						if (e->ny != 0) {
-							if (e->ny < 0) {
-								vy = -KOOPA_JUMP_SPEED_Y;
-								vx = this->nx * KOOPA_JUMP_SPEED_X;
-							}
-							else {
-								vy = 0;
-							}
-						}
-						if (e->nx != 0) {
-							vx *= -1;
-							this->nx *= -1;
-						}
-					}
-					else {
+					if (state == STATE_HOLD || state == STATE_WALKING_SWINGS)
+						IsCollisionWithBrickSpecially(e);
+					else
 						IsCollisionWithBrick(e);
-					}
 				}
 				else if (dynamic_cast<CInvisibleObject*>(e->obj)) {
-					if (state == STATE_WALKING_SWINGS) {
-						if (e->ny != 0) {
-							if (e->ny < 0) {
-								DebugOut(L"nxxxx %d\n", this->nx);
-								vy = -KOOPA_JUMP_SPEED_Y;
-								vx = this->nx * KOOPA_JUMP_SPEED_X;
-							}
-							else {
-								y += dy;
-							}
-						}
-						if (e->nx != 0) x += dx;
-					}
+					if (state == STATE_WALKING_SWINGS)
+						IsCollisionWithGhostPlatformSpecially(e);
 					else
 						IsCollisionWithGhostPlatform(e);
 				}
 				else if (dynamic_cast<CEnemy*>(e->obj)) {
 					IsCollisionWithEnemy(e);
+				}
+				else if (dynamic_cast<CBrickQuestion*>(e->obj)) {
+					CBrickQuestion* brick = dynamic_cast<CBrickQuestion*>(e->obj);
+					if (state == STATE_SPIN) {
+						if (e->nx != 0) {
+							brick->SetState(STATE_EMPTY);
+							vx *= -1;
+						}
+						if (e->ny != 0) vy = 0;
+					}
+					else 
+						IsCollisionWithBrick(e);
 				}
 			}
 		}
@@ -321,7 +306,7 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 
 void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 {
-	
+
 	/*DebugOut(L"state %d\n", state);
 	DebugOut(L"e state %d\n", e->obj->state);
 	DebugOut(L"e ableToCheckCollision %d\n", e->obj->ableToCheckCollision);*/
@@ -342,7 +327,7 @@ void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 					AttackedByShell();
 				}
 			}
-			else if (state == STATE_WALKING_SWINGS ||state == STATE_WALKING) {
+			else if (state == STATE_WALKING_SWINGS || state == STATE_WALKING) {
 				if (e->ny < 0) {
 					goomba->SetState(STATE_DIE);
 				}
@@ -425,6 +410,44 @@ void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 			}
 		}
 	}
+}
+
+void CKoopa::IsCollisionWithBrickSpecially(LPCOLLISIONEVENT e)
+{
+	if (state == STATE_HOLD) {
+		if (e->nx != 0) x += dx;
+		if (e->ny != 0) vy = 0;
+	}
+	else if (state == STATE_WALKING_SWINGS) {
+		if (e->ny != 0) {
+			if (e->ny < 0) {
+				vy = -KOOPA_JUMP_SPEED_Y;
+				vx = this->nx * KOOPA_JUMP_SPEED_X;
+			}
+			else {
+				vy = 0;
+			}
+		}
+		if (e->nx != 0) {
+			vx *= -1;
+			this->nx *= -1;
+		}
+	}
+
+}
+
+void CKoopa::IsCollisionWithGhostPlatformSpecially(LPCOLLISIONEVENT e)
+{
+	if (e->ny != 0) {
+		if (e->ny < 0) {
+			vy = -KOOPA_JUMP_SPEED_Y;
+			vx = this->nx * KOOPA_JUMP_SPEED_X;
+		}
+		else {
+			y += dy;
+		}
+	}
+	if (e->nx != 0) x += dx;
 }
 
 void CKoopa::AttackedByShell()
