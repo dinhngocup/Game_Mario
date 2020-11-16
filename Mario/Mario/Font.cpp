@@ -1,32 +1,26 @@
-﻿#include "Sprite.h"
-#include "Game.h"
-#include "Utils.h"
+﻿#include "Font.h"
 
-CSprite::CSprite(int id, int left, int top, int width, int height, LPDIRECT3DTEXTURE9 tex)
+CFont::CFont(int left, int top, int w, int h, int textID)
 {
-	this->id = id;
 	this->left = left;
 	this->top = top;
-	this->right = left + width;
-	this->bottom = top + height;
-	this->texture = tex;
+	this->w = w;
+	this->h = h;
+	this->textID = textID;
 }
 
-void CSprite::Draw(float x, float y, int alpha)
+void CFont::Draw(float x, float y)
 {
-	CGame* game = CGame::GetInstance();
-	game->Draw(x, y, texture, left, top, right, bottom, alpha);
-}
+	LPDIRECT3DTEXTURE9 tex = CTextures::GetInstance()->Get(textID);
+	//CGame::GetInstance()->Draw(x, y, tex, left, top, left + w, top + h);
 
-void CSprite::DrawFlipX(float x, float y, int alpha, int nx, int offset, int ny)
-{
 	LPD3DXSPRITE spriteHandler = CGame::GetInstance()->GetSpriteHandler();
 
 	float cam_x, cam_y;
 	CGame::GetInstance()->GetCamPos(cam_x, cam_y);
 
-	x += (right - left)*3 / 2;
-	y += (bottom - top)*3 / 2;
+	x += w * 3 / 2;
+	y += h * 3 / 2;
 
 	// tọa độ của sprite trên màn hình
 	D3DXVECTOR3 p(floor(x - cam_x), floor(y - cam_y), 0);
@@ -35,8 +29,8 @@ void CSprite::DrawFlipX(float x, float y, int alpha, int nx, int offset, int ny)
 	RECT r;
 	r.left = left;
 	r.top = top;
-	r.right = right;
-	r.bottom = bottom;
+	r.right = left + w;
+	r.bottom = top + h;
 
 	// dùng ma trận middleTransform để tính ra các thông số transform
 	// dùng ma trận newTransform để lưu lại ma trận sau khi tính -  tức là tile sau khi đã scale bự lên
@@ -50,14 +44,14 @@ void CSprite::DrawFlipX(float x, float y, int alpha, int nx, int offset, int ny)
 	các thông số còn lại dùng cho việc xoay góc bao nhiêu độ,... ở đây vẽ tile không cần
 	*/
 	D3DXVECTOR2 vector_p(p.x, p.y);
-	D3DXVECTOR2 vector_scale(3.0f * nx, 3.0f * ny);
+	D3DXVECTOR2 vector_scale(3.0f, 3.0f);
 
 	D3DXMatrixTransformation2D(&middleTransform, &vector_p, 0, &vector_scale, NULL, 0.0f, NULL);
 
-	D3DXVECTOR3 center = D3DXVECTOR3((float)(right - left) / 2 + offset, (float)(bottom - top) / 2, 0);
+	D3DXVECTOR3 center = D3DXVECTOR3((float)w / 2, (float)h / 2, 0);
 
 	D3DXMATRIX newTransform = oldTransform * middleTransform;
 	spriteHandler->SetTransform(&newTransform);
-	spriteHandler->Draw(texture, &r, &center, &p, D3DCOLOR_ARGB(alpha, 255, 255, 255));
+	spriteHandler->Draw(tex, &r, &center, &p, D3DCOLOR_ARGB(255, 255, 255, 255));
 	spriteHandler->SetTransform(&oldTransform);
 }

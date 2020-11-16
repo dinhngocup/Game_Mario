@@ -56,6 +56,9 @@
     <Filter Include="Objects\Bonus">
       <UniqueIdentifier>{53b97ed6-a8d7-408a-8955-fcc39e05dfc4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\Hub">
+      <UniqueIdentifier>{72f7c246-8c9e-4f37-92be-8b976daab54b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -178,8 +181,14 @@
     <ClCompile Include="Coin.cpp">
       <Filter>Objects\Bonus</Filter>
     </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>Framework\Hub</Filter>
+    </ClCompile>
+    <ClCompile Include="Hub.cpp">
+      <Filter>Framework\Hub</Filter>
+    </ClCompile>
     <ClCompile Include="Item.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Objects\Bonus</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -315,8 +324,16 @@
     <ClInclude Include="BrickQuestion.h">
       <Filter>Objects\Bonus</Filter>
     </ClInclude>
-    <ClInclude Include="Item.h" />
     <ClInclude Include="Coin.h">
+      <Filter>Objects\Bonus</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>Framework\Hub</Filter>
+    </ClInclude>
+    <ClInclude Include="Hub.h">
+      <Filter>Framework\Hub</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
       <Filter>Objects\Bonus</Filter>
     </ClInclude>
   </ItemGroup>

@@ -15,6 +15,7 @@
 #define MAX_ROW (int)(SCENE_HEIGHT/CELL_HEIGHT) + 1
 #define MAX_COLUMN (int)(SCENE_WIDTH/CELL_WIDTH) + 1
 
+
 class CGrid
 {
 	vector<LPGAMEOBJECT> enemies;
@@ -29,10 +30,11 @@ public:
 	CGrid(LPCWSTR objFilePath);
 	~CGrid() {};
 
-	void AddObjectIntoGrid(int object_type, float x, float y, float w, float h, int ani_id, int type, int state = 0);
+	void AddObjectIntoGrid(int id, int object_type, float x, float y, float w, float h, int ani_id, int type, int state = 0);
 	void GetListObjInGrid(float cam_x, float cam_y);
-	LPGAMEOBJECT CreateNewObj(int obj_type, float x, float y, float w, float h, int ani_id, int type, int state = 0);
+	LPGAMEOBJECT CreateNewObj(int id, int obj_type, float x, float y, float w, float h, int ani_id, int type, int state = 0);
 	void Classify(LPGAMEOBJECT obj);
+	void UpdatePositionInGrid(float cam_x, float cam_y);
 	void ReadFileObj();
 	void ReloadGrid();
 };

@@ -1,4 +1,5 @@
 ﻿#include "Goomba.h"
+#include "PlayScene.h"
 
 CGoomba::CGoomba(int state)
 {
@@ -18,23 +19,29 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	//DebugOut(L"update goomba\n");
 	vy += GOOMBA_GRAVITY * dt;
-	//DebugOut(L"y %f\n", y);
 	CGameObject::Update(dt);
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	CGame* game = CGame::GetInstance();
-	vector<LPGAMEOBJECT>* enemies = game->GetCurrentScene()->GetEnemiesInScene();
-	vector<LPGAMEOBJECT>* bricks = game->GetCurrentScene()->GetGhostPlatformsInScene();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+	vector<LPGAMEOBJECT> enemies = scene->enemies;
+	vector<LPGAMEOBJECT> bricks = scene->ghost_platforms;
+	vector<LPGAMEOBJECT> items = scene->items;
+
 	coEvents.clear();
 
 	if (state != STATE_DIE_BY_WEAPON) {
-		CalcPotentialCollisions(bricks, coEvents);
-		CalcPotentialCollisions(enemies, coEvents);
+		CalcPotentialCollisions(&bricks, coEvents);
+		CalcPotentialCollisions(&enemies, coEvents);
+		CalcPotentialCollisions(&items, coEvents);
+		//DebugOut(L"size items %d\n", items.size());
+		DebugOut(L"size coEve %d\n", coEvents.size());
 
 	}
 
+	
 	if (coEvents.size() == 0)
 	{
 
@@ -53,7 +60,8 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
 
-
+		//DebugOut(L"size %d\n", coEventsResult.size());
+		//DebugOut(L"size in gooomba %d\n", coEventsResult.size());
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
@@ -61,7 +69,9 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			// biến thành die by weapon, xong nó xét vc tiếp với gạch
 			// làm reset vy của nấm => khi thành die by weapon thì mấy e tiếp theo pass luôn
 			if (state != STATE_DIE_BY_WEAPON) {
-				if (dynamic_cast<CBrick*>(e->obj)) {
+				if (dynamic_cast<CBrickQuestion*>(e->obj)) {
+					DebugOut(L"dung brick\n");
+					
 					IsCollisionWithBrick(e);
 				}
 				else if (dynamic_cast<CInvisibleObject*>(e->obj)) {
@@ -70,7 +80,10 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else if (dynamic_cast<CEnemy*>(e->obj)) {
 					IsCollisionWithEnemy(e);
 				}
-
+				else if (dynamic_cast<CBrick*>(e->obj)) {
+					//DebugOut(L"dung ghost\n");
+					IsCollisionWithBrick(e);
+				}
 			}
 		}
 
@@ -116,8 +129,8 @@ void CGoomba::SetState(int state)
 	switch (state)
 	{
 	case STATE_WALKING:
-		vx = -GOOMBA_WALKING_SPEED;
 		vx = 0;
+		vx = -GOOMBA_WALKING_SPEED;
 		break;
 	case STATE_DIE:
 		y += GOOMBA_DISPARITIES;

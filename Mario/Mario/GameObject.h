@@ -35,7 +35,8 @@ struct CCollisionEvent
 class CGameObject
 {
 public:
-	
+	int id;
+
 	eTYPE type;
 	int type_object;
 
@@ -61,7 +62,10 @@ public:
 	bool ableToCheckCollision = true;
 	
 	float start_x, start_y;
+
+
 public:
+	int h, w;
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
 	void GetPosition(float& x, float& y) { x = this->x; y = this->y; }
@@ -69,7 +73,8 @@ public:
 	float GetY() { return y; }
 	void SetX(float x) { this->x = x; }
 	void SetY(float y) { this->y = y; }
-
+	void SetId(int id) { this->id = id; }
+	int GetId() { return id; }
 	eTYPE GetType() { return this->type; }
 
 	void SetHealth(bool health) { this->health = health; }
@@ -78,7 +83,7 @@ public:
 	void GetSpeed(float& vx, float& vy) { vx = this->vx; vy = this->vy; }
 
 	int GetState() { return this->state; }
-
+	
 	virtual void RenderBoundingBox();
 
 	void SetStartPosition(float start_x, float start_y) {

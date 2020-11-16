@@ -1,5 +1,6 @@
 ﻿#include "FireBall.h"
 #include "Game.h"
+#include "PlayScene.h"
 
 CFireBall::CFireBall()
 {
@@ -25,8 +26,9 @@ void CFireBall::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 	vy += FIRE_BALL_GRAVITY * dt;
 	CGameObject::Update(dt, colliable_objects);
 
-	vector<LPGAMEOBJECT>* bricks = game->GetCurrentScene()->GetGhostPlatformsInScene();
-	vector<LPGAMEOBJECT>* enemies = game->GetCurrentScene()->GetEnemiesInScene();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+	vector<LPGAMEOBJECT> enemies = scene->enemies;
+	vector<LPGAMEOBJECT> bricks = scene->ghost_platforms;
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -39,8 +41,8 @@ void CFireBall::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		return;
 	}
 
-	CalcPotentialCollisions(bricks, coEvents);
-	CalcPotentialCollisions(enemies, coEvents);
+	CalcPotentialCollisions(&bricks, coEvents);
+	CalcPotentialCollisions(&enemies, coEvents);
 
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)

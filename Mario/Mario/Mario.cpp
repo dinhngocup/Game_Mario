@@ -4,7 +4,7 @@
 
 #include "Mario.h"
 #include "Game.h"
-
+#include "PlayScene.h"
 
 CMario* CMario::__instance = NULL;
 CMario::CMario() : CGameObject()
@@ -21,9 +21,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt);
 
 	CGame* game = CGame::GetInstance();
-	vector<LPGAMEOBJECT>* bricks = game->GetCurrentScene()->GetGhostPlatformsInScene();
-	vector<LPGAMEOBJECT>* enemies = game->GetCurrentScene()->GetEnemiesInScene();
-	vector<LPGAMEOBJECT>* items = game->GetCurrentScene()->GetItemsInScene();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+	vector<LPGAMEOBJECT> enemies = scene->enemies;
+	vector<LPGAMEOBJECT> bricks = scene->ghost_platforms;
+	vector<LPGAMEOBJECT> items = scene->items;
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -33,9 +34,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	// turn off collision when die 
 	if (state != MARIO_STATE_DIE) {
-		CalcPotentialCollisions(bricks, coEvents);
-		CalcPotentialCollisions(enemies, coEvents);
-		CalcPotentialCollisions(items, coEvents);
+		CalcPotentialCollisions(&bricks, coEvents);
+		CalcPotentialCollisions(&enemies, coEvents);
+		CalcPotentialCollisions(&items, coEvents);
 	}
 
 	if (GetTickCount() - untouchable_start > MARIO_UNTOUCHABLE_TIME)

@@ -1,5 +1,5 @@
 ﻿#include "HoldingState.h"
-
+#include "PlayScene.h"
 CHoldingState::CHoldingState(int level)
 {
 	DebugOut(L"holding\n");
@@ -33,14 +33,17 @@ void CHoldingState::Update(float dt)
 
 	}
 	CGame* game = CGame::GetInstance();
-	vector<LPGAMEOBJECT>* enemies = game->GetCurrentScene()->GetEnemiesInScene();
-	for (int i = 0; i < enemies->size(); i++) {
-		if (dynamic_cast<CKoopa*>(enemies->at(i)) && enemies->at(i)->state == STATE_HOLD) {
+
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+	vector<LPGAMEOBJECT> enemies = scene->enemies;
+
+	for (int i = 0; i < enemies.size(); i++) {
+		if (dynamic_cast<CKoopa*>(enemies.at(i)) && enemies.at(i)->state == STATE_HOLD) {
 			//enemies->at(i)->vx = mario->vx;
 
-			enemies->at(i)->nx = mario->nx;
+			enemies.at(i)->nx = mario->nx;
 
-			enemies->at(i)->x += (mario->vx - enemies->at(i)->vx) * dt;
+			enemies.at(i)->x += (mario->vx - enemies.at(i)->vx) * dt;
 
 			//DebugOut(L"mario %f\n", mario->vx);
 			//DebugOut(L"rua %f\n", enemies->at(i)->vx);

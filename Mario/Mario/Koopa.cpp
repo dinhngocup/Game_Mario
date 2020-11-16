@@ -1,4 +1,5 @@
 ﻿#include "Koopa.h"
+#include "PlayScene.h"
 
 CKoopa::CKoopa()
 {
@@ -6,8 +7,8 @@ CKoopa::CKoopa()
 
 CKoopa::CKoopa(int state)
 {
-	SetState(state);
 	nx = -1;
+	SetState(state);
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)
@@ -52,16 +53,17 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	CGame* game = CGame::GetInstance();
-	vector<LPGAMEOBJECT>* enemies = game->GetCurrentScene()->GetEnemiesInScene();
-	vector<LPGAMEOBJECT>* bricks = game->GetCurrentScene()->GetGhostPlatformsInScene();
-	vector<LPGAMEOBJECT>* items = game->GetCurrentScene()->GetItemsInScene();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+	vector<LPGAMEOBJECT> enemies = scene->enemies;
+	vector<LPGAMEOBJECT> bricks = scene->ghost_platforms;
+	vector<LPGAMEOBJECT> items = scene->items;
 
 	coEvents.clear();
 
 	if (state != STATE_DIE_BY_WEAPON) {
-		CalcPotentialCollisions(bricks, coEvents);
-		CalcPotentialCollisions(enemies, coEvents);
-		CalcPotentialCollisions(items, coEvents);
+		CalcPotentialCollisions(&bricks, coEvents);
+		CalcPotentialCollisions(&enemies, coEvents);
+		CalcPotentialCollisions(&items, coEvents);
 	}
 
 	if (coEvents.size() == 0)
@@ -159,8 +161,8 @@ void CKoopa::SetState(int state)
 	switch (state)
 	{
 	case STATE_WALKING:
-		vx = nx * KOOPA_WALKING_SPEED;
 		vx = 0;
+		vx = nx * KOOPA_WALKING_SPEED;
 		break;
 	case STATE_DIE:
 		//y += KOOPA_DISPARITIES;

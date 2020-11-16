@@ -1,8 +1,11 @@
 #include "BrickQuestion.h"
+#include "Game.h"
+#include "PlayScene.h"
 
 CBrickQuestion::CBrickQuestion()
 {
 	SetState(STATE_NORMAL);
+	//this->vx = 0.001;
 }
 
 void CBrickQuestion::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
@@ -20,6 +23,7 @@ void CBrickQuestion::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		CGameObject::Update(dt);
 		y += dy;
 	}
+
 }
 
 void CBrickQuestion::Render()

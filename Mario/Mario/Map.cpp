@@ -33,7 +33,7 @@ void CMap::DrawMap(float cam_x, float cam_y)
 	int h = CTiles::GetInstance()->GetFrameHeight();
 
 	int begin_row = cam_y / h;
-	int end_row = (cam_y + game->GetScreenHeight()) / h + 1;
+	int end_row = (cam_y + game->GetScreenHeight() - height_board) / h + 1;
 
 	int begin_column = cam_x / w;
 	int end_column = (cam_x + game->GetScreenWidth()) / w +  1;

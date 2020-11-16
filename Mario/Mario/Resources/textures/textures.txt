@@ -5,8 +5,9 @@
 20	textures\brick_transparent.png	255	0	255
 30	textures\mario(2).png	255	255	255
 40	textures\fire_ball.png	0	0	0
-50	textures\enemy.png	255	255	255
-
+50	textures\enemy.png	63	72	204
+60	textures\hub.png	0	0	0
+	
 # id	left	top	width	height	texture_id
 [SPRITES]
 # BIG MARIO 
@@ -227,6 +228,11 @@
 40038	307	101	8	14	10
 40039	319	101	8	14	10
 
+##################################################
+#HUB
+40040	11	127	234	30	60
+
+
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 # ==== MARIO =========
@@ -421,4 +427,5 @@
 8	712	713	714	715
 # COIN
 9	721
-	
+
+
