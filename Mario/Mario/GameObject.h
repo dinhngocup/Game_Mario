@@ -44,7 +44,7 @@ public:
 	float y;
 
 	bool health = true;
-	
+	bool is_in_grid = false;
 
 	float dx;	// dx = vx*dt
 	float dy;	// dy = vy*dt

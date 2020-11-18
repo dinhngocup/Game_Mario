@@ -14,6 +14,7 @@ private:
 	bool is_right = false;
 	bool is_left = false;
 	bool can_change_to_walking = false;
+	DWORD start_skid;
 public:
 	CRunningState() {};
 	CRunningState(int level);

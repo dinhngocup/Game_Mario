@@ -39,7 +39,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		else {
 			if (mario->is_skid || vx == 0) {
-				x = mario->x + 30.0f * mario->nx;
+				x = mario->x + 27.0f * mario->nx;
 				mario->is_skid = false;
 			}
 			else {

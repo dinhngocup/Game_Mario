@@ -7,14 +7,14 @@ CGrid::CGrid(LPCWSTR objFilePath)
 	this->objFilePath = objFilePath;
 }
 
-void CGrid::AddObjectIntoGrid(int id, int object_type, float x, float y, float w, float h, int ani_id, int type, int state)
+void CGrid::AddObjectIntoGrid(int id, int object_type, float x, float y, float w, float h, int ani_id, int type, int state, int nx)
 {
 	int top = (int)(y / CELL_HEIGHT);
 	int bottom = (int)((y + h) / CELL_HEIGHT);
 	int left = (int)(x / CELL_WIDTH);
 	int right = (int)((x + w) / CELL_WIDTH);
 
-	LPGAMEOBJECT obj = CreateNewObj(id, object_type, x, y, w, h, ani_id, type, state);
+	LPGAMEOBJECT obj = CreateNewObj(id, object_type, x, y, w, h, ani_id, type, state, nx);
 
 
 
@@ -54,8 +54,9 @@ void CGrid::GetListObjInGrid(float cam_x, float cam_y)
 		for (int j = left - 1; j <= right; j++) {
 			if (left < 0) left = 0;
 			for (int k = 0; k < cells[i][j].size(); k++) {
-				if (cells[i][j].at(k)->GetHealth()) {
+				if (cells[i][j].at(k)->GetHealth() && !cells[i][j].at(k)->is_in_grid) {
 					Classify(cells[i][j].at(k));
+					cells[i][j].at(k)->is_in_grid = true;
 				}
 			}
 		}
@@ -64,11 +65,10 @@ void CGrid::GetListObjInGrid(float cam_x, float cam_y)
 
 	game->GetCurrentScene()->SetEnemiesInScene(enemies);
 	game->GetCurrentScene()->SetItemsInScene(items);
-	//DebugOut(L"size ene %d\n", enemies.size());
 
 }
 
-LPGAMEOBJECT CGrid::CreateNewObj(int id, int object_type, float x, float y, float w, float h, int ani_id, int type, int state)
+LPGAMEOBJECT CGrid::CreateNewObj(int id, int object_type, float x, float y, float w, float h, int ani_id, int type, int state, int nx)
 {
 	//DebugOut(L"insert\n");
 	CGameObject* obj = NULL;
@@ -98,6 +98,13 @@ LPGAMEOBJECT CGrid::CreateNewObj(int id, int object_type, float x, float y, floa
 		obj->SetStartPosition(x, y);
 		obj->type = eTYPE::COIN;
 		break;
+	}
+	case eTYPE::FIRE_BALL: {
+		obj = new CFireBall(x, y, nx);
+		obj->type = eTYPE::FIRE_BALL;
+		obj->type_object = type;
+		obj->SetId(id);
+		return obj;
 	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
@@ -159,29 +166,38 @@ void CGrid::UpdatePositionInGrid(float cam_x, float cam_y)
 				}
 			}
 
-
 		int top = (int)(enemy->GetY() / CELL_HEIGHT);
 		int bottom = (int)((enemy->GetY() + enemy->h) / CELL_HEIGHT);
 		int left = (int)(enemy->GetX() / CELL_WIDTH);
 		int right = (int)((enemy->GetX() + enemy->w) / CELL_WIDTH);
-
-
-		
-
 		for (int i = top; i <= bottom; i++)
 			for (int j = left; j <= right; j++) {
 				cells[i][j].push_back(enemy);
 			}
 	}
+	for (int m = 0; m < items.size(); m++) {
+		LPGAMEOBJECT item = items[m];
 
-	/*for (int i = top_cell; i <= bottom_cell; i++) {
-		for (int j = 0; j < cells[i][right_cell + 1].size(); j++) {
-			cells[i][right_cell + 1].at(j)->ResetPosition();
-		}
-		for (int j = 0; j < cells[i][left_cell -1].size(); j++) {
-			cells[i][left_cell - 1].at(j)->ResetPosition();
-		}
-	}*/
+		for (int i = top_cell; i <= bottom_cell; i++)
+			for (int j = left_cell; j <= right_cell; j++) {
+				if (left_cell < 0) left_cell = 0;
+				for (int k = 0; k < cells[i][j].size(); k++) {
+					if (cells[i][j].at(k)->GetId() == item->GetId()) {
+						cells[i][j].erase(cells[i][j].begin() + k);
+					}
+				}
+			}
+
+		int top = (int)(item->GetY() / CELL_HEIGHT);
+		int bottom = (int)((item->GetY() + item->h) / CELL_HEIGHT);
+		int left = (int)(item->GetX() / CELL_WIDTH);
+		int right = (int)((item->GetX() + item->w) / CELL_WIDTH);
+		for (int i = top; i <= bottom; i++)
+			for (int j = left; j <= right; j++) {
+				cells[i][j].push_back(item);
+			}
+	}
+
 
 
 
@@ -229,5 +245,8 @@ void CGrid::ReloadGrid()
 			cells[i][j].clear();
 	ReadFileObj();
 }
+
+
+
 
 

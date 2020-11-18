@@ -10,6 +10,8 @@ CFireBall::CFireBall()
 CFireBall::CFireBall(float start_x, float start_y, int nx)
 {
 	//OutputDebugString(L"new fire ball\n");
+	w = 24;
+	h = 24;
 	vx = 0.9f * nx;
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 	LPANIMATION_SET ani_set = animation_sets->Get(4);
@@ -93,7 +95,7 @@ void CFireBall::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 void CFireBall::Render()
 {
-	//OutputDebugString(L"render fire ball\n");
+	OutputDebugString(L"render fire ball\n");
 	animation_set->at(0)->Render(x, y);
 	//RenderBoundingBox();
 }
@@ -121,8 +123,8 @@ void CFireBall::RenderBoundingBox()
 
 void CFireBall::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)
 {
-	left = x - 12;
-	top = y - 12;
+	left = x;
+	top = y;
 	right = left + 24;
 	bottom = top + 24;
 }

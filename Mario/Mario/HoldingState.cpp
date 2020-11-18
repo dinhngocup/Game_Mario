@@ -11,9 +11,8 @@ CHoldingState::CHoldingState(int level)
 void CHoldingState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
-	
+
 	float speed_x = abs(mario->vx);
-	//DebugOut(L"vx %f\n", mario->vx);
 
 	if (speed_x < 0.7 || (is_max_speed && is_speed_low)) {
 		is_max_speed = false;
@@ -22,6 +21,7 @@ void CHoldingState::Update(float dt)
 	else {
 		is_max_speed = true;
 	}
+	DebugOut(L"vx %f\n", mario->vx);
 
 
 	if (speed_x < MARIO_WALKING_SPEED && can_change_to_walking) {
@@ -39,14 +39,11 @@ void CHoldingState::Update(float dt)
 
 	for (int i = 0; i < enemies.size(); i++) {
 		if (dynamic_cast<CKoopa*>(enemies.at(i)) && enemies.at(i)->state == STATE_HOLD) {
-			//enemies->at(i)->vx = mario->vx;
 
 			enemies.at(i)->nx = mario->nx;
 
 			enemies.at(i)->x += (mario->vx - enemies.at(i)->vx) * dt;
 
-			//DebugOut(L"mario %f\n", mario->vx);
-			//DebugOut(L"rua %f\n", enemies->at(i)->vx);
 			break;
 		}
 	}
@@ -101,9 +98,7 @@ void CHoldingState::OnKeyUp(int KeyCode)
 	CMario* mario = CMario::GetInstance();
 	switch (KeyCode) {
 	case DIK_A:
-		mario->is_holding = false;
-		mario->is_attacking_by_spinning = false;
-		mario->ChangeState(new CKickingState(level));
+
 		break;
 	}
 }
@@ -122,8 +117,11 @@ void CHoldingState::KeyState(BYTE* states)
 		}
 		else if (game->IsKeyDown(DIK_RIGHT))
 		{
-			if (mario->nx < 0)
+			if (mario->nx < 0) {
 				mario->is_skid = true;
+				start_skid = GetTickCount64();
+				//DebugOut(L"skid right\n");
+			}
 			SetAnimation(level);
 			can_change_to_walking = false;
 			is_right = true;
@@ -133,23 +131,22 @@ void CHoldingState::KeyState(BYTE* states)
 			}
 			else
 			{
-				can_change_to_walking = false;
 				is_speed_low = true;
 				acceleration = -MARIO_ACCELERATION;
-				//mario->is_skid = true;
 				mario->nx = 1;
-				DWORD stop_skid = GetTickCount();
-				if (stop_skid - start_skid >= 300) {
+				DWORD stop_skid = GetTickCount64();
+				if (stop_skid - start_skid >= 400) {
 					is_speed_low = false;
 					acceleration = MARIO_ACCELERATION;
 				}
-				//SetAnimation(level);
 			}
-
 		}
 		else if (game->IsKeyDown(DIK_LEFT)) {
-			if (mario->nx > 0)
+			if (mario->nx > 0) {
 				mario->is_skid = true;
+				start_skid = GetTickCount64();
+				//DebugOut(L"skid left\n");
+			}
 			SetAnimation(level);
 			is_left = true;
 			can_change_to_walking = false;
@@ -160,26 +157,28 @@ void CHoldingState::KeyState(BYTE* states)
 			}
 			else
 			{
-				can_change_to_walking = false;
 				is_speed_low = true;
 				acceleration = -MARIO_ACCELERATION;
 				mario->nx = -1;
-				//mario->is_skid = true;
-				DWORD stop_skid = GetTickCount();
+				DWORD stop_skid = GetTickCount64();
 				if (stop_skid - start_skid >= 400) {
 					mario->nx = -1;
 					is_speed_low = false;
-					//mario->is_skid = false;
 					acceleration = MARIO_ACCELERATION;
 				}
 				//SetAnimation(level);
 			}
+			//DebugOut(L"nx left%d\n", mario->nx);
 
 		}
 	}
 	else if (!game->IsKeyDown(DIK_A)) {
 		is_speed_low = true;
-		acceleration = -MARIO_ACCELERATION;
-		can_change_to_walking = true;
+		acceleration = -MARIO_ACCELERATION * 3;
+		if (mario->vx <= 0 && mario->nx > 0 || mario->vx >= 0 && mario->nx < 0) {
+			mario->is_holding = false;
+			mario->is_attacking_by_spinning = false;
+			mario->ChangeState(new CKickingState(level));
+		}
 	}
 }

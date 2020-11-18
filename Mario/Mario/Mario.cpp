@@ -19,8 +19,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 
 	player_state->Update(dt);
-
 	vy += MARIO_GRAVITY * dt;
+	if (dynamic_cast<CRunningState*>(player_state) ||
+		dynamic_cast<CHoldingState*>(player_state) ||
+		dynamic_cast<CFlyingState*>(player_state))
+		scene->UpdateSpeedBar(abs(vx));
 	CGameObject::Update(dt);
 
 	vector<LPGAMEOBJECT> enemies = scene->enemies;
@@ -70,6 +73,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				IsCollisionWithGhostPlatform(e);
 			}
 			else if (dynamic_cast<CEnemy*>(e->obj)) {
+				if (is_holding && e->obj->state == STATE_HOLD) {
+
+				}
+				else
 				e->obj->IsCollisionWithMario(e);
 			}
 			else if (dynamic_cast<CBrickQuestion*>(e->obj)) {
@@ -92,6 +99,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CMario::Render()
 {
+	if (dynamic_cast<CRunningState*>(player_state))
+		player_state->SetAnimation(level);
 	this->ani = player_state->GetAnimation();
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;

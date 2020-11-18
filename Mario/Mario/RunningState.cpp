@@ -4,7 +4,7 @@ CRunningState::CRunningState(int level)
 {
 	DebugOut(L"Running\n");
 	this->level = level;
-	
+
 	SetAnimation(level);
 	CMario* mario = CMario::GetInstance();
 	acceleration = MARIO_ACCELERATION;
@@ -36,8 +36,8 @@ void CRunningState::Update(float dt)
 	//DebugOut(L"vx %f\n", speed_x);
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 
-	scene->UpdateSpeedBar(speed_x);
-	
+	//scene->UpdateSpeedBar(speed_x);
+
 	if (speed_x < MARIO_WALKING_SPEED && can_change_to_walking && is_rendered_completely) {
 		DebugOut(L"change to walking\n");
 		is_speed_low = false;
@@ -109,10 +109,10 @@ void CRunningState::OnKeyDown(int KeyCode)
 		}
 		else if (level == FIRE_LEVEL && is_rendered_completely) {
 			if (mario->number_attack == 0 || mario->number_attack == 1) {
-				mario->time_start_attack = GetTickCount();
+				mario->time_start_attack = GetTickCount64();
 			}
 			mario->number_attack++;
-			DWORD count = GetTickCount();
+			DWORD count = GetTickCount64();
 
 			if (count - mario->time_start_attack <= 1000 && mario->number_attack <= 2) {
 				ani = FIRE_MARIO_ANI_THROW;
@@ -128,7 +128,7 @@ void CRunningState::OnKeyDown(int KeyCode)
 			else {
 				DebugOut(L"ignore\n");
 			}
-			
+
 		}
 		return;
 		break;
@@ -183,12 +183,18 @@ void CRunningState::KeyState(BYTE* state)
 				else
 				{
 					// bật cờ này để cho mario giảm hết tốc độ rồi quay đầu chứ hong chuyển về walking state
+				if (!is_skid && mario->nx < 0) {
+					start_skid = GetTickCount64();
+						is_skid = true;
+				}
+					
 					can_change_to_walking = false;
 					is_speed_low = true;
 					acceleration = -MARIO_ACCELERATION;
-					is_skid = true;
+					DWORD stop_skid = GetTickCount64();
 					// tăng tốc mario trở lại sau khi đã xả hết tốc độ
-					if (mario->vx >= 0) {
+					//if (mario->vx >= 0) {
+					if (stop_skid - start_skid >= 400) {
 						is_skid = false;
 						mario->nx = 1;
 						is_speed_low = false;
@@ -210,11 +216,16 @@ void CRunningState::KeyState(BYTE* state)
 				}
 				else
 				{
+					if (!is_skid && mario->nx > 0) {
+						start_skid = GetTickCount64();
+						is_skid = true;
+					}
 					can_change_to_walking = false;
 					is_speed_low = true;
 					acceleration = -MARIO_ACCELERATION;
-					is_skid = true;
-					if (mario->vx <= 0) {
+					DWORD stop_skid = GetTickCount64();
+					//if (mario->vx ><= 0) {
+					if (stop_skid - start_skid >= 400) {
 						mario->nx = -1;
 						is_speed_low = false;
 						is_skid = false;
@@ -233,7 +244,7 @@ void CRunningState::KeyState(BYTE* state)
 		can_change_to_walking = true;
 	}
 	if (game->IsKeyDown(DIK_X)) {
-		mario->time_start_jump = GetTickCount();
+		mario->time_start_jump = GetTickCount64();
 		mario->ChangeState(new CJumpingState(level));
 	}
 }

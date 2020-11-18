@@ -1,7 +1,7 @@
 #pragma once
 
 #define MARIO_WALKING_SPEED		0.3f 
-#define MARIO_ACCELERATION	0.0008f 
+#define MARIO_ACCELERATION	0.0005f 
 #define MARIO_RUNNING_SPEED		0.3f 
 //0.1f
 #define MARIO_JUMP_SPEED_Y		0.6f

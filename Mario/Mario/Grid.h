@@ -7,6 +7,7 @@
 #include "InvisibleObject.h"
 #include "GameConst.h"
 #include "Coin.h"
+#include "FireBall.h"
 
 
 #define CELL_HEIGHT (SCREEN_HEIGHT/4.0f)
@@ -30,9 +31,9 @@ public:
 	CGrid(LPCWSTR objFilePath);
 	~CGrid() {};
 
-	void AddObjectIntoGrid(int id, int object_type, float x, float y, float w, float h, int ani_id, int type, int state = 0);
+	void AddObjectIntoGrid(int id, int object_type, float x, float y, float w, float h, int ani_id, int type, int state = 0, int nx = 1);
 	void GetListObjInGrid(float cam_x, float cam_y);
-	LPGAMEOBJECT CreateNewObj(int id, int obj_type, float x, float y, float w, float h, int ani_id, int type, int state = 0);
+	LPGAMEOBJECT CreateNewObj(int id, int obj_type, float x, float y, float w, float h, int ani_id, int type, int state = 0, int nx = 1);
 	void Classify(LPGAMEOBJECT obj);
 	void UpdatePositionInGrid(float cam_x, float cam_y);
 	void ReadFileObj();

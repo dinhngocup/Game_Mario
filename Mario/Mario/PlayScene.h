@@ -49,6 +49,8 @@ protected:
 	CHub* hub;
 	vector<Number> numbers;
 	DWORD previousTime;
+	DWORD previousTimeUpdateSpeedBar;
+	bool is_updated_bar = false;
 	int time_game;
 	int time_limit;
 public:

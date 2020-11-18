@@ -242,7 +242,7 @@ void CPlayScene::Update(DWORD dt)
 {
 	UpdateHub(dt);
 	if (player->is_attacking) {
-		CGameObject* obj = NULL;
+		//CGameObject* obj = NULL;
 		float x;
 		if (player->nx > 0) {
 			x = player->GetX() + MARIO_BIG_BBOX_WIDTH / 2;
@@ -251,11 +251,8 @@ void CPlayScene::Update(DWORD dt)
 			x = player->GetX() - MARIO_BIG_BBOX_WIDTH / 2;
 
 		float y = player->GetY();
-
-		obj = new CFireBall(x, y, player->nx);
-
-		obj->type = eTYPE::FIRE_BALL;
-		items.push_back(obj);
+		grid->AddObjectIntoGrid(100, eTYPE::FIRE_BALL, x, y, 20,0,0, eTYPE_OBJECT::ITEM, 0, player->nx);
+		
 		player->is_attacking = false;
 	}
 
@@ -265,10 +262,12 @@ void CPlayScene::Update(DWORD dt)
 	for (size_t i = 0; i < items.size(); i++)
 	{
 		items[i]->Update(dt);
+		items[i]->is_in_grid = false;
 	}
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
 		enemies[i]->Update(dt);
+		enemies[i]->is_in_grid = false;
 	}
 	player->Update(dt);
 
@@ -303,7 +302,6 @@ void CPlayScene::Update(DWORD dt)
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
 		if (!enemies[i]->GetHealth()) {
-			LPGAMEOBJECT x = enemies[i];
 			enemies.erase(enemies.begin() + i);
 		}
 	}
@@ -314,7 +312,7 @@ void CPlayScene::Update(DWORD dt)
 			items.erase(items.begin() + i);
 		}
 	}
-
+	//DebugOut(L"items.size() %d\n", items.size());
 }
 
 void CPlayScene::Render()
@@ -331,7 +329,6 @@ void CPlayScene::Render()
 	}
 
 
-
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
 		enemies[i]->Render();
@@ -341,6 +338,7 @@ void CPlayScene::Render()
 	{
 		ghost_platforms[i]->Render();
 	}
+
 	for (size_t i = 0; i < items.size(); i++)
 	{
 		items[i]->Render();
@@ -457,18 +455,43 @@ void CPlayScene::RenderHub()
 
 void CPlayScene::UpdateSpeedBar(float mario_speed)
 {
+	if (mario_speed <= 0.3f) {
+		for (int i = 15; i <= 20; i++) {
+			numbers.at(i).id = 38;
+		}
+		return;
+	}
+
 	int boundary = (mario_speed - 0.3) / (0.4 / 6);
 	if (boundary > 5) boundary = 5;
 	if (boundary < 0) boundary = 0;
 	int out_bound = 15 + boundary + 1;
-	//DebugOut(L"boundary %d\n", boundary);
-	//DebugOut(L"out_bound %d\n", out_bound);
+
 	for (int i = 15; i <= 15 + boundary; i++) {
 		numbers.at(i).id = 37;
 	}
 	for (int i = out_bound; i <= 20; i++) {
 		numbers.at(i).id = 38;
 	}
+	if (mario_speed >= 0.7) {
+		if (!is_updated_bar) {
+			previousTimeUpdateSpeedBar = GetTickCount64();
+			is_updated_bar = true;
+		}
+		DWORD now = GetTickCount64();
+		if (now - previousTimeUpdateSpeedBar > 200) {
+			is_updated_bar = false;
+			if (numbers.at(21).id == 40)
+				numbers.at(21).id = 39;
+			else
+				numbers.at(21).id = 40;
+		}
+	}
+	else {
+		numbers.at(21).id = 40;
+		is_updated_bar = false;
+	}
+
 }
 
 void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
