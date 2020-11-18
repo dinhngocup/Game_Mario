@@ -23,11 +23,12 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 */
 
 #define SCENE_SECTION_UNKNOWN -1
+#define SCENE_SECTION_INFO 0
 #define SCENE_SECTION_TILESET	1
 #define SCENE_SECTION_MAP	2
 #define SCENE_SECTION_STATIC_OBJECTS	3
 #define SCENE_SECTION_OBJECTS	4
-#define SCENE_SECTION_HUB	5
+#define SCENE_SECTION_HUB_PATH	5
 #define SCENE_SECTION_FONT	6
 
 #define MAX_SCENE_LINE 1024
@@ -43,6 +44,18 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	wstring path = ToWSTR(line);
 	grid = new CGrid(path.c_str());
 	grid->ReadFileObj();
+}
+
+void CPlayScene::_ParseSection_INFO(string line)
+{
+	vector<string> tokens = split(line);
+
+	if (tokens.size() < 3) return; // skip invalid lines
+
+	world_id = atoi(tokens[0].c_str());
+	map_id = atoi(tokens[1].c_str());
+	time_limit = atoi(tokens[2].c_str());
+
 }
 
 void CPlayScene::_ParseSection_TILESET(string line)
@@ -72,13 +85,11 @@ void CPlayScene::_ParseSection_TILESET(string line)
 
 void CPlayScene::_ParseSection_HUB(string line)
 {
-	vector<string> tokens = split(line);
-	if (tokens.size() < 3) return;
-	Number number;
-	number.x = atoi(tokens[0].c_str());
-	number.y = atoi(tokens[1].c_str());
-	number.id = atoi(tokens[2].c_str());
-	numbers.push_back(number);
+	// skip empty line
+	if (line == "") return;
+
+	wstring path = ToWSTR(line);
+	ReadFileHub(path.c_str());
 
 }
 
@@ -98,6 +109,24 @@ void CPlayScene::_ParseSection_FONT(string line)
 	CFont* letter = new CFont(l, t, w, h, textID);
 	hub->AddFont(letter);
 
+}
+
+void CPlayScene::ReadFileHub(LPCWSTR filePath)
+{
+	ifstream f;
+	f.open(filePath);
+
+	int quantity, card_pos_X;
+	f >> quantity >> card_pos_X;
+
+	hub->SetCardPosX(card_pos_X);
+
+	for (int i = 0; i < quantity; i++) {
+		Number number;
+		f >> number.x >> number.y >> number.id;
+		numbers.push_back(number);
+	}
+	f.close();
 }
 
 void CPlayScene::_ParseSection_MAP(string line)
@@ -169,7 +198,7 @@ void CPlayScene::LoadSceneResources()
 
 	player->SetAnimationSet(ani_set);
 	hub = CHub::GetInstance();
-	previousTime = GetTickCount();
+
 	ifstream f;
 	f.open(sceneFilePath);
 
@@ -180,19 +209,21 @@ void CPlayScene::LoadSceneResources()
 		string line(str);
 		// skip the comment
 		if (line[0] == '#') continue;
+		if (line == "[SCENE_INFO]") { section = SCENE_SECTION_INFO; continue; }
 		if (line == "[TILESET]") { section = SCENE_SECTION_TILESET; continue; }
 		if (line == "[MAP]") { section = SCENE_SECTION_MAP; continue; }
 		if (line == "[STATIC_OBJECTS]") { section = SCENE_SECTION_STATIC_OBJECTS; continue; }
 		if (line == "[OBJECTS]") { section = SCENE_SECTION_OBJECTS; continue; }
-		if (line == "[HUB]") { section = SCENE_SECTION_HUB; continue; }
+		if (line == "[HUB_PATH]") { section = SCENE_SECTION_HUB_PATH; continue; }
 		if (line == "[FONT]") { section = SCENE_SECTION_FONT; continue; }
 
 		switch (section) {
+		case SCENE_SECTION_INFO:_ParseSection_INFO(line); break;
 		case SCENE_SECTION_TILESET:_ParseSection_TILESET(line); break;
 		case SCENE_SECTION_MAP: {_ParseSection_MAP(line); break; }
 		case SCENE_SECTION_STATIC_OBJECTS: {_ParseSection_STATIC_OBJECTS(line); break; }
 		case SCENE_SECTION_OBJECTS:_ParseSection_OBJECTS(line); break;
-		case SCENE_SECTION_HUB:_ParseSection_HUB(line); break;
+		case SCENE_SECTION_HUB_PATH:_ParseSection_HUB(line); break;
 		case SCENE_SECTION_FONT:_ParseSection_FONT(line); break;
 		}
 	}
@@ -203,7 +234,8 @@ void CPlayScene::LoadSceneResources()
 
 
 	DebugOut(L"[INFO] Done loading resources of this scene %s\n", sceneFilePath);
-
+	time_game = time_limit;
+	previousTime = GetTickCount();
 }
 
 void CPlayScene::Update(DWORD dt)
@@ -315,9 +347,11 @@ void CPlayScene::Render()
 	}
 	if (!isMoved) {
 		hub->Render(20.0f, DEFAULT_CAM_Y + game->GetScreenHeight() - 125);
+		hub->SetHubPos(20.0f, DEFAULT_CAM_Y + game->GetScreenHeight() - 125);
 	}
 	else {
 		hub->Render(cx + 20.0f, cy + game->GetScreenHeight() - 125);
+		hub->SetHubPos(cx + 20.0f, cy + game->GetScreenHeight() - 125);
 	}
 	RenderHub();
 }
@@ -347,25 +381,53 @@ void CPlayScene::Unload()
 
 void CPlayScene::UpdateHub(DWORD dt)
 {
-	
 	DWORD now = GetTickCount();
 	if (now - previousTime >= 1000)
 	{
 		previousTime = GetTickCount();
 		// need to custom, time should be saved in hub
-		time--;
+		time_game--;
 	}
-	for (int i = 0; i < numbers.size(); i++)
+
+	for (int i = 0; i < TOTAL_NUMBER_IN_HUB; i++)
 	{
 		int n = 0;
-		int temp = time;
-		//time
-		// need to custom cause hub has another elements
-
-		for (int j = 0; j < 3 - i; j++) // push từ trái qua phải
-		{
-			n = temp % 10;
-			temp = temp / 10;
+		int temp;
+		if (i == 0) {
+			// get world number
+			n = world_id;
+		}
+		else if (i >= 1 && i <= 2) {
+			// get coin number
+			temp = player->GetCoin();
+			for (int j = 0; j < (COIN_LENGTH + 1) - i; j++)
+			{
+				n = temp % 10;
+				temp = temp / 10;
+			}
+		}
+		else if (i == 3) {
+			// get map number
+			n = map_id;
+		}
+		else if (i >= 4 && i <= 10) {
+			// get score
+			temp = player->GetScore();
+			// số lần chia (giá trị của j) sẽ lấy ra được con số ở vị trí đó
+			for (int j = 0; j < (SCORE_LENGTH + 4) - i; j++) // push từ trái qua phải
+			{
+				n = temp % 10;
+				temp = temp / 10;
+			}
+		}
+		else if (i >= 11 && i <= 13) {
+			// get time
+			temp = time_game;
+			for (int j = 0; j < (TIME_LENGTH + 11) - i; j++) // push từ trái qua phải
+			{
+				n = temp % 10;
+				temp = temp / 10;
+			}
 		}
 		numbers.at(i).id = n;
 	}
@@ -373,10 +435,39 @@ void CPlayScene::UpdateHub(DWORD dt)
 
 void CPlayScene::RenderHub()
 {
+	float hub_x, hub_y;
+	hub->GetHubPos(hub_x, hub_y);
+
+	// all number in hub
 	for (int i = 0; i < numbers.size(); i++)
 	{
 		CFont* number = hub->GetFont(numbers.at(i).id);
-		number->Draw(numbers.at(i).x, numbers.at(i).y);
+		number->Draw(numbers.at(i).x + hub_x, numbers.at(i).y + hub_y);
+	}
+	// cards
+	vector<int> cards = player->GetCards();
+	for (int i = 0; i < cards.size(); i++)
+	{
+		int card_sprite_id = hub->GetCardId(cards.at(i));
+		float x;
+		hub->GetCardPosX(x);
+		CSprites::GetInstance()->Get(card_sprite_id)->DrawFlipX(hub_x + x + 72 * i, hub_y);
+	}
+}
+
+void CPlayScene::UpdateSpeedBar(float mario_speed)
+{
+	int boundary = (mario_speed - 0.3) / (0.4 / 6);
+	if (boundary > 5) boundary = 5;
+	if (boundary < 0) boundary = 0;
+	int out_bound = 15 + boundary + 1;
+	//DebugOut(L"boundary %d\n", boundary);
+	//DebugOut(L"out_bound %d\n", out_bound);
+	for (int i = 15; i <= 15 + boundary; i++) {
+		numbers.at(i).id = 37;
+	}
+	for (int i = out_bound; i <= 20; i++) {
+		numbers.at(i).id = 38;
 	}
 }
 

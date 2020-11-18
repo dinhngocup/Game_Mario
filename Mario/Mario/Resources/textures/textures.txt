@@ -6,7 +6,7 @@
 30	textures\mario(2).png	255	255	255
 40	textures\fire_ball.png	0	0	0
 50	textures\enemy.png	63	72	204
-60	textures\hub.png	0	0	0
+60	textures\hub.png	163	73	164
 	
 # id	left	top	width	height	texture_id
 [SPRITES]
@@ -231,6 +231,17 @@
 ##################################################
 #HUB
 40040	11	127	234	30	60
+
+#MUSHROOM CARD
+40041	171	158	24	30	60
+
+#FIRE FLOWER CARD
+40042	202	158	24	30	60
+
+#START MAN CARD
+40043	232	158	24	30	60
+
+
 
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...

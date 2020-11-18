@@ -16,6 +16,10 @@
 #include "Hub.h"
 
 #define DEFAULT_CAM_Y	750.0f
+#define SCORE_LENGTH	7
+#define TIME_LENGTH 3
+#define COIN_LENGTH 2
+#define TOTAL_NUMBER_IN_HUB 14
 struct Number
 {
 	float x, y;
@@ -29,22 +33,24 @@ protected:
 
 	// data object for this scene
 	void _ParseSection_OBJECTS(string line);
+	void _ParseSection_INFO(string line);
 	void _ParseSection_MAP(string line);
 	void _ParseSection_STATIC_OBJECTS(string line);
 	void _ParseSection_TILESET(string line);
 	void _ParseSection_HUB(string line);
 	void _ParseSection_FONT(string line);
-	
+	void ReadFileHub(LPCWSTR filePath);
 	int sceneWidth, sceneHeight;
 	bool isMoved;
+	int world_id, map_id;
 	CTiles *tiles;
 	CMap* map;
 	CGrid* grid;
 	CHub* hub;
 	vector<Number> numbers;
 	DWORD previousTime;
-	//custom
-	int time = 300;
+	int time_game;
+	int time_limit;
 public:
 	vector<LPGAMEOBJECT> enemies;
 	vector<LPGAMEOBJECT> ghost_platforms;
@@ -58,6 +64,7 @@ public:
 	virtual void Unload();
 	void UpdateHub(DWORD dt);
 	void RenderHub();
+	void UpdateSpeedBar(float mario_speed);
 	CMario* GetPlayer() { return player; }
 	
 	/*vector<LPGAMEOBJECT>* GetEnemiesInScene() { return &enemies; }

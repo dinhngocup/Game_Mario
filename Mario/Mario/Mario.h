@@ -21,8 +21,9 @@ class CMario : public CGameObject
 	float start_y;
 	
 	static CMario* __instance;
-	
-
+	int score = 1234567;
+	int coin_number = 10;
+	vector <int> cards;
 public:
 	int ani;
 	CPlayerState *player_state;
@@ -53,9 +54,11 @@ public:
 	void SetLevel(int l) { level = l; }
 	int GetLevel() { return level; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }
-
+	int GetScore() { return score; }
+	int GetCoin() { return coin_number; }
 	void Reset();
-
+	void AddCard(int card_id) { cards.push_back(card_id); }
+	vector<int> GetCards() { return cards; }
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy);
 
 	static CMario* GetInstance();

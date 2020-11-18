@@ -15,13 +15,14 @@ CMario::CMario() : CGameObject()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 
 	player_state->Update(dt);
+
 	vy += MARIO_GRAVITY * dt;
 	CGameObject::Update(dt);
 
-	CGame* game = CGame::GetInstance();
-	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	vector<LPGAMEOBJECT> enemies = scene->enemies;
 	vector<LPGAMEOBJECT> bricks = scene->ghost_platforms;
 	vector<LPGAMEOBJECT> items = scene->items;
@@ -219,7 +220,7 @@ void CMario::SetState(int state) {
 
 void CMario::IsCollisionWithBrick(LPCOLLISIONEVENT e)
 {
-	if (e->nx != 0) vx = 0;
+	//if (e->nx != 0) vx = 0;
 	if (e->ny != 0)	vy = 0;
 }
 

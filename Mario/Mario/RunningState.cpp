@@ -1,5 +1,5 @@
 ﻿#include "RunningState.h"
-
+#include "PlayScene.h"
 CRunningState::CRunningState(int level)
 {
 	DebugOut(L"Running\n");
@@ -15,7 +15,7 @@ void CRunningState::Update(float dt)
 {
 	//DebugOut(L"update \n");
 	CMario* mario = CMario::GetInstance();
-
+	CGame* game = CGame::GetInstance();
 	float speed_x = abs(mario->vx);
 	//DebugOut(L"vx khi running ne %f\n", speed_x);
 	// is speed low dùng để xác định lúc nào là lúc giảm tốc
@@ -33,8 +33,11 @@ void CRunningState::Update(float dt)
 	else {
 		is_max_speed = true;
 	}
+	//DebugOut(L"vx %f\n", speed_x);
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 
-
+	scene->UpdateSpeedBar(speed_x);
+	
 	if (speed_x < MARIO_WALKING_SPEED && can_change_to_walking && is_rendered_completely) {
 		DebugOut(L"change to walking\n");
 		is_speed_low = false;

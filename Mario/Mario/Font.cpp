@@ -12,7 +12,6 @@ CFont::CFont(int left, int top, int w, int h, int textID)
 void CFont::Draw(float x, float y)
 {
 	LPDIRECT3DTEXTURE9 tex = CTextures::GetInstance()->Get(textID);
-	//CGame::GetInstance()->Draw(x, y, tex, left, top, left + w, top + h);
 
 	LPD3DXSPRITE spriteHandler = CGame::GetInstance()->GetSpriteHandler();
 
