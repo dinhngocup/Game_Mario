@@ -10,11 +10,13 @@ CFireBall::CFireBall()
 CFireBall::CFireBall(float start_x, float start_y, int nx)
 {
 	//OutputDebugString(L"new fire ball\n");
+	generate_id++;
+	this->id = generate_id;
 	w = 24;
 	h = 24;
 	vx = 0.9f * nx;
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(4);
+	LPANIMATION_SET ani_set = animation_sets->Get(ANI_FIRE_BALL);
 	SetAnimationSet(ani_set);
 
 	SetPosition(start_x, start_y);
@@ -22,7 +24,7 @@ CFireBall::CFireBall(float start_x, float start_y, int nx)
 
 void CFireBall::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 {
-	OutputDebugString(L"update fire ball\n");
+	//OutputDebugString(L"update fire ball\n");
 	CGame* game = CGame::GetInstance();
 
 	vy += FIRE_BALL_GRAVITY * dt;
@@ -95,7 +97,7 @@ void CFireBall::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 void CFireBall::Render()
 {
-	OutputDebugString(L"render fire ball\n");
+	//OutputDebugString(L"render fire ball\n");
 	animation_set->at(0)->Render(x, y);
 	//RenderBoundingBox();
 }

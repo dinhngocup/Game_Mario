@@ -7,6 +7,8 @@
 40	textures\fire_ball.png	0	0	0
 50	textures\enemy.png	63	72	204
 60	textures\hub.png	163	73	164
+70	textures\effect_1.png	0	0	0
+80	textures\enemy1.png	68	145	190
 	
 # id	left	top	width	height	texture_id
 [SPRITES]
@@ -241,8 +243,36 @@
 #START MAN CARD
 40043	232	158	24	30	60
 
+##################################################
+#EFFECT
+40044	76	3	12	12	70
+40045	94	4	12	10	70
+40046	38	1	16	16	70
+40047	58	3	12	12	70
 
+##################################################
+#LEAF
+40048	180	123	16	14	10
+#MUSHROOM
+40049	156	121	16	16	10
 
+##################################################
+# FLOWER
+# RED FIRE FLOWER
+40050	7	33	16	32	50
+40051	144	240	16	32	80
+40052	7	71	16	32	50
+40053	176	240	16	32	80
+
+# GREEN FIRE FLOWER
+40054	6	166	16	24	50
+40055	48	240	16	24	80
+40056	6	195	16	24	50
+40057	80	240	16	24	80
+
+# GREEN FLOWER
+40058	7	108	 16	23	50
+40059	7	137	 16	24	50
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
@@ -413,7 +443,40 @@
 720	40036	100
 
 # ==== COIN =====
-721	40037	2000	40038	2000	40039	2000
+721	40037	200	40038	200	40039	200
+
+# ==== EFFECT ATTACKED OR HAVE BONUS ====
+722	40044	100	40045	100	40046	100	40047	100	40044	100	40045	100
+
+# ==== LEAF =====
+723	40048	100
+
+# ==== MUSHROOM ====
+724	40049	100
+
+# ==== RED FIRE MOVE DOWN ====
+725	40050	100	40051	100
+
+# ==== RED FIRE ATTACK DOWN ====
+726	40050	100
+
+# ==== RED FIRE MOVE UP ====
+727	40052	100	40053	100
+
+# ==== RED FIRE ATTACK UP ====
+728	40052	100
+
+# ==== GREEN FIRE MOVE DOWN ====
+729	40054	100	40055	100
+
+# ==== GREEN  FIRE ATTACK DOWN ====
+730	40054	100
+
+# ==== GREEN FIRE MOVE UP ====
+731	40056	100	40057	100
+
+# ==== GREEN FIRE ATTACK UP ====
+732	40056	100
 
 #
 # id	ani1	ani2	ani3
@@ -438,5 +501,12 @@
 8	712	713	714	715
 # COIN
 9	721
-
+# EFFECT ATTACKED OR HAVE BONUS
+10	722
+# LEAF
+11	723
+# MUSHROOM
+12	724
+# FIRE FLOWER
+13	725	726	727	728	729	730	731	732
 

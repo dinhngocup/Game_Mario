@@ -10,7 +10,7 @@
 #include "BrickQuestion.h"
 
 #define FIRE_BALL_GRAVITY			0.002f
-
+#define ANI_FIRE_BALL	4
 
 class CFireBall : public CGameObject
 {

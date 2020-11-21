@@ -2,7 +2,7 @@
 
 CFallingState::CFallingState(int level)
 {
-	OutputDebugString(L"falling\n");
+	//OutputDebugString(L"falling\n");
 	CMario* mario = CMario::GetInstance();
 
 	this->level = level;
@@ -21,24 +21,22 @@ void CFallingState::Update(float dt)
 	}*/
 	// chuyen trang thai standing
 	if (mario->vy == 0) {
-		//if ((mario->is_spinning && is_rendered_completely) || !mario->is_spinning) {
 		if (is_rendered_completely) {
 			if (level == RACCOON_LEVEL_BIG)
 				mario->is_attacking_by_spinning = false;
 			if (mario->is_crouching)
 				mario->ChangeState(new CCrouchingState(level));
-			//else if (abs(mario->vx) > MARIO_WALKING_SPEED && level != RACCOON_LEVEL_BIG) {
 			else if (abs(mario->vx) > MARIO_WALKING_SPEED) {
-				DWORD time_end_jump = GetTickCount();
-				DWORD dt_from_jump_to_fall = time_end_jump - mario->time_start_jump;
-				float speed_x = abs(mario->vx);
-				mario->vx = (speed_x - MARIO_ACCELERATION * (dt_from_jump_to_fall / 1000) * 2) * mario->nx;
-				DebugOut(L"vx sau khi nhay %f\n", mario->vx);
+				if (level == RACCOON_LEVEL_BIG) {
+					mario->vx = 0.4f;
+				}
 				mario->ChangeState(new CRunningState(level));
 
 			}
-			else
+			else {
 				mario->ChangeState(new CStandingState(level));
+
+			}
 		}
 	}
 	//DebugOut(L"collision spinningggg %d\n", mario->is_attacking_by_spinning);
@@ -52,6 +50,7 @@ void CFallingState::HandleKeyboard()
 
 void CFallingState::SetAnimation(int level)
 {
+	this->level = level;
 	CMario* mario = CMario::GetInstance();
 	switch (level) {
 	case MARIO_LEVEL_BIG:

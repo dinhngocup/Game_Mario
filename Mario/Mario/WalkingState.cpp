@@ -3,7 +3,7 @@
 
 CWalkingState::CWalkingState(int level)
 {
-	OutputDebugString(L"walking\n");
+	//OutputDebugString(L"walking\n");
 	this->level = level;
 
 	// tra ra animation
@@ -12,7 +12,11 @@ CWalkingState::CWalkingState(int level)
 
 void CWalkingState::Update(float dt)
 {
-	this->HandleKeyboard();
+	CMario* mario = CMario::GetInstance();
+	if (mario->vy > MARIO_GRAVITY) {
+		//DebugOut(L"change to falling\n");
+		mario->ChangeState(new CFallingState(level));
+	}
 }
 
 void CWalkingState::HandleKeyboard()
@@ -22,7 +26,7 @@ void CWalkingState::HandleKeyboard()
 
 void CWalkingState::SetAnimation(int level)
 {
-
+	this->level = level;
 	switch (level) {
 	case RACCOON_LEVEL_BIG:
 		ani = RACCOON_ANI_BIG_WALKING_RIGHT;

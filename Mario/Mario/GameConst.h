@@ -9,6 +9,7 @@
 
 #define SCENE_WIDTH 8448
 #define SCENE_HEIGHT 1968
+#define HEIGHT_HUB 145
 
 
 #define MAX_FRAME_RATE 120

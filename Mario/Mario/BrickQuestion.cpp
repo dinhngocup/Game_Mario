@@ -2,10 +2,12 @@
 #include "Game.h"
 #include "PlayScene.h"
 
-CBrickQuestion::CBrickQuestion()
+CBrickQuestion::CBrickQuestion(int bonus_id)
 {
+	generate_id++;
+	this->id = generate_id;
+	this->bonus_id = bonus_id;
 	SetState(STATE_NORMAL);
-	//this->vx = 0.001;
 }
 
 void CBrickQuestion::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
@@ -48,10 +50,29 @@ void CBrickQuestion::SetState(int state)
 
 		break;
 	case STATE_EMPTY:
-
+		CreateBonus();
 		break;
 	}
 
+}
+
+void CBrickQuestion::CreateBonus()
+{
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+	switch (bonus_id) {
+	case eTYPE::COIN:
+		scene->grid->AddObjectIntoGrid(eTYPE::COIN, x, y - 10, 0, 0, COIN_ANI, eTYPE_OBJECT::ITEM);
+		break;
+	case eTYPE::MUSHROOM:
+		scene->grid->AddObjectIntoGrid(eTYPE::MUSHROOM, x, y - 30, 48, 48, MUSHROOM_ANI, eTYPE_OBJECT::ITEM);
+		break;
+	case eTYPE::LEAF:
+		scene->grid->AddObjectIntoGrid(eTYPE::LEAF, x, y - 30, 48, 48, LEAF_ANI, eTYPE_OBJECT::ITEM);
+		break;
+	default:
+		break;
+	}
 }
 
 void CBrickQuestion::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)

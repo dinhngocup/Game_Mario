@@ -6,7 +6,7 @@ CJumpingState::CJumpingState()
 
 CJumpingState::CJumpingState(int level)
 {
-	OutputDebugString(L"jump\n");
+	//OutputDebugString(L"jump\n");
 
 	this->level = level;
 
@@ -39,6 +39,7 @@ void CJumpingState::HandleKeyboard()
 
 void CJumpingState::SetAnimation(int level)
 {
+	this->level = level;
 	CMario* mario = CMario::GetInstance();
 	switch (level) {
 	case MARIO_LEVEL_BIG:

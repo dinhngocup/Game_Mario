@@ -8,6 +8,8 @@ CKoopa::CKoopa()
 CKoopa::CKoopa(int state)
 {
 	nx = -1;
+	generate_id++;
+	this->id = generate_id;
 	SetState(state);
 }
 
@@ -233,6 +235,8 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 			}
 			else {
 				DebugOut(L"xu ly mario giam level hay chet\n");
+				mario->StartUntouchable();
+				mario->SetState(MARIO_STATE_HIDE_UNTOUCHABLE);
 				//if (mario->level > MARIO_LEVEL_SMALL)
 				//{
 				//	level = MARIO_LEVEL_SMALL;
@@ -418,7 +422,7 @@ void CKoopa::IsCollisionWithBrickSpecially(LPCOLLISIONEVENT e)
 {
 	if (state == STATE_HOLD) {
 		if (e->nx != 0) x += dx;
-		if (e->ny != 0) vy = 0;
+		if (e->ny != 0) y += dy;
 	}
 	else if (state == STATE_WALKING_SWINGS) {
 		if (e->ny != 0) {

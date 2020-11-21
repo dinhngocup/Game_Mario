@@ -32,6 +32,7 @@ CBrick::CBrick(float x, float y, float width, float height)
 	this->y = y;
 	this->width = width;
 	this->height = height;
+	id++;
 }
 
 void CBrick::GetBoundingBox(float& l, float& t, float& r, float& b, int dx, int dy)

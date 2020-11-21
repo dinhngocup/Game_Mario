@@ -3,6 +3,8 @@
 
 CGoomba::CGoomba(int state)
 {
+	generate_id++;
+	this->id = generate_id;
 	SetState(state);
 }
 
@@ -36,8 +38,6 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		CalcPotentialCollisions(&bricks, coEvents);
 		CalcPotentialCollisions(&enemies, coEvents);
 		CalcPotentialCollisions(&items, coEvents);
-		//DebugOut(L"size items %d\n", items.size());
-		DebugOut(L"size coEve %d\n", coEvents.size());
 
 	}
 

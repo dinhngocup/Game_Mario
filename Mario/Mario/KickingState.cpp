@@ -2,7 +2,7 @@
 
 CKickingState::CKickingState(int level)
 {
-	DebugOut(L"kicking\n");
+	//DebugOut(L"kicking\n");
 
 	this->level = level;
 	SetAnimation(level);
@@ -19,6 +19,7 @@ void CKickingState::HandleKeyboard()
 
 void CKickingState::SetAnimation(int level)
 {
+	this->level = level;
 	switch (level) {
 	case RACCOON_LEVEL_BIG:
 		ani = RACCOON_ANI_KICK;

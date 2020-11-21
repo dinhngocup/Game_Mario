@@ -20,7 +20,7 @@ class CAnimation
 
 	vector<LPANIMATION_FRAME> frames;
 public:
-	CAnimation(int defaultTime = 100) { this->defaultTime = defaultTime; lastFrameTime = -1; currentFrame = -1; lastFrame = false; }
+	CAnimation(int defaultTime = 100) { this->defaultTime = defaultTime; lastFrameTime = -1; currentFrame = -1; lastFrame = false; nextIsLastFrame = false; }
 	void Add(int spriteId, DWORD time = 0);
 	int GetCurrentFrame() {
 		return currentFrame;

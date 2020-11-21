@@ -28,17 +28,18 @@ public:
 	int ani;
 	CPlayerState *player_state;
 
-	//bool is_jumping = false;
+	
+	DWORD unhide_start;
 	bool is_crouching = false;
 	DWORD time_start_jump;
 	bool is_press_s = false;
 	bool is_attacking = false;
 	bool is_attacking_by_spinning = false;
-	bool is_spinning = false;
-	bool is_running = false;
-	bool is_collisionX_with_brick = false;
+	//bool is_spinning = false;
+	//bool is_running = false;
 	bool is_skid = false;
 	bool is_holding = true;
+	bool is_flying = false;
 	DWORD time_start_attack;
 
 	int number_attack = 0;
@@ -53,7 +54,7 @@ public:
 	
 	void SetLevel(int l) { level = l; }
 	int GetLevel() { return level; }
-	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
+	void StartUntouchable();
 	int GetScore() { return score; }
 	int GetCoin() { return coin_number; }
 	void Reset();

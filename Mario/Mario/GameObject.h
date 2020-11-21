@@ -35,6 +35,7 @@ struct CCollisionEvent
 class CGameObject
 {
 public:
+	static int generate_id;
 	int id;
 
 	eTYPE type;

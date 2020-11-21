@@ -9,7 +9,6 @@
 CMario* CMario::__instance = NULL;
 CMario::CMario() : CGameObject()
 {
-
 	untouchable = 0;
 }
 
@@ -20,10 +19,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	player_state->Update(dt);
 	vy += MARIO_GRAVITY * dt;
-	if (dynamic_cast<CRunningState*>(player_state) ||
+	/*if (dynamic_cast<CRunningState*>(player_state) ||
 		dynamic_cast<CHoldingState*>(player_state) ||
-		dynamic_cast<CFlyingState*>(player_state))
-		scene->UpdateSpeedBar(abs(vx));
+		dynamic_cast<CFlyingState*>(player_state))*/
+	scene->UpdateSpeedBar(abs(vx));
 	CGameObject::Update(dt);
 
 	vector<LPGAMEOBJECT> enemies = scene->enemies;
@@ -42,13 +41,29 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		CalcPotentialCollisions(&enemies, coEvents);
 		CalcPotentialCollisions(&items, coEvents);
 	}
-
-	if (GetTickCount() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
+	//DebugOut(L"itm %d\n", items.size());
+	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
 		untouchable_start = 0;
 		untouchable = 0;
+		SetState(0);
 	}
+	else {
+		if (untouchable == 1) {
+			DebugOut(L"untouchable\n");
+			if (GetTickCount64() - untouchable_start >= 600)
 
+				if (GetTickCount64() - unhide_start >= 100) {
+					if (state == MARIO_STATE_UNHIDE_UNTOUCHABLE)
+						SetState(MARIO_STATE_HIDE_UNTOUCHABLE);
+					else
+						SetState(MARIO_STATE_UNHIDE_UNTOUCHABLE);
+					unhide_start = GetTickCount64();
+				}
+
+		}
+	}
+	//DebugOut(L"size %d\n", coEvents.size());
 	if (coEvents.size() == 0)
 	{
 		x += dx;
@@ -73,21 +88,25 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				IsCollisionWithGhostPlatform(e);
 			}
 			else if (dynamic_cast<CEnemy*>(e->obj)) {
-				if (is_holding && e->obj->state == STATE_HOLD) {
+				if (is_holding && e->obj->state == STATE_HOLD || untouchable == 1) {
 
 				}
 				else
-				e->obj->IsCollisionWithMario(e);
+					e->obj->IsCollisionWithMario(e);
 			}
 			else if (dynamic_cast<CBrickQuestion*>(e->obj)) {
 				if (e->ny != 0) {
-					if (e->ny > 0) {
+					if (e->ny > 0 && e->obj->state == STATE_NORMAL) {
 						CBrickQuestion* brick = dynamic_cast<CBrickQuestion*>(e->obj);
 						brick->SetState(STATE_EMPTY);
 					}
 					vy = 0;
 				}
 				if (e->nx != 0) vx = 0;
+			}
+			else if (dynamic_cast<CLeaf*>(e->obj)) {
+				DebugOut(L"va cham ben mario\n");
+				e->obj->IsCollisionWithMario(e);
 			}
 			else {
 				IsCollisionWithBrick(e);
@@ -99,22 +118,25 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CMario::Render()
 {
-	if (dynamic_cast<CRunningState*>(player_state))
+	DebugOut(L"level %d\n", level);
+	if (dynamic_cast<CRunningState*>(player_state) && level != RACCOON_LEVEL_BIG && level != FIRE_LEVEL)
 		player_state->SetAnimation(level);
 	this->ani = player_state->GetAnimation();
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
 
-	int alpha = 255;
-	if (untouchable) alpha = 128;
 
 	int offset = 0;
 	if (level == RACCOON_LEVEL_BIG)
-		offset = 4;
+		offset = 6;
 
 	bool spinningFlag = false;
 	if (ani == RACCOON_ANI_SPINNING_BIG)
 		spinningFlag = true;
+
+	int alpha = 255;
+	if (state == MARIO_STATE_HIDE_UNTOUCHABLE) alpha = 0;
+	else if (state == MARIO_STATE_UNHIDE_UNTOUCHABLE) alpha = 255;
 
 	animation_set->at(ani)->Render(x, y, alpha, nx, offset, spinningFlag);
 
@@ -206,6 +228,27 @@ void CMario::ChangeState(CPlayerState* newState)
 	}
 }
 
+void CMario::StartUntouchable()
+{
+	untouchable = 1;
+	untouchable_start = GetTickCount64();
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+
+	float effect_x, effect_y;
+
+	if (level == MARIO_LEVEL_SMALL) {
+		effect_x = x + MARIO_SMALL_BBOX_WIDTH / 2;
+		effect_y = y + MARIO_SMALL_BBOX_HEIGHT / 2;
+	}
+	else {
+		effect_x = x + MARIO_BIG_BBOX_WIDTH / 2;
+		effect_y = y + MARIO_BIG_BBOX_HEIGHT / 2;
+	}
+	CTransform* transform = new CTransform(x, y);
+	scene->effects.push_back(transform);
+}
+
 /*
 	Reset Mario status to the beginning state of a scene
 */
@@ -223,6 +266,12 @@ void CMario::SetState(int state) {
 	{
 	case MARIO_STATE_DIE:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
+		break;
+	case MARIO_STATE_HIDE_UNTOUCHABLE:
+		vx = 0;
+		vy = 0;
+		break;
+	default:
 		break;
 	}
 }

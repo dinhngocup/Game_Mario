@@ -5,7 +5,7 @@
 #include "Textures.h"
 #include "Utils.h"
 #include <d3d9types.h>
-
+int CGameObject::generate_id = 0;
 void CGameObject::RenderBoundingBox()
 {
 

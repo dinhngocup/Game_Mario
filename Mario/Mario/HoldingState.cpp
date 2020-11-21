@@ -2,7 +2,7 @@
 #include "PlayScene.h"
 CHoldingState::CHoldingState(int level)
 {
-	DebugOut(L"holding\n");
+	//DebugOut(L"holding\n");
 
 	this->level = level;
 	SetAnimation(level);
@@ -21,7 +21,7 @@ void CHoldingState::Update(float dt)
 	else {
 		is_max_speed = true;
 	}
-	DebugOut(L"vx %f\n", mario->vx);
+	//DebugOut(L"vx %f\n", mario->vx);
 
 
 	if (speed_x < MARIO_WALKING_SPEED && can_change_to_walking) {
@@ -55,11 +55,12 @@ void CHoldingState::HandleKeyboard()
 
 void CHoldingState::SetAnimation(int level)
 {
+	this->level = level;
 	CMario* mario = CMario::GetInstance();
 	switch (level) {
 	case RACCOON_LEVEL_BIG:
 		if (mario->vx == 0) {
-			ani = RACCOON_ANI_HOLDING;
+			ani = RACCOON_ANI_STAND_HOLD;
 		}
 		else
 			ani = RACCOON_ANI_HOLDING;
@@ -73,7 +74,7 @@ void CHoldingState::SetAnimation(int level)
 		break;
 	case FIRE_LEVEL:
 		if (mario->vx == 0) {
-			ani = FIRE_ANI_HOLDING;
+			ani = FIRE_ANI_STAND_HOLD;
 		}
 		else
 			ani = FIRE_ANI_HOLDING;

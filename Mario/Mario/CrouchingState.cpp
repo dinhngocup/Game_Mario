@@ -2,7 +2,7 @@
 
 CCrouchingState::CCrouchingState(int level)
 {
-	DebugOut(L"crouching\n");
+	//DebugOut(L"crouching\n");
 	CMario* mario = CMario::GetInstance();
 	this->level = level;
 	mario->is_crouching = true;
@@ -22,6 +22,7 @@ void CCrouchingState::HandleKeyboard()
 
 void CCrouchingState::SetAnimation(int level)
 {
+	this->level = level;
 	switch (level) {
 	case RACCOON_LEVEL_BIG:
 		ani = RACCOON_ANI_BIG_CROUCHING_RIGHT;

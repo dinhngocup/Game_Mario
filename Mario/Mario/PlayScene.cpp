@@ -235,14 +235,19 @@ void CPlayScene::LoadSceneResources()
 
 	DebugOut(L"[INFO] Done loading resources of this scene %s\n", sceneFilePath);
 	time_game = time_limit;
-	previousTime = GetTickCount();
+	previousTime = GetTickCount64();
+
+	/*
+	Test animation of effect attacked
+	*/
+	/*CTransform* transform = new CTransform(300, 800);
+	effects.push_back(transform);*/
 }
 
 void CPlayScene::Update(DWORD dt)
 {
 	UpdateHub(dt);
 	if (player->is_attacking) {
-		//CGameObject* obj = NULL;
 		float x;
 		if (player->nx > 0) {
 			x = player->GetX() + MARIO_BIG_BBOX_WIDTH / 2;
@@ -251,8 +256,8 @@ void CPlayScene::Update(DWORD dt)
 			x = player->GetX() - MARIO_BIG_BBOX_WIDTH / 2;
 
 		float y = player->GetY();
-		grid->AddObjectIntoGrid(100, eTYPE::FIRE_BALL, x, y, 20,0,0, eTYPE_OBJECT::ITEM, 0, player->nx);
-		
+		grid->AddObjectIntoGrid(eTYPE::FIRE_BALL, x, y, 20, 0, 0, eTYPE_OBJECT::ITEM, 0, player->nx);
+
 		player->is_attacking = false;
 	}
 
@@ -264,12 +269,17 @@ void CPlayScene::Update(DWORD dt)
 		items[i]->Update(dt);
 		items[i]->is_in_grid = false;
 	}
+	
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
 		enemies[i]->Update(dt);
 		enemies[i]->is_in_grid = false;
 	}
 	player->Update(dt);
+	/*for (size_t i = 0; i < effects.size(); i++)
+	{
+		effects[i]->Update(dt);
+	}*/
 
 	grid->UpdatePositionInGrid(game->GetCamX(), DEFAULT_CAM_Y);
 
@@ -282,27 +292,56 @@ void CPlayScene::Update(DWORD dt)
 	cx -= game->GetScreenWidth() / 2;
 	cy -= game->GetScreenHeight() / 2;
 
+	CMario* mario = CMario::GetInstance();
+	if (mario->GetLevel() == RACCOON_LEVEL_BIG) {
+		
+		if (dynamic_cast<CFallingState*>(mario->player_state) && cy >= DEFAULT_CAM_Y)
+			mario->is_flying = false;
 
-	if (cx <= 0)
-	{
-		game->SetCamPos(0.0f, DEFAULT_CAM_Y);
+		if (mario->is_flying && cy < DEFAULT_CAM_Y) {
+			if (cy <= 145.0f) {
+				game->SetCamYPos(145.0f);
+			} else
+			game->SetCamYPos(cy);
+		}
+		else {
+			game->SetCamYPos(DEFAULT_CAM_Y);
+		}
+		if (cx <= 0)
+		{
+			game->SetCamXPos(0.0f);
+		}
+		else if (cx >= sceneWidth - game->GetScreenWidth()) {
+			game->SetCamXPos(sceneWidth - game->GetScreenWidth());
+		}
+		else
+		{
+			game->SetCamXPos(cx);
+			isMoved = true;
+		}
 	}
-	else if (cx >= sceneWidth - game->GetScreenWidth()) {
-		game->SetCamPos(sceneWidth - game->GetScreenWidth(), DEFAULT_CAM_Y);
+	else {
 
+		if (cx <= 0)
+		{
+			game->SetCamPos(0.0f, DEFAULT_CAM_Y);
+		}
+		else if (cx >= sceneWidth - game->GetScreenWidth()) {
+			game->SetCamPos(sceneWidth - game->GetScreenWidth(), DEFAULT_CAM_Y);
+		}
+		else
+		{
+			game->SetCamPos(cx, DEFAULT_CAM_Y);
+			isMoved = true;
+		}
 	}
-	else
-	{
-		game->SetCamPos(cx, DEFAULT_CAM_Y);
-		isMoved = true;
-	}
-
 
 
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
 		if (!enemies[i]->GetHealth()) {
 			enemies.erase(enemies.begin() + i);
+			
 		}
 	}
 	for (size_t i = 0; i < items.size(); i++)
@@ -312,7 +351,13 @@ void CPlayScene::Update(DWORD dt)
 			items.erase(items.begin() + i);
 		}
 	}
-	//DebugOut(L"items.size() %d\n", items.size());
+	for (size_t i = 0; i < effects.size(); i++)
+	{
+		if (!effects[i]->GetHealth()) {
+
+			effects.erase(effects.begin() + i);
+		}
+	}
 }
 
 void CPlayScene::Render()
@@ -342,6 +387,10 @@ void CPlayScene::Render()
 	for (size_t i = 0; i < items.size(); i++)
 	{
 		items[i]->Render();
+	}
+	for (size_t i = 0; i < effects.size(); i++)
+	{
+		effects[i]->Render();
 	}
 	if (!isMoved) {
 		hub->Render(20.0f, DEFAULT_CAM_Y + game->GetScreenHeight() - 125);
@@ -374,15 +423,17 @@ void CPlayScene::Unload()
 	player = NULL;
 	map = NULL;
 	tiles = NULL;
+	hub = NULL;
+	numbers.clear();
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
 void CPlayScene::UpdateHub(DWORD dt)
 {
-	DWORD now = GetTickCount();
+	DWORD now = GetTickCount64();
 	if (now - previousTime >= 1000)
 	{
-		previousTime = GetTickCount();
+		previousTime = GetTickCount64();
 		// need to custom, time should be saved in hub
 		time_game--;
 	}

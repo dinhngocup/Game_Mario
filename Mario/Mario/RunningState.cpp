@@ -2,7 +2,7 @@
 #include "PlayScene.h"
 CRunningState::CRunningState(int level)
 {
-	DebugOut(L"Running\n");
+	//DebugOut(L"Running\n");
 	this->level = level;
 
 	SetAnimation(level);
@@ -39,7 +39,7 @@ void CRunningState::Update(float dt)
 	//scene->UpdateSpeedBar(speed_x);
 
 	if (speed_x < MARIO_WALKING_SPEED && can_change_to_walking && is_rendered_completely) {
-		DebugOut(L"change to walking\n");
+		//DebugOut(L"change to walking\n");
 		is_speed_low = false;
 		is_max_speed = false;
 		mario->is_attacking_by_spinning = false;
@@ -57,6 +57,7 @@ void CRunningState::HandleKeyboard()
 
 void CRunningState::SetAnimation(int level)
 {
+	this->level = level;
 	switch (level) {
 	case MARIO_LEVEL_BIG:
 		if (is_max_speed) {
@@ -125,17 +126,14 @@ void CRunningState::OnKeyDown(int KeyCode)
 				animation->ResetFlagLastFrame();
 				CPlayerState::SetAnimation(animation);
 			}
-			else {
-				DebugOut(L"ignore\n");
-			}
 
 		}
 		return;
 		break;
 	case DIK_S:
 		if (is_max_speed) {
-			mario->time_start_jump = GetTickCount();
-			DebugOut(L"change to flying\n");
+			mario->time_start_jump = GetTickCount64();
+			//DebugOut(L"change to flying\n");
 			mario->ChangeState(new CFlyingState(level));
 			return;
 		}

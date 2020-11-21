@@ -8,7 +8,7 @@ CStandingState::CStandingState()
 CStandingState::CStandingState(int level)
 {
 	CMario* mario = CMario::GetInstance();
-	OutputDebugString(L"standing\n");
+	//OutputDebugString(L"standing\n");
 
 	this->level = level;
 
@@ -21,7 +21,12 @@ CStandingState::CStandingState(int level)
 
 void CStandingState::Update(float dt)
 {
-	this->HandleKeyboard();
+	CMario* mario = CMario::GetInstance();
+	//DebugOut(L"vy %f\n", mario->vy);
+	if (mario->vy > MARIO_GRAVITY) {
+		//DebugOut(L"change to falling\n");
+		mario->ChangeState(new CFallingState(level));
+	}
 }
 
 void CStandingState::HandleKeyboard()
@@ -30,7 +35,7 @@ void CStandingState::HandleKeyboard()
 
 void CStandingState::SetAnimation(int level)
 {
-
+	this->level = level;
 	CMario* mario = CMario::GetInstance();
 	switch (level) {
 	case MARIO_LEVEL_BIG:

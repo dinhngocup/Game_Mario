@@ -1,5 +1,7 @@
 #pragma once
-
+#define COIN_ANI	9
+#define LEAF_ANI	11
+#define MUSHROOM_ANI	12
 // id of object in scenetest.txt
 enum eTYPE {
 	MARIO = 0,
@@ -23,7 +25,9 @@ enum eTYPE {
 
 	//BONUS
 	COIN = 8,
-
+	MUSHROOM = 9,
+	LEAF = 10,
+	FIRE_FLOWER = 11,
 
 	//SWITCH SCENE
 	PORTAL = 50,

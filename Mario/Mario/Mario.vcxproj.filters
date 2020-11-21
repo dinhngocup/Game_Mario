@@ -59,6 +59,9 @@
     <Filter Include="Framework\Hub">
       <UniqueIdentifier>{72f7c246-8c9e-4f37-92be-8b976daab54b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Objects\Effect">
+      <UniqueIdentifier>{dcff3eea-e3af-4609-9139-498ec46314ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -157,9 +160,6 @@
     <ClCompile Include="Koopa.cpp">
       <Filter>Objects\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="RacconFallingState.cpp">
-      <Filter>Objects\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Weapon.cpp">
       <Filter>Objects\Weapon</Filter>
     </ClCompile>
@@ -189,6 +189,18 @@
     </ClCompile>
     <ClCompile Include="Item.cpp">
       <Filter>Objects\Bonus</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Objects\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Mushroom.cpp">
+      <Filter>Objects\Bonus</Filter>
+    </ClCompile>
+    <ClCompile Include="Leaf.cpp">
+      <Filter>Objects\Bonus</Filter>
+    </ClCompile>
+    <ClCompile Include="FireFlower.cpp">
+      <Filter>Objects\Enemies</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -300,9 +312,6 @@
     <ClInclude Include="Koopa.h">
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="RacconFallingState.h">
-      <Filter>Objects\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Weapon.h">
       <Filter>Objects\Weapon</Filter>
     </ClInclude>
@@ -335,6 +344,18 @@
     </ClInclude>
     <ClInclude Include="Item.h">
       <Filter>Objects\Bonus</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Objects\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Mushroom.h">
+      <Filter>Objects\Bonus</Filter>
+    </ClInclude>
+    <ClInclude Include="Leaf.h">
+      <Filter>Objects\Bonus</Filter>
+    </ClInclude>
+    <ClInclude Include="FireFlower.h">
+      <Filter>Objects\Enemies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

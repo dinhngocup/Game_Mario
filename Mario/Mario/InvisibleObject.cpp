@@ -6,6 +6,7 @@ CInvisibleObject::CInvisibleObject(float x, float y, float width, float height)
 	this->y = y;
 	this->width = width;
 	this->height = height;
+	id++;
 }
 
 void CInvisibleObject::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)

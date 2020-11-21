@@ -2,11 +2,11 @@
 
 CFlyingState::CFlyingState(int level)
 {
-	OutputDebugString(L"flying\n");
+	//OutputDebugString(L"flying\n");
 	CMario* mario = CMario::GetInstance();
 	mario->vy = -MARIO_JUMP_SPEED_Y;
 	this->level = level;
-
+	mario->is_flying = true;
 	SetAnimation(level);
 }
 void CFlyingState::Update(float dt)
@@ -17,8 +17,9 @@ void CFlyingState::Update(float dt)
 	if (mario->vy == 0) {
 		if(level != RACCOON_LEVEL_BIG)
 			mario->ChangeState(new CRunningState(level));
-		else 
+		else {
 			mario->ChangeState(new CFallingState(level));
+		}
 	}
 }
 
@@ -28,6 +29,7 @@ void CFlyingState::HandleKeyboard()
 
 void CFlyingState::SetAnimation(int level)
 {
+	this->level = level;
 	CMario* mario = CMario::GetInstance();
 	switch (level) {
 	case MARIO_LEVEL_BIG:
@@ -51,12 +53,10 @@ void CFlyingState::OnKeyDown(int KeyCode)
 	switch (KeyCode) {
 	case DIK_S:
 		if (level == RACCOON_LEVEL_BIG) {
-			DWORD time_press_s = GetTickCount();
-			//DebugOut(L"time %d\n", time_press_s - mario->time_start_jump);
-			if (time_press_s - mario->time_start_jump <= 2000)
-				mario->vy = -MARIO_JUMP_SPEED_Y;
+			DWORD time_press_s = GetTickCount64();
+			if (time_press_s - mario->time_start_jump <= 2600)
+				mario->vy = -0.4f;
 			else {
-				DebugOut(L"change to falling\n");
 				mario->ChangeState(new CFallingState(level));
 			}
 		}

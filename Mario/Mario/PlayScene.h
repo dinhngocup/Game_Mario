@@ -14,6 +14,7 @@
 #include "Goomba.h"
 #include "Grid.h"
 #include "Hub.h"
+#include "Transform.h"
 
 #define DEFAULT_CAM_Y	750.0f
 #define SCORE_LENGTH	7
@@ -45,7 +46,6 @@ protected:
 	int world_id, map_id;
 	CTiles *tiles;
 	CMap* map;
-	CGrid* grid;
 	CHub* hub;
 	vector<Number> numbers;
 	DWORD previousTime;
@@ -54,9 +54,11 @@ protected:
 	int time_game;
 	int time_limit;
 public:
+	CGrid* grid;
 	vector<LPGAMEOBJECT> enemies;
 	vector<LPGAMEOBJECT> ghost_platforms;
 	vector<LPGAMEOBJECT> items;
+	vector<LPGAMEOBJECT> effects;
 
 	CPlayScene(int id, LPCWSTR filePath);
 
@@ -69,18 +71,11 @@ public:
 	void UpdateSpeedBar(float mario_speed);
 	CMario* GetPlayer() { return player; }
 	
-	/*vector<LPGAMEOBJECT>* GetEnemiesInScene() { return &enemies; }
-	vector<LPGAMEOBJECT>* GetGhostPlatformsInScene() { return &ghost_platforms; }
-	vector<LPGAMEOBJECT>* GetItemsInScene() { return &items; }*/
-
 
 	void SetEnemiesInScene(vector<LPGAMEOBJECT> listEnemy) { enemies.clear(); enemies = listEnemy; }
 	void SetGhostPlatformsInScene(vector<LPGAMEOBJECT> listGhostPlatform) { ghost_platforms = listGhostPlatform; }
 	void SetItemsInScene(vector<LPGAMEOBJECT> listItem) { items = listItem; }
 
-	//vector<LPGAMEOBJECT>* GetItemsInScene() { return &objects; }
-	//void AddObject(LPGAMEOBJECT obj) { objects.push_back(obj); }
-	//friend class CPlayScenceKeyHandler;
 };
 
 class CPlayScenceKeyHandler : public CScenceKeyHandler

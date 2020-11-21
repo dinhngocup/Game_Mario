@@ -5,7 +5,7 @@ CSpinningState::CSpinningState(int level)
 	this->level = level;
 	SetAnimation();
 
-	DebugOut(L"spinning\n");
+	//DebugOut(L"spinning\n");
 }
 
 void CSpinningState::Update(float dt)
