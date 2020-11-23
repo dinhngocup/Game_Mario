@@ -56,10 +56,7 @@ void CAnimation::Render(float x, float y, int alpha, int nx, int offset, bool sp
 	CMario* mario = CMario::GetInstance();
 	if (spinningFlag) {
 		if (currentFrame == 0 || currentFrame == 4) {
-			frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, offset);
-		}
-		else if (currentFrame == 2) {
-			frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, -offset);
+			frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, offset + 1);
 		}
 		else {
 			frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, 0);

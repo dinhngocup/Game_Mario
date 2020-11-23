@@ -10,6 +10,7 @@
 #include "MarioConst.h"
 #include "Koopa.h"
 #include "Enemy.h"
+#include "Item.h"
 #include "KickingState.h"
 class CMario : public CGameObject
 {
@@ -21,8 +22,8 @@ class CMario : public CGameObject
 	float start_y;
 	
 	static CMario* __instance;
-	int score = 1234567;
-	int coin_number = 10;
+	int score = 0;
+	int coin_number = 0;
 	vector <int> cards;
 public:
 	int ani;
@@ -57,6 +58,8 @@ public:
 	void StartUntouchable();
 	int GetScore() { return score; }
 	int GetCoin() { return coin_number; }
+	void AddScore(int score) { this->score += score; }
+	void AddCoin() { this->coin_number++; }
 	void Reset();
 	void AddCard(int card_id) { cards.push_back(card_id); }
 	vector<int> GetCards() { return cards; }

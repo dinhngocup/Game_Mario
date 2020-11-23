@@ -47,6 +47,7 @@ public:
 	void SetState(int state);
 
 	void IsCollisionWithMario(LPCOLLISIONEVENT e);
+	void HandleCollisionWithMario(LPCOLLISIONEVENT e);
 	void IsCollisionWithEnemy(LPCOLLISIONEVENT e);
 	void IsCollisionWithBrickSpecially(LPCOLLISIONEVENT e);
 	void IsCollisionWithGhostPlatformSpecially(LPCOLLISIONEVENT e);

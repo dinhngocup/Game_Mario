@@ -4,11 +4,10 @@
 
 CBrickQuestion::CBrickQuestion(int bonus_id)
 {
-	generate_id++;
-	this->id = generate_id;
 	this->bonus_id = bonus_id;
 	SetState(STATE_NORMAL);
 }
+
 
 void CBrickQuestion::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 {
@@ -25,7 +24,7 @@ void CBrickQuestion::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		CGameObject::Update(dt);
 		y += dy;
 	}
-
+	
 }
 
 void CBrickQuestion::Render()
@@ -62,10 +61,10 @@ void CBrickQuestion::CreateBonus()
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	switch (bonus_id) {
 	case eTYPE::COIN:
-		scene->grid->AddObjectIntoGrid(eTYPE::COIN, x, y - 10, 0, 0, COIN_ANI, eTYPE_OBJECT::ITEM);
+		scene->grid->AddObjectIntoGrid(eTYPE::COIN, x + w/4, y - 10, 0, 0, COIN_ANI, eTYPE_OBJECT::ITEM);
 		break;
 	case eTYPE::MUSHROOM:
-		scene->grid->AddObjectIntoGrid(eTYPE::MUSHROOM, x, y - 30, 48, 48, MUSHROOM_ANI, eTYPE_OBJECT::ITEM);
+		scene->grid->AddObjectIntoGrid(eTYPE::MUSHROOM, x, y, 48, 48, MUSHROOM_ANI, eTYPE_OBJECT::ITEM);
 		break;
 	case eTYPE::LEAF:
 		scene->grid->AddObjectIntoGrid(eTYPE::LEAF, x, y - 30, 48, 48, LEAF_ANI, eTYPE_OBJECT::ITEM);
@@ -75,10 +74,22 @@ void CBrickQuestion::CreateBonus()
 	}
 }
 
+void CBrickQuestion::IsCollisionWithMario(LPCOLLISIONEVENT e)
+{
+	CMario* mario = CMario::GetInstance();
+	if (e->ny != 0) {
+		if (e->ny > 0 && state == STATE_NORMAL) {
+			SetState(STATE_EMPTY);
+		}
+		mario->vy = 0;
+	}
+	if (e->nx != 0) mario->vx = 0;
+}
+
 void CBrickQuestion::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)
 {
 	left = x;
 	top = y;
-	right = left + 48;
-	bottom = top + 48;
+	right = left + w;
+	bottom = top + h;
 }

@@ -56,16 +56,7 @@ void CGame::Init(HWND hWnd)
 	}
 
 	d3ddv->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
-	HRESULT result;
-	result = d3ddv->CreateOffscreenPlainSurface(
-		100, //width of the surface
-		100, //height of the surface
-		D3DFMT_X8R8G8B8, //surface format
-		D3DPOOL_DEFAULT, //memory pool to use
-		&surface, //pointer to the surface
-		NULL); //reserved (always NULL)
 	
-
 	// Initialize sprite helper from Direct3DX helper library
 	D3DXCreateSprite(d3ddv, &spriteHandler);
 
@@ -212,7 +203,6 @@ CGame::~CGame()
 {
 	if (spriteHandler != NULL) spriteHandler->Release();
 	if (backBuffer != NULL) backBuffer->Release();
-	if (surface != NULL) surface->Release();
 	if (d3ddv != NULL) d3ddv->Release();
 	if (d3d != NULL) d3d->Release();
 }

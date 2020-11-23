@@ -35,26 +35,12 @@ void Render()
 
 	LPDIRECT3DSURFACE9 bb = game->GetBackBuffer();
 
-	LPDIRECT3DSURFACE9 surface = game->GetSurface();
-
 	LPD3DXSPRITE spriteHandler = game->GetSpriteHandler();
 	RECT rect;
 	if (d3ddv->BeginScene())
 	{
 		// Clear back buffer with a color
 		d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
-
-		d3ddv->ColorFill(surface, NULL, D3DCOLOR_XRGB(0, 0, 0));
-
-
-		rect.left = 0;
-		rect.right = SCREEN_WIDTH - 15;
-		rect.top = 545;
-		rect.bottom = SCREEN_HEIGHT - 40;
-
-		d3ddv->StretchRect(surface, NULL, bb, &rect,
-			D3DTEXF_NONE);
-
 
 		spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
 

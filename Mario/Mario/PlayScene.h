@@ -67,7 +67,7 @@ public:
 	virtual void Render();
 	virtual void Unload();
 	void UpdateHub(DWORD dt);
-	void RenderHub();
+	void RenderItemHub();
 	void UpdateSpeedBar(float mario_speed);
 	CMario* GetPlayer() { return player; }
 	

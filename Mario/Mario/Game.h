@@ -34,7 +34,6 @@ class CGame
 	LPDIRECT3DDEVICE9 d3ddv = NULL;				// Direct3D device object
 
 	LPDIRECT3DSURFACE9 backBuffer = NULL;
-	LPDIRECT3DSURFACE9 surface = NULL;
 
 
 	LPD3DXSPRITE spriteHandler = NULL;			// Sprite helper library to help us draw 2D image on the screen 
@@ -101,7 +100,6 @@ public:
 
 	LPDIRECT3DDEVICE9 GetDirect3DDevice() { return this->d3ddv; }
 	LPDIRECT3DSURFACE9 GetBackBuffer() { return backBuffer; }
-	LPDIRECT3DSURFACE9 GetSurface() { return surface; }
 	LPD3DXSPRITE GetSpriteHandler() { return this->spriteHandler; }
 
 	void SetCamXPos(float x) { cam_x = x; }

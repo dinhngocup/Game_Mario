@@ -23,12 +23,13 @@ public:
 	static CHub* GetInstance();
 	int GetTimeLimit() { return time_limit; }
 	void AddFont(CFont* letter);
-	void Render(float cam_x, float cam_y);
+	void Render();
 	CFont* GetFont(int id) { return letters[id]; }
 	int GetCardId(int id);
 	void GetCardPosX(float& x) { x = card_posX;}
 	void SetCardPosX(float x) { card_posX = x; }
-	void SetHubPos(float x, float y) { hub_posX = x; hub_posY = y; }
+	void SetHubPos(float cam_x, float cam_y);
 	void GetHubPos(float& x, float& y) { x = hub_posX; y = hub_posY; }
+	void RenderBackgroundHub(float hub_posX, float hub_posY);
 };
 

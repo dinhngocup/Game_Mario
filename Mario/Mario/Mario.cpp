@@ -24,14 +24,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		dynamic_cast<CFlyingState*>(player_state))*/
 	scene->UpdateSpeedBar(abs(vx));
 	CGameObject::Update(dt);
-
 	vector<LPGAMEOBJECT> enemies = scene->enemies;
 	vector<LPGAMEOBJECT> bricks = scene->ghost_platforms;
 	vector<LPGAMEOBJECT> items = scene->items;
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
-
 
 	coEvents.clear();
 
@@ -41,7 +39,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		CalcPotentialCollisions(&enemies, coEvents);
 		CalcPotentialCollisions(&items, coEvents);
 	}
-	//DebugOut(L"itm %d\n", items.size());
+
 	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
 		untouchable_start = 0;
@@ -50,7 +48,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	else {
 		if (untouchable == 1) {
-			DebugOut(L"untouchable\n");
+			//DebugOut(L"untouchable\n");
 			if (GetTickCount64() - untouchable_start >= 600)
 
 				if (GetTickCount64() - unhide_start >= 100) {
@@ -63,7 +61,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		}
 	}
-	//DebugOut(L"size %d\n", coEvents.size());
 	if (coEvents.size() == 0)
 	{
 		x += dx;
@@ -94,18 +91,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else
 					e->obj->IsCollisionWithMario(e);
 			}
-			else if (dynamic_cast<CBrickQuestion*>(e->obj)) {
-				if (e->ny != 0) {
-					if (e->ny > 0 && e->obj->state == STATE_NORMAL) {
-						CBrickQuestion* brick = dynamic_cast<CBrickQuestion*>(e->obj);
-						brick->SetState(STATE_EMPTY);
-					}
-					vy = 0;
-				}
-				if (e->nx != 0) vx = 0;
-			}
-			else if (dynamic_cast<CLeaf*>(e->obj)) {
-				DebugOut(L"va cham ben mario\n");
+			else if (dynamic_cast<CItem*>(e->obj)) {
 				e->obj->IsCollisionWithMario(e);
 			}
 			else {
@@ -114,11 +100,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 	}
+	
 }
 
 void CMario::Render()
 {
-	DebugOut(L"level %d\n", level);
 	if (dynamic_cast<CRunningState*>(player_state) && level != RACCOON_LEVEL_BIG && level != FIRE_LEVEL)
 		player_state->SetAnimation(level);
 	this->ani = player_state->GetAnimation();
@@ -127,8 +113,12 @@ void CMario::Render()
 
 
 	int offset = 0;
-	if (level == RACCOON_LEVEL_BIG)
-		offset = 6;
+	if (level == RACCOON_LEVEL_BIG) {
+		if (nx > 0)
+			offset = 6;
+		else
+			offset = 0;
+	}
 
 	bool spinningFlag = false;
 	if (ani == RACCOON_ANI_SPINNING_BIG)

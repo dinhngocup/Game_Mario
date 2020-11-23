@@ -2,14 +2,11 @@
 
 CLeaf::CLeaf(float x, float y)
 {
-	generate_id++;
-	this->id = generate_id;
 	this->x = x;
 	this->y = y;
 	vy = -0.9f;
 	start_x = x;
 	start_y = y;
-	start_time = GetTickCount64();
 	SetState(STATE_FLYING);
 }
 
@@ -22,17 +19,48 @@ void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		if (state == STATE_FLYING)
 			SetState(STATE_FALLING);
 		else {
-			if (GetTickCount64() - start_time >= 900) {
+			if(abs(x + dx - start_x) >= 50) {
 				vx *= -1;
 				nx *= -1;
-				start_time = GetTickCount64();
 			}
 		}
 	}
-	CGameObject::Update(dt, colliable_objects);
 
-	x += dx;
-	y += dy;
+	CGameObject::Update(dt, colliable_objects);
+	vector<LPCOLLISIONEVENT> coEvents;
+	vector<LPCOLLISIONEVENT> coEventsResult;
+
+	vector<LPGAMEOBJECT> obj;
+	CMario* mario = CMario::GetInstance();
+	obj.clear();
+	obj.push_back(mario);
+	coEvents.clear();
+
+	
+	CalcPotentialCollisions(&obj, coEvents);
+
+	if (coEvents.size() == 0)
+	{
+		x += dx;
+		y += dy;
+	}
+	else
+	{
+		float min_tx, min_ty, nx = 0, ny;
+		float rdx = 0;
+		float rdy = 0;
+
+		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+
+		// block every object first!
+		x += min_tx * dx + nx * 0.4f;
+		y += min_ty * dy + ny * 0.4f;
+
+		HandleCollisionWithMario(coEventsResult[0]);
+
+		// clean up collision events
+		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+	}
 
 }
 
@@ -47,8 +75,8 @@ void CLeaf::SetState(int state)
 	CGameObject::SetState(state);
 	switch (state) {
 	case STATE_FALLING:
-		vx = 0.06f;
-		vy = 0.09f;
+		vy = 0.1f;
+		vx = 0.1f;
 		nx = 1;
 		break;
 	}
@@ -56,13 +84,30 @@ void CLeaf::SetState(int state)
 
 void CLeaf::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
+	// e is leaf
 	CMario* mario = CMario::GetInstance();
 	mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
-	int level = mario->GetLevel() - 1;
-	DebugOut(L"before set\n");
+	int level = mario->GetLevel() + 1;
 	mario->SetLevel(level);
 	mario->player_state->SetAnimation(level);
+	mario->AddScore(LEAF_SCORE);
+
 	SetHealth(false);
+	ableToCheckCollision = false;
+}
+
+void CLeaf::HandleCollisionWithMario(LPCOLLISIONEVENT e)
+{
+	// e is mario
+	CMario* mario = CMario::GetInstance();
+	mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
+	int level = mario->GetLevel() + 1;
+	mario->SetLevel(level);
+	mario->player_state->SetAnimation(level);
+	mario->AddScore(LEAF_SCORE);
+
+	SetHealth(false);
+	ableToCheckCollision = false;
 }
 
 void CLeaf::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)

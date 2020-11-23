@@ -60,6 +60,8 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vector<LPGAMEOBJECT> bricks = scene->ghost_platforms;
 	vector<LPGAMEOBJECT> items = scene->items;
 
+	items.push_back(mario);
+
 	coEvents.clear();
 
 	if (state != STATE_DIE_BY_WEAPON) {
@@ -116,6 +118,9 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 					else 
 						IsCollisionWithBrick(e);
+				}
+				else {
+
 				}
 			}
 		}
@@ -308,6 +313,10 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 			}
 		}
 	}
+}
+
+void CKoopa::HandleCollisionWithMario(LPCOLLISIONEVENT e)
+{
 }
 
 void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)

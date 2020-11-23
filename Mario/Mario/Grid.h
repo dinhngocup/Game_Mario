@@ -13,8 +13,8 @@
 #include "FireFlower.h"
 
 
-#define CELL_HEIGHT (SCREEN_HEIGHT/4.0f)
-#define CELL_WIDTH (SCREEN_WIDTH/4.0f)
+#define CELL_HEIGHT (692/4.0f)
+#define CELL_WIDTH (745/4.0f)
 
 #define MAX_ROW (int)(SCENE_HEIGHT/CELL_HEIGHT) + 1
 #define MAX_COLUMN (int)(SCENE_WIDTH/CELL_WIDTH) + 1
@@ -25,6 +25,8 @@ class CGrid
 	vector<LPGAMEOBJECT> enemies;
 	vector<LPGAMEOBJECT> items;
 	vector<LPGAMEOBJECT> bonus;
+
+	vector<LPGAMEOBJECT> listResetObj;
 
 	// mỗi grid sẽ là vector GO
 	vector<LPGAMEOBJECT> cells[MAX_ROW][MAX_COLUMN];
@@ -42,5 +44,6 @@ public:
 	void UpdatePositionInGrid(float cam_x, float cam_y);
 	void ReadFileObj();
 	void ReloadGrid();
+	void ResetListObj(float cam_x, float cam_y);
 };
 

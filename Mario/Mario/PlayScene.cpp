@@ -231,22 +231,16 @@ void CPlayScene::LoadSceneResources()
 	f.close();
 
 	CTextures::GetInstance()->Add(-100, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
+	CTextures::GetInstance()->Add(-200, L"textures\\bbox_black.png", D3DCOLOR_XRGB(255, 255, 255));
 
 
 	DebugOut(L"[INFO] Done loading resources of this scene %s\n", sceneFilePath);
 	time_game = time_limit;
 	previousTime = GetTickCount64();
-
-	/*
-	Test animation of effect attacked
-	*/
-	/*CTransform* transform = new CTransform(300, 800);
-	effects.push_back(transform);*/
 }
 
 void CPlayScene::Update(DWORD dt)
 {
-	UpdateHub(dt);
 	if (player->is_attacking) {
 		float x;
 		if (player->nx > 0) {
@@ -276,10 +270,11 @@ void CPlayScene::Update(DWORD dt)
 		enemies[i]->is_in_grid = false;
 	}
 	player->Update(dt);
-	/*for (size_t i = 0; i < effects.size(); i++)
+	UpdateHub(dt);
+	for (size_t i = 0; i < effects.size(); i++)
 	{
 		effects[i]->Update(dt);
-	}*/
+	}
 
 	grid->UpdatePositionInGrid(game->GetCamX(), DEFAULT_CAM_Y);
 
@@ -358,6 +353,7 @@ void CPlayScene::Update(DWORD dt)
 			effects.erase(effects.begin() + i);
 		}
 	}
+	hub->SetHubPos(game->GetCamX(), game->GetCamY());
 }
 
 void CPlayScene::Render()
@@ -392,15 +388,8 @@ void CPlayScene::Render()
 	{
 		effects[i]->Render();
 	}
-	if (!isMoved) {
-		hub->Render(20.0f, DEFAULT_CAM_Y + game->GetScreenHeight() - 125);
-		hub->SetHubPos(20.0f, DEFAULT_CAM_Y + game->GetScreenHeight() - 125);
-	}
-	else {
-		hub->Render(cx + 20.0f, cy + game->GetScreenHeight() - 125);
-		hub->SetHubPos(cx + 20.0f, cy + game->GetScreenHeight() - 125);
-	}
-	RenderHub();
+	hub->Render();
+	RenderItemHub();
 }
 
 /*
@@ -482,7 +471,7 @@ void CPlayScene::UpdateHub(DWORD dt)
 	}
 }
 
-void CPlayScene::RenderHub()
+void CPlayScene::RenderItemHub()
 {
 	float hub_x, hub_y;
 	hub->GetHubPos(hub_x, hub_y);

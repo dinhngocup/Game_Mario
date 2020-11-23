@@ -2,11 +2,16 @@
 #include "GameObject.h"
 #include "Game.h"
 #include "Mario.h"
+#include "Item.h"
+
 #define LEAF_GRAVITY 0.002f
 #define LEAF_RANGE	60
+
 #define STATE_FALLING 0
 #define STATE_FLYING 1
-class CLeaf : public CGameObject
+#define LEAF_SCORE 1000
+
+class CLeaf : public CItem
 {
 	DWORD start_time;
 public:
@@ -17,7 +22,7 @@ public:
 	void Render();
 	void SetState(int state);
 	void IsCollisionWithMario(LPCOLLISIONEVENT e);
-
+	void HandleCollisionWithMario(LPCOLLISIONEVENT e);
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx = 0, int dy = 0);
 
 };
