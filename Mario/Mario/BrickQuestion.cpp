@@ -2,9 +2,9 @@
 #include "Game.h"
 #include "PlayScene.h"
 
-CBrickQuestion::CBrickQuestion(int bonus_id)
+CBrickQuestion::CBrickQuestion(int bonus)
 {
-	this->bonus_id = bonus_id;
+	this->bonus = bonus;
 	SetState(STATE_NORMAL);
 }
 
@@ -20,11 +20,12 @@ void CBrickQuestion::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 			y = start_y;
 			vy = 0;
 			is_lifted = true;
+			SetState(STATE_EMPTY_BONUS);
 		}
 		CGameObject::Update(dt);
 		y += dy;
 	}
-	
+
 }
 
 void CBrickQuestion::Render()
@@ -32,7 +33,7 @@ void CBrickQuestion::Render()
 	int ani = 0;
 	if (state == STATE_NORMAL)
 		ani = ANI_NORMAL;
-	else if (state == STATE_EMPTY)
+	else 
 		ani = ANI_EMPTY;
 
 	animation_set->at(ani)->Render(x, y, 255, 1, 0, 0);
@@ -45,11 +46,8 @@ void CBrickQuestion::SetState(int state)
 	CGameObject::SetState(state);
 	switch (state)
 	{
-	case STATE_NORMAL:
-
-		break;
-	case STATE_EMPTY:
-		CreateBonus();
+	case STATE_EMPTY_BONUS:
+			CreateBonus();
 		break;
 	}
 
@@ -59,18 +57,28 @@ void CBrickQuestion::CreateBonus()
 {
 	CGame* game = CGame::GetInstance();
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
-	switch (bonus_id) {
-	case eTYPE::COIN:
-		scene->grid->AddObjectIntoGrid(eTYPE::COIN, x + w/4, y - 10, 0, 0, COIN_ANI, eTYPE_OBJECT::ITEM);
-		break;
-	case eTYPE::MUSHROOM:
-		scene->grid->AddObjectIntoGrid(eTYPE::MUSHROOM, x, y, 48, 48, MUSHROOM_ANI, eTYPE_OBJECT::ITEM);
-		break;
-	case eTYPE::LEAF:
-		scene->grid->AddObjectIntoGrid(eTYPE::LEAF, x, y - 30, 48, 48, LEAF_ANI, eTYPE_OBJECT::ITEM);
-		break;
-	default:
-		break;
+	CMario* mario = CMario::GetInstance();
+	int level = mario->GetLevel();
+	if (bonus == 1) {
+		scene->grid->AddObjectIntoGrid(eTYPE::COIN, x + w / 4, y - 10, 0, 0, COIN_ANI, eTYPE_OBJECT::ITEM);
+	}
+	else {
+		switch (level) {
+		case MARIO_LEVEL_SMALL:
+			scene->grid->AddObjectIntoGrid(eTYPE::MUSHROOM, x, y, 48, 48, MUSHROOM_ANI, eTYPE_OBJECT::ITEM);
+			break;
+		case MARIO_LEVEL_BIG:
+			scene->grid->AddObjectIntoGrid(eTYPE::LEAF, x, y - 30, 48, 48, LEAF_ANI, eTYPE_OBJECT::ITEM);
+			break;
+		case RACCOON_LEVEL_BIG:
+			scene->grid->AddObjectIntoGrid(eTYPE::COIN, x + w / 4, y - 10, 0, 0, COIN_ANI, eTYPE_OBJECT::ITEM);
+			break;
+		case FIRE_LEVEL:
+			scene->grid->AddObjectIntoGrid(eTYPE::COIN, x + w / 4, y - 10, 0, 0, COIN_ANI, eTYPE_OBJECT::ITEM);
+			break;
+		default:
+			break;
+		}
 	}
 }
 

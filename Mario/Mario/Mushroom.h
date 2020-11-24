@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "AnimationSets.h"
 #include "Item.h"
+#include "GrowingUpState.h"
 
 #define MUSHROOM_GRAVITY 0.002f
 
@@ -20,7 +21,7 @@ public:
 	void SetState(int state);
 	void IsCollisionWithMario(LPCOLLISIONEVENT e);
 	void IsCollisionWithBrick(LPCOLLISIONEVENT e);
-	void HandleCollisionWithBrick(LPCOLLISIONEVENT e);
+	void HandleCollisionWithMario(LPCOLLISIONEVENT e);
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx = 0, int dy = 0);
 };
 

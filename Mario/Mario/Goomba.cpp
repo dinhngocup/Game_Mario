@@ -184,16 +184,13 @@ void CGoomba::IsCollisionWithMario(LPCOLLISIONEVENT e)
 				SetState(STATE_DIE_BY_WEAPON);
 			}
 			else {
-				DebugOut(L"xu ly mario giam level hay chet\n");
-				//if (mario->level > MARIO_LEVEL_SMALL)
-				//{
-				//	level = MARIO_LEVEL_SMALL;
-				//	player_state->SetLevel(level);
-				//	StartUntouchable();
-				//}
-				//// mario chết
-				//else
-				//	SetState(MARIO_STATE_DIE);
+				//DebugOut(L"xu ly mario giam level hay chet\n");
+				if (mario->GetLevel() != MARIO_LEVEL_SMALL)
+				{
+					mario->StartUntouchable();
+				}
+				else
+					mario->SetState(MARIO_STATE_DIE);
 			}
 		}
 	}
@@ -261,81 +258,7 @@ void CGoomba::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 			}
 		}
 		
-		// đụng trúng rùa đang spin
-		//if (koopa->state == STATE_SPIN) {
-		//	AttackedByShell();
-		//	koopa->x += dx;
-		//}
-		//else if (koopa->state == STATE_DIE) {
-		//	vx *= -1;
-		//}
-		//else if (koopa->state == STATE_WALKING_SWINGS) {
-		//	if (e->ny != 0)
-		//		// đụng phía dưới rùa
-		//		if (e->ny > 0) {
-		//			koopa->vy = -KOOPA_JUMP_SPEED_Y;
-		//			koopa->vx = koopa->nx * KOOPA_JUMP_SPEED_X;
-		//			y -= dy;
-		//		}
-		//		else {
-		//			koopa->vy = 0;
-		//		}
-		//	if (e->nx != 0) {
-		//		if (nx * e->nx > 0) {
-		//			vx *= -1;
-		//			nx *= -1;
-		//			koopa->vx *= -1;
-		//			koopa->nx *= -1;
-		//		}
-		//		else {
-		//			koopa->vx *= -1;
-		//			koopa->nx *= -1;
-		//		}
-		//	}
-		//}
-		//else {
-		//	if (e->ny != 0)
-		//		// đụng phía dưới rùa
-		//		if (e->ny > 0) {
-		//			koopa->vx = koopa->nx * KOOPA_JUMP_SPEED_X;
-		//			y -= dy;
-		//		}
-		//		else {
-		//			koopa->vy = 0;
-		//		}
-		//	if (e->nx != 0) {
-		//		if (nx * e->nx > 0) {
-		//			vx *= -1;
-		//			nx *= -1;
-		//			koopa->vx *= -1;
-		//			koopa->nx *= -1;
-		//		}
-		//		else {
-		//			koopa->vx *= -1;
-		//			koopa->nx *= -1;
-		//		}
-		//	}
-		//}
+		
 	}
 }
 
-//void CGoomba::RenderBoundingBox()
-//{
-//	D3DXVECTOR3 p(x, y, 0);
-//	RECT rect;
-//
-//	LPDIRECT3DTEXTURE9 bbox = CTextures::GetInstance()->Get(-100);
-//
-//	float l, t, r, b;
-//
-//	GetBoundingBox(l, t, r, b);
-//	rect.left = 0;
-//	rect.top = 0;
-//	rect.right = (int)r - (int)l;
-//	rect.bottom = (int)b - (int)t;
-//
-//	//float draw_x = x - ((int)r - (int)l) / 2;
-//	//float draw_y = y - ((int)b - (int)t) / 2;
-//
-//	CGame::GetInstance()->Draw(x, y, bbox, rect.left, rect.top, rect.right, rect.bottom, 80);
-//}

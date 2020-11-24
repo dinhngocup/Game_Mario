@@ -18,15 +18,15 @@ void CSprite::Draw(float x, float y, int alpha)
 	game->Draw(x, y, texture, left, top, right, bottom, alpha);
 }
 
-void CSprite::DrawFlipX(float x, float y, int alpha, int nx, int offset, int ny)
+void CSprite::DrawFlipX(float x, float y, int alpha, int nx, int offset, int ny, int scale)
 {
 	LPD3DXSPRITE spriteHandler = CGame::GetInstance()->GetSpriteHandler();
 
 	float cam_x, cam_y;
 	CGame::GetInstance()->GetCamPos(cam_x, cam_y);
 
-	x += (right - left)*3 / 2;
-	y += (bottom - top)*3 / 2;
+	x += (right - left) * scale / 2;
+	y += (bottom - top) * scale / 2;
 
 	// tọa độ của sprite trên màn hình
 	D3DXVECTOR3 p(floor(x - cam_x), floor(y - cam_y), 0);
@@ -50,7 +50,7 @@ void CSprite::DrawFlipX(float x, float y, int alpha, int nx, int offset, int ny)
 	các thông số còn lại dùng cho việc xoay góc bao nhiêu độ,... ở đây vẽ tile không cần
 	*/
 	D3DXVECTOR2 vector_p(p.x, p.y);
-	D3DXVECTOR2 vector_scale(3.0f * nx, 3.0f * ny);
+	D3DXVECTOR2 vector_scale(scale * nx, scale * ny);
 
 	D3DXMatrixTransformation2D(&middleTransform, &vector_p, 0, &vector_scale, NULL, 0.0f, NULL);
 

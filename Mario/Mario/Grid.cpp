@@ -15,7 +15,11 @@ void CGrid::AddObjectIntoGrid(int object_type, float x, float y, float w, float 
 	int right = (int)((x + w) / CELL_WIDTH);
 
 	LPGAMEOBJECT obj = CreateNewObj(object_type, x, y, w, h, ani_id, type, extra, nx);
-
+	/*if (object_type == eTYPE::KOOPA) {
+		DebugOut(L"left %d\n", left);
+		DebugOut(L"r %d\n", right);
+		DebugOut(L"id %d\n", obj->GetId());
+	}*/
 	for (int i = top; i <= bottom; i++)
 		for (int j = left; j <= right; j++) {
 			cells[i][j].push_back(obj);
@@ -35,19 +39,22 @@ void CGrid::GetListObjInGrid(float cam_x, float cam_y)
 	int bottom = (int)((cam_y + game->GetScreenHeight()) / CELL_HEIGHT) - 1;
 
 	int left = (int)((cam_x) / CELL_WIDTH);
-	int right = (int)((cam_x + game->GetScreenWidth()) / CELL_WIDTH) - 1;
-	/*DebugOut(L"t %d\n", top);
-	DebugOut(L"b %d\n", bottom);
-	DebugOut(L"l %d\n", left);
-	DebugOut(L"r %d\n", right);*/
+	int right = (int)((cam_x + game->GetScreenWidth()) / CELL_WIDTH);
 
+	//DebugOut(L"right %d\n", right);
 	for (int i = top - 1; i <= bottom + 1; i++)
 		for (int j = left - 1; j <= right + 1; j++) {
-			if (left < 0) left = 0;
+			if (j < 0) j = 0;
+			if (i < 0) i = 0;
 			for (int k = 0; k < cells[i][j].size(); k++) {
-				if (cells[i][j].at(k)->GetHealth() && !cells[i][j].at(k)->is_in_grid) {
-					Classify(cells[i][j].at(k));
-					cells[i][j].at(k)->is_in_grid = true;
+				if (cells[i][j].at(k)->GetHealth()) {
+					if (j >= left && j <= right)
+						cells[i][j].at(k)->is_appeared = true;
+					if (!cells[i][j].at(k)->is_in_grid && cells[i][j].at(k)->is_appeared) {
+						Classify(cells[i][j].at(k));
+						cells[i][j].at(k)->is_in_grid = true;
+					}
+
 				}
 			}
 		}
@@ -106,9 +113,18 @@ LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, flo
 		break;
 	}
 	case eTYPE::FIRE_FLOWER: {
-		obj = new CFireFlower(extra);
-		obj->start_y = y;
+		obj = new CFireFlower(extra, x, y, w, h);
 		obj->type = eTYPE::FIRE_FLOWER;
+		break;
+	}
+	case eTYPE::STATIC_COIN: {
+		obj = new CStaticCoin(x, y);
+		obj->type = eTYPE::STATIC_COIN;
+		break;
+	}
+	case eTYPE::FIRE_FLOWER_WEAPON: {
+		obj = new CFireFlowerWeapon(x, y, nx, extra);
+		obj->type = eTYPE::FIRE_FLOWER_WEAPON;
 		break;
 	}
 	default:
@@ -153,7 +169,7 @@ void CGrid::UpdatePositionInGrid(float cam_x, float cam_y)
 	int bottom_cell = (int)((cam_y + game->GetScreenHeight()) / CELL_HEIGHT) - 1;
 
 	int left_cell = (int)((cam_x) / CELL_WIDTH);
-	int right_cell = (int)((cam_x + game->GetScreenWidth()) / CELL_WIDTH) - 1;
+	int right_cell = (int)((cam_x + game->GetScreenWidth()) / CELL_WIDTH);
 	enemies.clear();
 	items.clear();
 
@@ -166,8 +182,9 @@ void CGrid::UpdatePositionInGrid(float cam_x, float cam_y)
 		LPGAMEOBJECT enemy = enemies[m];
 
 		for (int i = top_cell - 1; i <= bottom_cell + 1; i++)
-			for (int j = left_cell - 1; j <= right_cell + 1; j++) {
-				if (left_cell < 0) left_cell = 0;
+			for (int j = left_cell - 2; j <= right_cell + 3; j++) {
+				if (j < 0) j = 0;
+				if (i < 0) i = 0;
 				for (int k = 0; k < cells[i][j].size(); k++) {
 					if (cells[i][j].at(k)->GetId() == enemy->GetId()) {
 						cells[i][j].erase(cells[i][j].begin() + k);
@@ -179,15 +196,20 @@ void CGrid::UpdatePositionInGrid(float cam_x, float cam_y)
 		int bottom = (int)((enemy->GetY() + enemy->h) / CELL_HEIGHT);
 		int left = (int)(enemy->GetX() / CELL_WIDTH);
 		int right = (int)((enemy->GetX() + enemy->w) / CELL_WIDTH);
+
+		//DebugOut(L"left %d\n", left);
+		//DebugOut(L"right %d\n", right);
 		for (int i = top; i <= bottom; i++)
 			for (int j = left; j <= right; j++) {
 				cells[i][j].push_back(enemy);
 			}
 	}
 
-	
+
 	// lấy 2 dòng biên
 	for (int x = left_cell - 1; x < right_cell + 1; x++) {
+		if (x < 0) x = 0;
+		if (top_cell - 1 < 0) top_cell = 1;
 		for (int k = 0; k < cells[top_cell - 1][x].size(); k++) {
 			if (cells[top_cell - 1][x].at(k)->GetHealth()
 				&& cells[top_cell - 1][x].at(k)->type_object == eTYPE_OBJECT::ENEMY) {
@@ -197,8 +219,10 @@ void CGrid::UpdatePositionInGrid(float cam_x, float cam_y)
 						quantity++;
 						break;
 					}
-				if (quantity == 0)
+				if (quantity == 0) {
+					DebugOut(L"push 2 dong bien\n");
 					listResetObj.push_back(cells[top_cell - 1][x].at(k));
+				}
 			}
 		}
 		for (int k = 0; k < cells[bottom_cell + 1][x].size(); k++) {
@@ -211,6 +235,7 @@ void CGrid::UpdatePositionInGrid(float cam_x, float cam_y)
 						break;
 					}
 				if (quantity == 0) {
+					DebugOut(L"push 2 dong bien\n");
 					listResetObj.push_back(cells[bottom_cell + 1][x].at(k));
 				}
 			}
@@ -218,25 +243,33 @@ void CGrid::UpdatePositionInGrid(float cam_x, float cam_y)
 	}
 
 
-
+	//DebugOut(L"righ_cell %d\n", right_cell + 2);
 	// lấy 2 cột biên
 	for (int i = top_cell - 1; i <= bottom_cell + 1; i++) {
+		if (i < 0) i = 0;
 		for (int k = 0; k < cells[i][right_cell + 2].size(); k++) {
 			if (cells[i][right_cell + 2].at(k)->GetHealth()
-				&& cells[i][right_cell + 2].at(k)->type_object == eTYPE_OBJECT::ENEMY) {
+				&& cells[i][right_cell + 2].at(k)->type_object == eTYPE_OBJECT::ENEMY
+				&& cells[i][right_cell + 2].at(k)->is_appeared) {
 				int quantity = 0;
 				for (LPGAMEOBJECT obj : listResetObj)
 					if (obj->GetId() == cells[i][right_cell + 2].at(k)->GetId()) {
 						quantity++;
 						break;
 					}
-				if (quantity == 0)
+				if (quantity == 0) {
+					//DebugOut(L"push cot bien phai\n");
+					cells[i][right_cell + 2].at(k)->is_appeared = false;
 					listResetObj.push_back(cells[i][right_cell + 2].at(k));
+
+				}
 			}
 		}
 		for (int k = 0; k < cells[i][left_cell - 2].size(); k++) {
+			if (left_cell - 1 < 0) left_cell = 2;
 			if (cells[i][left_cell - 2].at(k)->GetHealth()
-				&& cells[i][left_cell - 2].at(k)->type_object == eTYPE_OBJECT::ENEMY) {
+				&& cells[i][left_cell - 2].at(k)->type_object == eTYPE_OBJECT::ENEMY
+				&& cells[i][left_cell - 2].at(k)->is_appeared) {
 				if (left_cell < 0) left_cell = 0;
 				int quantity = 0;
 				for (LPGAMEOBJECT obj : listResetObj)
@@ -244,8 +277,12 @@ void CGrid::UpdatePositionInGrid(float cam_x, float cam_y)
 						quantity++;
 						break;
 					}
-				if (quantity == 0)
+				if (quantity == 0) {
+					DebugOut(L"push 2 cot bien trai\n");
+					cells[i][left_cell - 2].at(k)->is_appeared = false;
 					listResetObj.push_back(cells[i][left_cell - 2].at(k));
+
+				}
 
 			}
 		}
@@ -286,6 +323,7 @@ void CGrid::ReadFileObj()
 	ifstream f;
 	f.open(objFilePath);
 	char str[MAX_SCENE_LINE];
+
 	while (f.getline(str, MAX_SCENE_LINE))
 	{
 		string line(str);
@@ -327,11 +365,16 @@ void CGrid::ResetListObj(float cam_x, float cam_y)
 {
 	CGame* game = CGame::GetInstance();
 	int size = listResetObj.size();
+	//DebugOut(L"size %d\n", size);
+
 	for (int i = 0; i < size; i++) {
+
+
 		// check start pos coi có trong cam k có thì return
-		if (listResetObj[i]->start_x >= cam_x && listResetObj[i]->start_x + listResetObj[i]->w <= cam_x + game->GetScreenWidth() + CELL_WIDTH)
+		if (listResetObj[i]->start_x + listResetObj[i]->w >= cam_x && listResetObj[i]->start_x <= cam_x + game->GetScreenWidth())
 			return;
 
+		//DebugOut(L"type %d\n", listResetObj[i]->GetType());
 		// tính hiện tại nó ở grid nào
 		int top_cell = (int)((listResetObj[i]->y) / CELL_HEIGHT);
 		int bottom_cell = (int)((listResetObj[i]->y + listResetObj[i]->h) / CELL_HEIGHT);

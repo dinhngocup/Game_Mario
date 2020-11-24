@@ -159,8 +159,10 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationSets.cpp" />
+    <ClCompile Include="FireFlowerWeapon.cpp" />
     <ClCompile Include="FireFlower.cpp" />
     <ClCompile Include="Font.cpp" />
+    <ClCompile Include="GrowingUpState.cpp" />
     <ClCompile Include="Hub.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Coin.cpp" />
@@ -170,6 +172,7 @@
     <ClCompile Include="KickingState.cpp" />
     <ClCompile Include="Leaf.cpp" />
     <ClCompile Include="Mushroom.cpp" />
+    <ClCompile Include="StaticCoin.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="CrouchingState.cpp" />
@@ -215,12 +218,14 @@
     <ClInclude Include="FallingState.h" />
     <ClInclude Include="FireBall.h" />
     <ClInclude Include="FireFlower.h" />
+    <ClInclude Include="FireFlowerWeapon.h" />
     <ClInclude Include="FlyingState.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Goomba.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="GameConst.h" />
+    <ClInclude Include="GrowingUpState.h" />
     <ClInclude Include="HighJumpingState.h" />
     <ClInclude Include="HoldingState.h" />
     <ClInclude Include="Hub.h" />
@@ -241,6 +246,7 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Sprites.h" />
     <ClInclude Include="StandingState.h" />
+    <ClInclude Include="StaticCoin.h" />
     <ClInclude Include="Textures.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="KeyEventHandler.h" />

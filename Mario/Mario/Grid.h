@@ -11,6 +11,8 @@
 #include "Mushroom.h"
 #include "Leaf.h"
 #include "FireFlower.h"
+#include "StaticCoin.h"
+#include "FireFlowerWeapon.h"
 
 
 #define CELL_HEIGHT (692/4.0f)
@@ -26,7 +28,6 @@ class CGrid
 	vector<LPGAMEOBJECT> items;
 	vector<LPGAMEOBJECT> bonus;
 
-	vector<LPGAMEOBJECT> listResetObj;
 
 	// mỗi grid sẽ là vector GO
 	vector<LPGAMEOBJECT> cells[MAX_ROW][MAX_COLUMN];
@@ -34,6 +35,7 @@ class CGrid
 	LPCWSTR objFilePath;
 	int current = 4;
 public:
+	vector<LPGAMEOBJECT> listResetObj;
 	CGrid(LPCWSTR objFilePath);
 	~CGrid() {};
 

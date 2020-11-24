@@ -30,7 +30,6 @@ void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	//DebugOut(L"update koopa\n");
 
 	CMario* mario = CMario::GetInstance();
 	vy += KOOPA_GRAVITY * dt;
@@ -93,8 +92,9 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (state != STATE_DIE_BY_WEAPON) {
 				if (dynamic_cast<CBrick*>(e->obj)) {
-					if (state == STATE_HOLD || state == STATE_WALKING_SWINGS)
+					if (state == STATE_HOLD || state == STATE_WALKING_SWINGS) {
 						IsCollisionWithBrickSpecially(e);
+					}
 					else
 						IsCollisionWithBrick(e);
 				}
@@ -119,9 +119,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					else 
 						IsCollisionWithBrick(e);
 				}
-				else {
-
-				}
+				
 			}
 		}
 
@@ -222,7 +220,14 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 			mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
 		else {
-			mario->vy = 0;
+			mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
+			if (mario->x <= x) {
+				nx = 1;
+			}
+			else {
+				nx = -1;
+			}
+				SetState(STATE_SPIN);
 		}
 	}
 	// đụng bên hông koopa
@@ -239,18 +244,13 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 				SetState(STATE_DIE_BY_WEAPON);
 			}
 			else {
-				DebugOut(L"xu ly mario giam level hay chet\n");
-				mario->StartUntouchable();
-				mario->SetState(MARIO_STATE_HIDE_UNTOUCHABLE);
-				//if (mario->level > MARIO_LEVEL_SMALL)
-				//{
-				//	level = MARIO_LEVEL_SMALL;
-				//	player_state->SetLevel(level);
-				//	StartUntouchable();
-				//}
-				//// mario chết
-				//else
-				//	SetState(MARIO_STATE_DIE);
+				if (mario->GetLevel() > MARIO_LEVEL_SMALL)
+				{
+					mario->StartUntouchable();
+				}
+				// mario chết
+				else
+					mario->SetState(MARIO_STATE_DIE);
 			}
 		}
 		else {
@@ -299,16 +299,13 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 					SetState(STATE_DIE_BY_WEAPON);
 				}
 				else {
-					DebugOut(L"xu ly mario giam level hay chet\n");
-					//if (level > MARIO_LEVEL_SMALL)
-					//{
-					//	level = MARIO_LEVEL_SMALL;
-					//	player_state->SetLevel(level);
-					//	StartUntouchable();
-					//}
-					//// mario chết
-					//else
-					//	SetState(MARIO_STATE_DIE);
+					if (mario->GetLevel() > MARIO_LEVEL_SMALL)
+					{
+						mario->StartUntouchable();
+					}
+					// mario chết
+					else
+						mario->SetState(MARIO_STATE_DIE);
 				}
 			}
 		}
@@ -322,9 +319,7 @@ void CKoopa::HandleCollisionWithMario(LPCOLLISIONEVENT e)
 void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 {
 
-	/*DebugOut(L"state %d\n", state);
-	DebugOut(L"e state %d\n", e->obj->state);
-	DebugOut(L"e ableToCheckCollision %d\n", e->obj->ableToCheckCollision);*/
+	
 	if (e->obj->type == eTYPE::GOOMBA) {
 		CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 
@@ -430,6 +425,7 @@ void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 void CKoopa::IsCollisionWithBrickSpecially(LPCOLLISIONEVENT e)
 {
 	if (state == STATE_HOLD) {
+		DebugOut(L"hiii\n");
 		if (e->nx != 0) x += dx;
 		if (e->ny != 0) y += dy;
 	}

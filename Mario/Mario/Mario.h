@@ -17,6 +17,7 @@ class CMario : public CGameObject
 	int level;
 	int untouchable;
 	DWORD untouchable_start;
+	int time_flicker;
 
 	float start_x;			// initial position of Mario at scene
 	float start_y;
@@ -56,6 +57,7 @@ public:
 	void SetLevel(int l) { level = l; }
 	int GetLevel() { return level; }
 	void StartUntouchable();
+	void UpLevel();
 	int GetScore() { return score; }
 	int GetCoin() { return coin_number; }
 	void AddScore(int score) { this->score += score; }

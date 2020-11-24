@@ -1,14 +1,21 @@
 #include "Transform.h"
 
+void CTransform::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)
+{
+	left = x;
+	top = y;
+	right = left + w;
+	bottom = top + h;
+}
+
 CTransform::CTransform(float x, float y)
 {
 	start_ani = GetTickCount64();
-	DebugOut(L"new transform\n");
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 	LPANIMATION_SET ani_set = animation_sets->Get(ANI_TRANSFORM);
 	SetAnimationSet(ani_set);
-	w = 12;
-	h = 12;
+	w = 16;
+	h = 16;
 	SetPosition(x, y);
 	generate_id++;
 	this->id = generate_id;
@@ -23,7 +30,7 @@ void CTransform::Render()
 void CTransform::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CMario* mario = CMario::GetInstance();
-	if (GetTickCount64() - start_ani >= 600) {
+	if (GetTickCount64() - start_ani >= 480) {
 		SetHealth(false);
 		mario->SetState(MARIO_STATE_UNHIDE_UNTOUCHABLE);
 		mario->unhide_start = GetTickCount64();

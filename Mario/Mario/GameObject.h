@@ -46,6 +46,7 @@ public:
 
 	bool health = true;
 	bool is_in_grid = false;
+	bool is_appeared = false;
 
 	float dx;	// dx = vx*dt
 	float dy;	// dy = vy*dt

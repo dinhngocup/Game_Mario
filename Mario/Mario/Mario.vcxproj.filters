@@ -202,6 +202,15 @@
     <ClCompile Include="FireFlower.cpp">
       <Filter>Objects\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="StaticCoin.cpp">
+      <Filter>Objects\Bonus</Filter>
+    </ClCompile>
+    <ClCompile Include="GrowingUpState.cpp">
+      <Filter>Objects\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="FireFlowerWeapon.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -355,6 +364,15 @@
       <Filter>Objects\Bonus</Filter>
     </ClInclude>
     <ClInclude Include="FireFlower.h">
+      <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticCoin.h">
+      <Filter>Objects\Bonus</Filter>
+    </ClInclude>
+    <ClInclude Include="GrowingUpState.h">
+      <Filter>Objects\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="FireFlowerWeapon.h">
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
   </ItemGroup>

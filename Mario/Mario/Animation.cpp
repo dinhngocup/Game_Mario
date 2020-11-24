@@ -48,20 +48,28 @@ void CAnimation::Render(float x, float y, int alpha, int nx, int offset, bool sp
 			if (currentFrame == frames.size()) {
 				currentFrame = 0;
 				lastFrame = true;
-			} else
+			}
+			else
 				lastFrame = false;
 		}
 	}
 	// set offset cho ani spinning
 	CMario* mario = CMario::GetInstance();
-	if (spinningFlag) {
-		if (currentFrame == 0 || currentFrame == 4) {
-			frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, offset + 1);
-		}
-		else {
-			frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, 0);
-		}
+	if (frames[currentFrame]->GetSprite()->Get() == 40064 ||
+		frames[currentFrame]->GetSprite()->Get() == 40065) {
+		frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, offset,ny, 1);
 	}
-	else
-		frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, offset, ny);
+	else {
+		if (spinningFlag) {
+			if (currentFrame == 0 || currentFrame == 4) {
+				frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, offset + 1);
+			}
+			else {
+				frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, 0);
+			}
+		}
+		else
+			frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, offset, ny);
+
+	}
 }

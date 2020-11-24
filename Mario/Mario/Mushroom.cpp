@@ -1,4 +1,4 @@
-#include "Mushroom.h"
+﻿#include "Mushroom.h"
 #include "PlayScene.h"
 
 CMushroom::CMushroom(float x, float y)
@@ -81,7 +81,7 @@ void CMushroom::Render()
 	animation_set->at(0)->Render(x, y, 255, 1, 0, 0);
 
 	CAnimationSets* sets = CAnimationSets::GetInstance();
-	//sets->Get(2)->at(1)->Render(start_x, start_y);
+	sets->Get(2)->at(1)->Render(start_x, start_y);
 	RenderBoundingBox();
 
 }
@@ -102,15 +102,13 @@ void CMushroom::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
 	// e is mushroom
 	CMario* mario = CMario::GetInstance();
+	// set tam thời
+	mario->vx = 0;
 	mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
-	int level = mario->GetLevel();
-	level++;
-	mario->SetLevel(level);
-	mario->player_state->SetAnimation(level);
-	mario->AddScore(MUSHROOM_SCORE);
-
 	SetHealth(false);
 	ableToCheckCollision = false;
+	mario->ChangeState(new CGrowingUpState(mario->GetLevel()));
+	mario->AddScore(MUSHROOM_SCORE);
 }
 
 void CMushroom::IsCollisionWithBrick(LPCOLLISIONEVENT e)
@@ -122,19 +120,17 @@ void CMushroom::IsCollisionWithBrick(LPCOLLISIONEVENT e)
 	if (e->ny != 0) vy = 0;
 }
 
-void CMushroom::HandleCollisionWithBrick(LPCOLLISIONEVENT e)
+void CMushroom::HandleCollisionWithMario(LPCOLLISIONEVENT e)
 {
 	// e is mario
 	CMario* mario = CMario::GetInstance();
+	// set tam thời
+	mario->vx = 0;
 	mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
-	int level = mario->GetLevel();
-	level++;
-	mario->SetLevel(level);
-	mario->player_state->SetAnimation(level);
-	mario->AddScore(MUSHROOM_SCORE);
-
 	SetHealth(false);
 	ableToCheckCollision = false;
+	mario->ChangeState(new CGrowingUpState(mario->GetLevel()));
+	mario->AddScore(MUSHROOM_SCORE);
 }
 
 void CMushroom::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)

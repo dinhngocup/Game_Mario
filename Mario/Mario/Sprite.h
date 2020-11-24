@@ -18,7 +18,7 @@ public:
 	CSprite(int id, int left, int top, int width, int height, LPDIRECT3DTEXTURE9 tex);
 
 	void Draw(float x, float y, int alpha = 255);
-	void DrawFlipX(float x, float y, int alpha = 255, int nx = 1, int offset = 0, int ny = 1);
+	void DrawFlipX(float x, float y, int alpha = 255, int nx = 1, int offset = 0, int ny = 1, int scale = 3);
 	int Get() { return id; }
 };
 typedef CSprite* LPSPRITE;

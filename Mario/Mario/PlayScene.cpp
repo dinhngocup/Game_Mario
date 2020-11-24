@@ -269,12 +269,12 @@ void CPlayScene::Update(DWORD dt)
 		enemies[i]->Update(dt);
 		enemies[i]->is_in_grid = false;
 	}
-	player->Update(dt);
-	UpdateHub(dt);
 	for (size_t i = 0; i < effects.size(); i++)
 	{
 		effects[i]->Update(dt);
 	}
+	player->Update(dt);
+	UpdateHub(dt);
 
 	grid->UpdatePositionInGrid(game->GetCamX(), DEFAULT_CAM_Y);
 

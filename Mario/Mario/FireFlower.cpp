@@ -1,10 +1,14 @@
-#include "FireFlower.h"
+﻿#include "FireFlower.h"
+#include "PlayScene.h"
 
-CFireFlower::CFireFlower(int flower_color)
+CFireFlower::CFireFlower(int flower_color, float x, float y, int w, int h)
 {
 	generate_id++;
 	this->id = generate_id;
 	this->flower_color = flower_color;
+	start_x = x;
+	start_y = y;
+	boundaryY = start_y - h;
 	SetState(STATE_MOVING_UP);
 }
 
@@ -20,11 +24,18 @@ void CFireFlower::GetBoundingBox(float& left, float& top, float& right, float& b
 void CFireFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
-	
+	CMario* mario = CMario::GetInstance();
 	if (state == STATE_MOVING_UP) {
 		if (y <= start_y - h) {
 			y = start_y - h;
-			SetState(STATE_ATTACKING_UP);
+			if (mario->y <= boundaryY) {
+				ny = -1;
+				SetState(STATE_ATTACKING_UP);
+			}
+			else {
+				ny = 1;
+				SetState(STATE_ATTACKING_DOWN);
+			}
 		}
 		else y += dy;
 	}
@@ -39,8 +50,15 @@ void CFireFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	}
 	else {
-		if (GetTickCount64() - start_count >= 500) {
-			SetState(STATE_MOVING_UP);
+		// state là hide
+		if (mario->x <= start_x - 24 && mario->x >= start_x - 24 - 48 ||
+			mario->x >= start_x - 24 + 96 && mario->x <= start_x - 24 + 96 + 48) {
+
+		}
+		else {
+			if (GetTickCount64() - start_count >= 800) {
+				SetState(STATE_MOVING_UP);
+			}
 		}
 	}
 
@@ -48,6 +66,7 @@ void CFireFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CFireFlower::Render()
 {
+	CMario* mario = CMario::GetInstance();
 	int ani;
 	if (flower_color == RED_FLOWER) {
 		switch (state) {
@@ -61,10 +80,11 @@ void CFireFlower::Render()
 			ani = RED_FF_ANI_ATTACKING_DOWN;
 			break;
 		case STATE_MOVING_UP:
-			ani = RED_FF_ANI_MOVING_UP;
-			break;
 		case STATE_MOVING_DOWN:
-			ani = RED_FF_ANI_MOVING_DOWN;
+			if (ny < 0)
+				ani = RED_FF_ANI_UP;
+			else
+				ani = RED_FF_ANI_DOWN;
 			break;
 		}
 	}
@@ -87,31 +107,43 @@ void CFireFlower::Render()
 			break;
 		}
 	}
-	CMario* mario = CMario::GetInstance();
 
 	animation_set->at(ani)->Render(x, y);
-
+	animation_set->at(PIPE_ANI)->Render(start_x - 23, start_y);
 	RenderBoundingBox();
 }
 
 void CFireFlower::SetState(int state)
 {
 	CGameObject::SetState(state);
+	CMario* mario = CMario::GetInstance();
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	switch (state) {
 	case STATE_MOVING_UP:
+		if (mario->y <= boundaryY) {
+			ny = -1;
+		}
+		else
+			ny = 1;
 		vy = -FF_SPEED;
 		break;
 	case STATE_MOVING_DOWN:
+		if (mario->y <= boundaryY) {
+			ny = -1;
+		}
+		else
+			ny = 1;
 		vy = FF_SPEED;
 		break;
 	case STATE_ATTACKING_UP:
+	case STATE_ATTACKING_DOWN: {
+		//bắn lửa
+		scene->grid->AddObjectIntoGrid(eTYPE::FIRE_FLOWER_WEAPON, x + 10 * nx * -1, y + 10, 24, 24, ANI_FF_WEAPON, eTYPE_OBJECT::ITEM, ny, nx);
 		start_count = GetTickCount64();
 		vy = 0;
 		break;
-	case STATE_ATTACKING_DOWN:
-		start_count = GetTickCount64();
-		vy = 0;
-		break;
+	}
 	case STATE_HIDE:
 		start_count = GetTickCount64();
 		vy = 0;
@@ -121,6 +153,11 @@ void CFireFlower::SetState(int state)
 
 void CFireFlower::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
+}
+
+void CFireFlower::CreateWeapon()
+{
+
 }
 
 void CFireFlower::IsCollisionWithEnemy(LPCOLLISIONEVENT e)

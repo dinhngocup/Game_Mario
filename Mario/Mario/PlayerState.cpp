@@ -1,15 +1,18 @@
 ﻿#include "PlayerState.h"
 #include "Mario.h"
+#include "GrowingUpState.h"
 #include "Game.h"
 void CPlayerState::OnKeyDown(int KeyCode)
 {
 	CMario* mario = CMario::GetInstance();
 	float current_x = mario->GetX();
-	//DebugOut(L"key downnn \n");
-	//DebugOut(L"keycode %d\n", KeyCode);
+	
 	CPlayerState* player_state = mario->GetState();
 	switch (KeyCode)
 	{
+	case DIK_K:
+		mario->ChangeState(new CGrowingUpState(level));
+		break;
 	case DIK_X:
 		if (!dynamic_cast<CJumpingState*>(player_state) &&
 			!dynamic_cast<CHighJumpingState*>(player_state) &&
@@ -59,22 +62,26 @@ void CPlayerState::OnKeyDown(int KeyCode)
 		mario->SetPosition(current_x, 450);
 		mario->SetSpeed(0, 0);
 		mario->SetLevel(MARIO_LEVEL_SMALL);
+		mario->SetState(0);
 		mario->ChangeState(new CStandingState(MARIO_LEVEL_SMALL));
 		break;
 	case DIK_2:
 		mario->SetPosition(current_x, 450);
 		mario->SetSpeed(0, 0);
+		mario->SetState(0);
 		mario->SetLevel(MARIO_LEVEL_BIG);
 		mario->ChangeState(new CStandingState(MARIO_LEVEL_BIG));
 		break;
 	case DIK_3:
 		mario->SetPosition(current_x, 450);
 		mario->SetLevel(RACCOON_LEVEL_BIG);
+		mario->SetState(0);
 		mario->ChangeState(new CStandingState(RACCOON_LEVEL_BIG));
 		break;
 	case DIK_4:
 		mario->SetPosition(current_x, 450);
 		mario->SetLevel(FIRE_LEVEL);
+		mario->SetState(0);
 		mario->ChangeState(new CStandingState(FIRE_LEVEL));
 		break;
 	case DIK_R:

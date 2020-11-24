@@ -91,6 +91,7 @@ void CLeaf::IsCollisionWithMario(LPCOLLISIONEVENT e)
 	mario->SetLevel(level);
 	mario->player_state->SetAnimation(level);
 	mario->AddScore(LEAF_SCORE);
+	mario->UpLevel();
 
 	SetHealth(false);
 	ableToCheckCollision = false;
@@ -102,6 +103,7 @@ void CLeaf::HandleCollisionWithMario(LPCOLLISIONEVENT e)
 	CMario* mario = CMario::GetInstance();
 	mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
 	int level = mario->GetLevel() + 1;
+	mario->UpLevel();
 	mario->SetLevel(level);
 	mario->player_state->SetAnimation(level);
 	mario->AddScore(LEAF_SCORE);
