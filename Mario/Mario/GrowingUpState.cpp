@@ -2,19 +2,21 @@
 
 CGrowingUpState::CGrowingUpState(int level)
 {
-	DebugOut(L"grow\n");
 	CMario* mario = CMario::GetInstance();
 	this->level = level;
 	SetAnimation(this->level);
 	start_ani1 = GetTickCount64();
 	start_ani2 = GetTickCount64();
+	if (level == MARIO_LEVEL_SMALL)
+		limit = 1100;
+	else limit = 700;
 }
 
 void CGrowingUpState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
 	if (GetTickCount64() - start_ani1 >= 1800) {
-
+		mario->untouchable = 0;
 		int level_mario = mario->GetLevel();
 		if (level == MARIO_LEVEL_SMALL) {
 			level_mario++;
@@ -31,7 +33,7 @@ void CGrowingUpState::Update(float dt)
 		else
 			mario->ChangeState(new CStandingState(level_mario));
 	}
-	else if (GetTickCount64() - start_ani1 <= 1100) {
+	else if (GetTickCount64() - start_ani1 <= limit) {
 		if (GetTickCount64() - start_ani2 >= 200) {
 			start_ani2 = GetTickCount64();
 			if (level == MARIO_LEVEL_SMALL) {
@@ -49,7 +51,7 @@ void CGrowingUpState::Update(float dt)
 			else {
 				if (mario->state == MARIO_STATE_BIG_END_GROW_UP) {
 					mario->SetState(MARIO_STATE_BIG_GROW_UP);
-					mario->y += 24;
+					mario->y += 22;
 
 				}
 				else if (mario->state == MARIO_STATE_BIG_GROW_UP) {
@@ -76,6 +78,7 @@ void CGrowingUpState::Update(float dt)
 
 			}
 			else {
+				
 				if (mario->state == MARIO_STATE_SMALL_GROW_UP) {
 					mario->SetState(MARIO_STATE_BIG_GROW_UP);
 					mario->y -= 12;

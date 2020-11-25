@@ -18,7 +18,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	if (state != MARIO_STATE_DIE)
 		player_state->Update(dt);
-	
+
 	vy += MARIO_GRAVITY * dt;
 
 	scene->UpdateSpeedBar(abs(vx));
@@ -40,23 +40,23 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	if (untouchable == 1) {
-		if (GetTickCount64() - untouchable_start >= time_flicker
-			&& GetTickCount64() - untouchable_start < MARIO_UNTOUCHABLE_TIME) {
-			if (GetTickCount64() - unhide_start >= 100) {
-				if (state == MARIO_STATE_HIDE_UNTOUCHABLE)
-					SetState(MARIO_STATE_UNHIDE_UNTOUCHABLE);
-				else
-					SetState(MARIO_STATE_HIDE_UNTOUCHABLE);
-				unhide_start = GetTickCount64();
+		if (!dynamic_cast<CGrowingUpState*>(player_state)) {
+			if (GetTickCount64() - untouchable_start >= time_flicker
+				&& GetTickCount64() - untouchable_start < MARIO_UNTOUCHABLE_TIME) {
+				if (GetTickCount64() - unhide_start >= 100) {
+					if (state == MARIO_STATE_HIDE_UNTOUCHABLE)
+						SetState(MARIO_STATE_UNHIDE_UNTOUCHABLE);
+					else
+						SetState(MARIO_STATE_HIDE_UNTOUCHABLE);
+					unhide_start = GetTickCount64();
+				}
+			}
+			else if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME) {
+				untouchable_start = 0;
+				untouchable = 0;
+				SetState(0);
 			}
 		}
-		else if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME) {
-			untouchable_start = 0;
-			untouchable = 0;
-			SetState(0);
-		}
-
-
 	}
 	if (coEvents.size() == 0)
 	{
@@ -72,6 +72,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		float rdy = 0;
 		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
+
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
 
@@ -84,6 +85,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				else if (dynamic_cast<CEnemy*>(e->obj)) {
 					if (is_holding && e->obj->state == STATE_HOLD || untouchable == 1) {
+
+					}
+					else if (e->obj->GetType() == eTYPE::FIRE_FLOWER_WEAPON) {
+						if (e->nx != 0)
+							x -= min_tx * dx + nx * 0.4f;
+						if (e->ny != 0);
+						y -= min_ty * dy + ny * 0.4f;
+						e->obj->IsCollisionWithMario(e);
 
 					}
 					else
@@ -237,16 +246,18 @@ void CMario::ChangeState(CPlayerState* newState)
 
 void CMario::StartUntouchable()
 {
-	untouchable = 1;
-	untouchable_start = GetTickCount64();
 	CGame* game = CGame::GetInstance();
-
-	if (level == MARIO_LEVEL_BIG) {
-		// xu ly tranform tu lon thanh nho
-		time_flicker = 1800;
+	if (level == MARIO_LEVEL_SMALL) {
+		SetState(MARIO_STATE_DIE);
+	}
+	else if (level == MARIO_LEVEL_BIG) {
+		untouchable = 1;
+		DebugOut(L"before grow %d\n",untouchable);
 		ChangeState(new CGrowingUpState(level));
 	}
 	else {
+		untouchable = 1;
+		untouchable_start = GetTickCount64();
 		// xu ly bang cuc lua no
 		time_flicker = 600;
 		SetState(MARIO_STATE_HIDE_UNTOUCHABLE);
@@ -263,13 +274,13 @@ void CMario::StartUntouchable()
 			effect_x = x;
 			effect_y = y + MARIO_BIG_BBOX_HEIGHT / 4;
 		}
-		
+
 		CTransform* transform = new CTransform(effect_x, effect_y);
 		scene->effects.push_back(transform);
 		level--;
 		player_state->SetLevel(level);
 		player_state->SetAnimation(level);
-		DebugOut(L"levelllllllllll %d\n", level);
+		//DebugOut(L"levelllllllllll %d\n", level);
 	}
 }
 
@@ -290,7 +301,7 @@ void CMario::UpLevel()
 	}
 	CTransform* transform = new CTransform(effect_x, effect_y);
 	scene->effects.push_back(transform);
-	
+
 
 }
 
@@ -323,7 +334,7 @@ void CMario::SetState(int state) {
 
 void CMario::IsCollisionWithBrick(LPCOLLISIONEVENT e)
 {
-	if(!dynamic_cast<CRunningState*>(player_state))
+	if (!dynamic_cast<CRunningState*>(player_state))
 		if (e->nx != 0) vx = 0;
 	if (e->ny != 0)	vy = 0;
 }

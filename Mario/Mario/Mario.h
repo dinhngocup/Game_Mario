@@ -15,7 +15,6 @@
 class CMario : public CGameObject
 {
 	int level;
-	int untouchable;
 	DWORD untouchable_start;
 	int time_flicker;
 
@@ -27,6 +26,7 @@ class CMario : public CGameObject
 	int coin_number = 0;
 	vector <int> cards;
 public:
+	int untouchable;
 	int ani;
 	CPlayerState *player_state;
 

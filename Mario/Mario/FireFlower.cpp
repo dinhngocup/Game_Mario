@@ -57,6 +57,7 @@ void CFireFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		else {
 			if (GetTickCount64() - start_count >= 800) {
+
 				SetState(STATE_MOVING_UP);
 			}
 		}
@@ -108,7 +109,7 @@ void CFireFlower::Render()
 		}
 	}
 
-	animation_set->at(ani)->Render(x, y);
+	animation_set->at(ani)->Render(x, y, 255, nx);
 	animation_set->at(PIPE_ANI)->Render(start_x - 23, start_y);
 	RenderBoundingBox();
 }
@@ -118,7 +119,6 @@ void CFireFlower::SetState(int state)
 	CGameObject::SetState(state);
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
-	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	switch (state) {
 	case STATE_MOVING_UP:
 		if (mario->y <= boundaryY) {
@@ -126,6 +126,9 @@ void CFireFlower::SetState(int state)
 		}
 		else
 			ny = 1;
+		if (mario->x <= start_x)
+			nx = 1;
+		else nx = -1;
 		vy = -FF_SPEED;
 		break;
 	case STATE_MOVING_DOWN:
@@ -139,7 +142,7 @@ void CFireFlower::SetState(int state)
 	case STATE_ATTACKING_UP:
 	case STATE_ATTACKING_DOWN: {
 		//bắn lửa
-		scene->grid->AddObjectIntoGrid(eTYPE::FIRE_FLOWER_WEAPON, x + 10 * nx * -1, y + 10, 24, 24, ANI_FF_WEAPON, eTYPE_OBJECT::ITEM, ny, nx);
+		CreateWeapon();
 		start_count = GetTickCount64();
 		vy = 0;
 		break;
@@ -157,6 +160,14 @@ void CFireFlower::IsCollisionWithMario(LPCOLLISIONEVENT e)
 
 void CFireFlower::CreateWeapon()
 {
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+	CMario* mario = CMario::GetInstance();
+	int angle = 0;
+	if (mario->x >= start_x - 24 + 48 * 4 * nx * -1) {
+		angle = 1;
+	}
+	scene->grid->AddObjectIntoGrid(eTYPE::FIRE_FLOWER_WEAPON, x + 10 * nx * -1, y + 10, 24, 24, ANI_FF_WEAPON, eTYPE_OBJECT::ITEM, ny, nx, angle);
 
 }
 

@@ -9,6 +9,7 @@ class CGrowingUpState : public CPlayerState
 private: 
 	DWORD start_ani1;
 	DWORD start_ani2;
+	int limit;
 	int state = STATE_SMALL;
 	float prev_vx;
 public:

@@ -39,9 +39,9 @@ public:
 	CGrid(LPCWSTR objFilePath);
 	~CGrid() {};
 
-	void AddObjectIntoGrid(int object_type, float x, float y, float w, float h, int ani_id, int type, int extra = 0, int nx = 1);
+	void AddObjectIntoGrid(int object_type, float x, float y, float w, float h, int ani_id, int type, int extra = 0, int nx = 1, int angle = 0);
 	void GetListObjInGrid(float cam_x, float cam_y);
-	LPGAMEOBJECT CreateNewObj(int obj_type, float x, float y, float w, float h, int ani_id, int type, int extra = 0, int nx = 1);
+	LPGAMEOBJECT CreateNewObj(int obj_type, float x, float y, float w, float h, int ani_id, int type, int extra = 0, int nx = 1, int angle = 1);
 	void Classify(LPGAMEOBJECT obj);
 	void UpdatePositionInGrid(float cam_x, float cam_y);
 	void ReadFileObj();

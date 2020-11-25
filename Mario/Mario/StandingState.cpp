@@ -63,6 +63,8 @@ void CStandingState::OnKeyDown(int KeyCode)
 {
 	CPlayerState::OnKeyDown(KeyCode);
 	CMario* mario = CMario::GetInstance();
+	if (mario->untouchable == 1)
+		return;
 	switch (KeyCode)
 	{
 	case DIK_DOWN:
@@ -98,7 +100,9 @@ void CStandingState::KeyState(BYTE* state)
 {
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
-
+	if (mario->untouchable == 1) {
+		return;
+	}
 	// dùng để lock việc vừa bấm A vừa bấm left right, giảm vận tốc cho đến khi bằng 0 rồi lock vx = 0 luôn
 	if (game->IsKeyDown(DIK_RIGHT) && game->IsKeyDown(DIK_LEFT)) {
 		mario->vx = 0;

@@ -7,14 +7,14 @@ CGrid::CGrid(LPCWSTR objFilePath)
 	this->objFilePath = objFilePath;
 }
 
-void CGrid::AddObjectIntoGrid(int object_type, float x, float y, float w, float h, int ani_id, int type, int extra, int nx)
+void CGrid::AddObjectIntoGrid(int object_type, float x, float y, float w, float h, int ani_id, int type, int extra, int nx, int angle)
 {
 	int top = (int)(y / CELL_HEIGHT);
 	int bottom = (int)((y + h) / CELL_HEIGHT);
 	int left = (int)(x / CELL_WIDTH);
 	int right = (int)((x + w) / CELL_WIDTH);
 
-	LPGAMEOBJECT obj = CreateNewObj(object_type, x, y, w, h, ani_id, type, extra, nx);
+	LPGAMEOBJECT obj = CreateNewObj(object_type, x, y, w, h, ani_id, type, extra, nx, angle);
 	/*if (object_type == eTYPE::KOOPA) {
 		DebugOut(L"left %d\n", left);
 		DebugOut(L"r %d\n", right);
@@ -66,7 +66,7 @@ void CGrid::GetListObjInGrid(float cam_x, float cam_y)
 
 }
 
-LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, float h, int ani_id, int type, int extra, int nx)
+LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, float h, int ani_id, int type, int extra, int nx, int angle)
 {
 	//DebugOut(L"insert\n");
 	CGameObject* obj = NULL;
@@ -123,7 +123,7 @@ LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, flo
 		break;
 	}
 	case eTYPE::FIRE_FLOWER_WEAPON: {
-		obj = new CFireFlowerWeapon(x, y, nx, extra);
+		obj = new CFireFlowerWeapon(x, y, nx, extra, angle);
 		obj->type = eTYPE::FIRE_FLOWER_WEAPON;
 		break;
 	}

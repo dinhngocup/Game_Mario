@@ -6,7 +6,9 @@ void CPlayerState::OnKeyDown(int KeyCode)
 {
 	CMario* mario = CMario::GetInstance();
 	float current_x = mario->GetX();
-	
+	if (mario->untouchable == 1) {
+		return;
+	}
 	CPlayerState* player_state = mario->GetState();
 	switch (KeyCode)
 	{
