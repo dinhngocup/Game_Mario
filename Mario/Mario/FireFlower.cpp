@@ -23,7 +23,6 @@ void CFireFlower::GetBoundingBox(float& left, float& top, float& right, float& b
 
 void CFireFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CGameObject::Update(dt);
 	CMario* mario = CMario::GetInstance();
 	if (state == STATE_MOVING_UP) {
 		if (y <= start_y - h) {
@@ -51,18 +50,19 @@ void CFireFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	else {
 		// state là hide
-		if (mario->x <= start_x - 24 && mario->x >= start_x - 24 - 48 ||
-			mario->x >= start_x - 24 + 96 && mario->x <= start_x - 24 + 96 + 48) {
+		if (mario->x >= start_x - 24 - 48 && mario->x <= start_x - 24 + 96 + 48) {
 
 		}
 		else {
-			if (GetTickCount64() - start_count >= 800) {
-
+			if (GetTickCount64() - start_count >= 1700) {
 				SetState(STATE_MOVING_UP);
 			}
 		}
 	}
-
+	CGameObject::Update(dt);
+	x += dx;
+	y += dy;
+	
 }
 
 void CFireFlower::Render()
@@ -156,6 +156,8 @@ void CFireFlower::SetState(int state)
 
 void CFireFlower::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
+	CMario* mario = CMario::GetInstance();
+	mario->StartUntouchable();
 }
 
 void CFireFlower::CreateWeapon()

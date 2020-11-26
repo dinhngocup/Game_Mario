@@ -13,7 +13,7 @@ public:
 
 	virtual void IsCollisionWithMario(LPCOLLISIONEVENT e) = 0;
 
-	void IsCollisionWithBrick(LPCOLLISIONEVENT e);
+	virtual void IsCollisionWithBrick(LPCOLLISIONEVENT e);
 	virtual void IsCollisionWithEnemy(LPCOLLISIONEVENT e);
 
 	virtual void AttackedByShell() {};

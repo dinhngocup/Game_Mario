@@ -15,11 +15,7 @@ void CGrid::AddObjectIntoGrid(int object_type, float x, float y, float w, float 
 	int right = (int)((x + w) / CELL_WIDTH);
 
 	LPGAMEOBJECT obj = CreateNewObj(object_type, x, y, w, h, ani_id, type, extra, nx, angle);
-	/*if (object_type == eTYPE::KOOPA) {
-		DebugOut(L"left %d\n", left);
-		DebugOut(L"r %d\n", right);
-		DebugOut(L"id %d\n", obj->GetId());
-	}*/
+
 	for (int i = top; i <= bottom; i++)
 		for (int j = left; j <= right; j++) {
 			cells[i][j].push_back(obj);
@@ -41,11 +37,15 @@ void CGrid::GetListObjInGrid(float cam_x, float cam_y)
 	int left = (int)((cam_x) / CELL_WIDTH);
 	int right = (int)((cam_x + game->GetScreenWidth()) / CELL_WIDTH);
 
-	//DebugOut(L"right %d\n", right);
+	/*DebugOut(L"bottom %d\n", bottom);
+	DebugOut(L"top %d\n", top);
+	DebugOut(L"r %d\n", right);
+	DebugOut(L"l %d\n", left);*/
 	for (int i = top - 1; i <= bottom + 1; i++)
 		for (int j = left - 1; j <= right + 1; j++) {
 			if (j < 0) j = 0;
 			if (i < 0) i = 0;
+			
 			for (int k = 0; k < cells[i][j].size(); k++) {
 				if (cells[i][j].at(k)->GetHealth()) {
 					if (j >= left && j <= right)
@@ -212,7 +212,8 @@ void CGrid::UpdatePositionInGrid(float cam_x, float cam_y)
 		if (top_cell - 1 < 0) top_cell = 1;
 		for (int k = 0; k < cells[top_cell - 1][x].size(); k++) {
 			if (cells[top_cell - 1][x].at(k)->GetHealth()
-				&& cells[top_cell - 1][x].at(k)->type_object == eTYPE_OBJECT::ENEMY) {
+				&& cells[top_cell - 1][x].at(k)->type_object == eTYPE_OBJECT::ENEMY &&
+				cells[top_cell - 1][x].at(k)->is_appeared) {
 				int quantity = 0;
 				for (LPGAMEOBJECT obj : listResetObj)
 					if (obj->GetId() == cells[top_cell - 1][x].at(k)->GetId()) {
@@ -221,13 +222,15 @@ void CGrid::UpdatePositionInGrid(float cam_x, float cam_y)
 					}
 				if (quantity == 0) {
 					DebugOut(L"push 2 dong bien\n");
+					cells[top_cell - 1][x].at(k)->is_appeared = false;
 					listResetObj.push_back(cells[top_cell - 1][x].at(k));
 				}
 			}
 		}
 		for (int k = 0; k < cells[bottom_cell + 1][x].size(); k++) {
 			if (cells[bottom_cell + 1][x].at(k)->GetHealth()
-				&& cells[bottom_cell + 1][x].at(k)->type_object == eTYPE_OBJECT::ENEMY) {
+				&& cells[bottom_cell + 1][x].at(k)->type_object == eTYPE_OBJECT::ENEMY &&
+				cells[bottom_cell + 1][x].at(k)->is_appeared) {
 				int quantity = 0;
 				for (LPGAMEOBJECT obj : listResetObj)
 					if (obj->GetId() == cells[bottom_cell + 1][x].at(k)->GetId()) {
@@ -236,6 +239,7 @@ void CGrid::UpdatePositionInGrid(float cam_x, float cam_y)
 					}
 				if (quantity == 0) {
 					DebugOut(L"push 2 dong bien\n");
+					cells[bottom_cell + 1][x].at(k)->is_appeared = false;
 					listResetObj.push_back(cells[bottom_cell + 1][x].at(k));
 				}
 			}
@@ -258,7 +262,7 @@ void CGrid::UpdatePositionInGrid(float cam_x, float cam_y)
 						break;
 					}
 				if (quantity == 0) {
-					//DebugOut(L"push cot bien phai\n");
+					DebugOut(L"push cot bien phai\n");
 					cells[i][right_cell + 2].at(k)->is_appeared = false;
 					listResetObj.push_back(cells[i][right_cell + 2].at(k));
 
@@ -371,7 +375,7 @@ void CGrid::ResetListObj(float cam_x, float cam_y)
 
 
 		// check start pos coi có trong cam k có thì return
-		if (listResetObj[i]->start_x + listResetObj[i]->w >= cam_x && listResetObj[i]->start_x <= cam_x + game->GetScreenWidth())
+		if (listResetObj[i]->start_x + listResetObj[i]->w >= cam_x && listResetObj[i]->start_x <= cam_x + game->GetScreenWidth() + 200)
 			return;
 
 		//DebugOut(L"type %d\n", listResetObj[i]->GetType());

@@ -62,6 +62,9 @@
     <Filter Include="Objects\Effect">
       <UniqueIdentifier>{dcff3eea-e3af-4609-9139-498ec46314ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Objects\HiddenObject">
+      <UniqueIdentifier>{c13b4129-4cbb-42af-9407-0ce4ae096dd1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -148,9 +151,6 @@
     <ClCompile Include="AttackingState.cpp">
       <Filter>Objects\Player</Filter>
     </ClCompile>
-    <ClCompile Include="InvisibleObject.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
     <ClCompile Include="FlyingState.cpp">
       <Filter>Objects\Player</Filter>
     </ClCompile>
@@ -210,6 +210,15 @@
     </ClCompile>
     <ClCompile Include="FireFlowerWeapon.cpp">
       <Filter>Objects\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="InvisibleObject.cpp">
+      <Filter>Objects\HiddenObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Portal.cpp">
+      <Filter>Objects\HiddenObject</Filter>
+    </ClCompile>
+    <ClCompile Include="GoDownState.cpp">
+      <Filter>Objects\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -309,9 +318,6 @@
     <ClInclude Include="AttackingState.h">
       <Filter>Objects\Player</Filter>
     </ClInclude>
-    <ClInclude Include="InvisibleObject.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
     <ClInclude Include="FlyingState.h">
       <Filter>Objects\Player</Filter>
     </ClInclude>
@@ -374,6 +380,15 @@
     </ClInclude>
     <ClInclude Include="FireFlowerWeapon.h">
       <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="InvisibleObject.h">
+      <Filter>Objects\HiddenObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Portal.h">
+      <Filter>Objects\HiddenObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GoDownState.h">
+      <Filter>Objects\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

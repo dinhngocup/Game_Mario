@@ -4,8 +4,8 @@ CInvisibleObject::CInvisibleObject(float x, float y, float width, float height)
 {
 	this->x = x;
 	this->y = y;
-	this->width = width;
-	this->height = height;
+	this->w = width;
+	this->h = height;
 	id++;
 }
 
@@ -13,8 +13,8 @@ void CInvisibleObject::GetBoundingBox(float& left, float& top, float& right, flo
 {
 	left = x;
 	top = y;
-	right = left + width;
-	bottom = top + height;
+	right = left + w;
+	bottom = top + h;
 }
 
 void CInvisibleObject::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)

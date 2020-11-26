@@ -15,6 +15,7 @@
 #include "Grid.h"
 #include "Hub.h"
 #include "Transform.h"
+#include "Portal.h"
 
 #define DEFAULT_CAM_Y	750.0f
 #define SCORE_LENGTH	7

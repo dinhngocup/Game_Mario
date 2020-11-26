@@ -55,7 +55,6 @@ void CPlayScene::_ParseSection_INFO(string line)
 	world_id = atoi(tokens[0].c_str());
 	map_id = atoi(tokens[1].c_str());
 	time_limit = atoi(tokens[2].c_str());
-
 }
 
 void CPlayScene::_ParseSection_TILESET(string line)
@@ -158,14 +157,20 @@ void CPlayScene::_ParseSection_STATIC_OBJECTS(string line)
 
 	int ani_set_id = atoi(tokens[5].c_str());
 	int type = atoi(tokens[6].c_str());
-
+	float new_cam_x, new_cam_y, start_x, direction_collision;
+	if (object_type == eTYPE::PORTAL) {
+		new_cam_x = atoi(tokens[7].c_str());
+		new_cam_y = atoi(tokens[8].c_str());
+		start_x = atoi(tokens[9].c_str());
+		direction_collision = atoi(tokens[10].c_str());
+	}
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 
 	CGameObject* obj = NULL;
 
 	switch (object_type)
 	{
-
+	case eTYPE::PORTAL: obj = new CPortal(x, y, w, h, new_cam_x, new_cam_y, start_x, direction_collision); obj->type = eTYPE::PORTAL;  break;
 	case eTYPE::BRICK: obj = new CBrick(x, y, w, h); obj->type = eTYPE::BRICK;  break;
 	case eTYPE::INVISIBLE_OBJECT: obj = new CInvisibleObject(x, y, w, h); obj->type = eTYPE::INVISIBLE_OBJECT; break;
 	default:
@@ -256,6 +261,7 @@ void CPlayScene::Update(DWORD dt)
 	}
 
 	CGame* game = CGame::GetInstance();
+
 	grid->GetListObjInGrid(game->GetCamX(), game->GetCamY());
 
 	for (size_t i = 0; i < items.size(); i++)
@@ -263,7 +269,10 @@ void CPlayScene::Update(DWORD dt)
 		items[i]->Update(dt);
 		items[i]->is_in_grid = false;
 	}
-	
+	for (size_t i = 0; i < ghost_platforms.size(); i++)
+	{
+		ghost_platforms[i]->Update(dt);
+	}
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
 		enemies[i]->Update(dt);
@@ -288,20 +297,23 @@ void CPlayScene::Update(DWORD dt)
 	cy -= game->GetScreenHeight() / 2;
 
 	CMario* mario = CMario::GetInstance();
-	if (mario->GetLevel() == RACCOON_LEVEL_BIG) {
-		
+	if (mario->GetLevel() == RACCOON_LEVEL_BIG || mario->y < DEFAULT_CAM_Y) {
+
 		if (dynamic_cast<CFallingState*>(mario->player_state) && cy >= DEFAULT_CAM_Y)
 			mario->is_flying = false;
 
 		if (mario->is_flying && cy < DEFAULT_CAM_Y) {
 			if (cy <= 145.0f) {
 				game->SetCamYPos(145.0f);
-			} else
-			game->SetCamYPos(cy);
+			}
+			else
+				game->SetCamYPos(cy);
 		}
 		else {
-			game->SetCamYPos(DEFAULT_CAM_Y);
+			if(game->GetCamY() == DEFAULT_CAM_Y)
+				game->SetCamYPos(DEFAULT_CAM_Y);
 		}
+
 		if (cx <= 0)
 		{
 			game->SetCamXPos(0.0f);
@@ -316,7 +328,6 @@ void CPlayScene::Update(DWORD dt)
 		}
 	}
 	else {
-
 		if (cx <= 0)
 		{
 			game->SetCamPos(0.0f, DEFAULT_CAM_Y);
@@ -326,17 +337,17 @@ void CPlayScene::Update(DWORD dt)
 		}
 		else
 		{
-			game->SetCamPos(cx, DEFAULT_CAM_Y);
+			game->SetCamXPos(cx);
 			isMoved = true;
 		}
-	}
 
+	}
 
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
 		if (!enemies[i]->GetHealth()) {
 			enemies.erase(enemies.begin() + i);
-			
+
 		}
 	}
 	for (size_t i = 0; i < items.size(); i++)
@@ -361,6 +372,8 @@ void CPlayScene::Render()
 	float cx, cy;
 	CGame* game = CGame::GetInstance();
 	game->GetCamPos(cx, cy);
+	/*DebugOut(L"cam_x %f\n", cx);
+	DebugOut(L"cam_y %f\n", cy);*/
 	if (!isMoved) {
 		map->DrawMap(0.0f, DEFAULT_CAM_Y);
 	}
@@ -368,6 +381,7 @@ void CPlayScene::Render()
 		map->DrawMap(cx, cy);
 
 	}
+	//map->DrawMap(cx, cy);
 
 
 	for (size_t i = 0; i < enemies.size(); i++)

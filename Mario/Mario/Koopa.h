@@ -51,6 +51,8 @@ public:
 	void IsCollisionWithEnemy(LPCOLLISIONEVENT e);
 	void IsCollisionWithBrickSpecially(LPCOLLISIONEVENT e);
 	void IsCollisionWithGhostPlatformSpecially(LPCOLLISIONEVENT e);
+	void IsCollisionWithBrick(LPCOLLISIONEVENT e);
+	void IsCollisionWithGhostPlatform(LPCOLLISIONEVENT e);
 	void AttackedByShell();
 	
 };

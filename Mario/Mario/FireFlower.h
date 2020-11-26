@@ -25,7 +25,7 @@
 #define RED_FLOWER 1
 #define GREEN_FLOWER 2
 
-#define FF_SPEED 0.08f
+#define FF_SPEED 0.1f
 class CFireFlower : public CEnemy
 {
 	int ny;

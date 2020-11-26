@@ -12,7 +12,7 @@ void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& botto
 {
 	left = x;
 	top = y;
-	
+
 	right = left + GOOMBA_BBOX_WIDTH;
 	bottom = top + GOOMBA_BBOX_HEIGHT;
 }
@@ -41,7 +41,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	}
 
-	
+
 	if (coEvents.size() == 0)
 	{
 
@@ -71,7 +71,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			if (state != STATE_DIE_BY_WEAPON) {
 				if (dynamic_cast<CBrickQuestion*>(e->obj)) {
 					DebugOut(L"dung brick\n");
-					
+
 					IsCollisionWithBrick(e);
 				}
 				else if (dynamic_cast<CInvisibleObject*>(e->obj)) {
@@ -168,13 +168,11 @@ void CGoomba::IsCollisionWithMario(LPCOLLISIONEVENT e)
 	// đụng bên hông nấm
 	else if (e->nx != 0)
 	{
-		//block vx trước
-		mario->vx = 0;
-
 		// đụng ngang nấm còn đang sống
 		if (state != STATE_DIE)
 		{
 			if (mario->is_attacking_by_spinning) {
+				mario->vx = 0;
 				// đụng bên phải
 				if (e->nx > 0) {
 					e->obj->nx = -1;
@@ -184,13 +182,16 @@ void CGoomba::IsCollisionWithMario(LPCOLLISIONEVENT e)
 				SetState(STATE_DIE_BY_WEAPON);
 			}
 			else {
-				//DebugOut(L"xu ly mario giam level hay chet\n");
-				if (mario->GetLevel() != MARIO_LEVEL_SMALL)
-				{
-					mario->StartUntouchable();
+				if (mario->untouchable == 0) {
+					mario->vx = 0;
+					if (mario->GetLevel() != MARIO_LEVEL_SMALL)
+					{
+						mario->StartUntouchable();
+					}
+					else
+						mario->SetState(MARIO_STATE_DIE);
+
 				}
-				else
-					mario->SetState(MARIO_STATE_DIE);
 			}
 		}
 	}
@@ -235,7 +236,7 @@ void CGoomba::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 				}
 			}
 		}
-		
+
 		if (e->nx != 0) {
 			if (koopa->state == STATE_SPIN) {
 				AttackedByShell();
@@ -257,8 +258,8 @@ void CGoomba::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 				}
 			}
 		}
-		
-		
+
+
 	}
 }
 

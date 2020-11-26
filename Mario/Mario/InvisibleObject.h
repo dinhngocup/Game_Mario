@@ -4,9 +4,6 @@
 #include "Game.h"
 class CInvisibleObject : public CGameObject
 {
-private:
-	float width;
-	float height;
 public:
 	CInvisibleObject() {};
 	CInvisibleObject(float x, float y, float width, float height);
@@ -16,10 +13,6 @@ public:
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render();
 
-	float GetWidth() { return width; }
-	float GetHeight() { return height; }
-	void SetWidth(float width) { this->width = width; }
-	void SetHeight(float height) { this->height = height; }
 
 };
 

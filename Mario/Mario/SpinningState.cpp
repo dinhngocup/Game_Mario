@@ -11,14 +11,7 @@ CSpinningState::CSpinningState(int level)
 void CSpinningState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
-	// Tổng có 3 frame, khi render đến frame cuối mà change state liền thì hong đẹp
-	// phải cho render frame cuối xong, quay về frame đầu, render rồi đổi luôn trạng thái
-	// lúc xét va chạm thì tới khúc animation.nextislastframe = true xxets va chạm là dc
-	// còn render gì kệ nó
-
-	// nếu render frame đầu xong mới đổi state thì current frame ở lần tiếp theo là 1, nó bị hụt 1 frame 0
-	// do đó phải reset frame về -1 như mới thì nó mới render frame 0
-	// vậy  nên hong?
+	
 
 }
 
@@ -73,9 +66,7 @@ void CSpinningState::KeyState(BYTE* state)
 		}
 
 	}
-	// bấm phím Z thì xoay liên tục
 	
-	//DebugOut(L"spinning%d\n", mario->is_attacking_by_spinning);
 
 }
 

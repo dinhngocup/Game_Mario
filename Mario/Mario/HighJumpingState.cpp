@@ -91,6 +91,10 @@ void CHighJumpingState::KeyState(BYTE* state)
 	CMario* mario = CMario::GetInstance();
 
 	if (game->IsKeyDown(DIK_S)) {
+		if (mario->collide_with_portal == 1) {
+			mario->is_underground = true;
+			return;
+		}
 		DWORD time_press_s = GetTickCount64();
 		if (time_press_s - mario->time_start_jump <= 300) {
 			mario->vy = -MARIO_JUMP_SPEED_Y;

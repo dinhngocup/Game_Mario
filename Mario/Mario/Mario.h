@@ -12,6 +12,8 @@
 #include "Enemy.h"
 #include "Item.h"
 #include "KickingState.h"
+#include "GoDownState.h"
+
 class CMario : public CGameObject
 {
 	int level;
@@ -37,12 +39,12 @@ public:
 	bool is_press_s = false;
 	bool is_attacking = false;
 	bool is_attacking_by_spinning = false;
-	//bool is_spinning = false;
-	//bool is_running = false;
 	bool is_skid = false;
 	bool is_holding = true;
 	bool is_flying = false;
 	DWORD time_start_attack;
+	int collide_with_portal = 0;
+	bool is_underground = false;
 
 	int number_attack = 0;
 
@@ -66,7 +68,7 @@ public:
 	void AddCard(int card_id) { cards.push_back(card_id); }
 	vector<int> GetCards() { return cards; }
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy);
-
+	void GetHeightMario();
 	static CMario* GetInstance();
 
 	void SetStartPosition(float start_x, float start_y);

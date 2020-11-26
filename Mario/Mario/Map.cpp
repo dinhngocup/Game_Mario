@@ -31,7 +31,7 @@ void CMap::DrawMap(float cam_x, float cam_y)
 	// get width height of tile
 	int w = CTiles::GetInstance()->GetFrameWidth();
 	int h = CTiles::GetInstance()->GetFrameHeight();
-
+	
 	int begin_row = cam_y / h;
 	int end_row = (cam_y + game->GetScreenHeight() - height_board) / h + 1;
 
@@ -44,7 +44,10 @@ void CMap::DrawMap(float cam_x, float cam_y)
 		end_row = row_map;
 	if (begin_column < 0) begin_column = 0;
 	if (begin_row < 0) begin_row = 0;
-
+	/*DebugOut(L"begin row %d\n", begin_row);
+	DebugOut(L"end row %d\n", end_row);
+	DebugOut(L"begin c %d\n", begin_column);
+	DebugOut(L"end c %d\n", end_column);*/
 	vector<LPSPRITE> tiles = CTiles::GetInstance()->GetTiles();
 	for (int i = begin_row; i < end_row; i++) {
 		for (int j = begin_column; j < end_column; j++) {

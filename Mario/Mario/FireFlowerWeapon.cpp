@@ -60,14 +60,11 @@ void CFireFlowerWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			float min_tx, min_ty, nx = 0, ny;
 			float rdx = 0;
 			float rdy = 0;
-
 			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-			// block every object first!
-			x += min_tx * dx + nx * 0.4f;
-			y += min_ty * dy + ny * 0.4f;
 			HandleCollisionWithMario(coEventsResult[0]);
-
+			x += dx;
+			y += dy;
 			// clean up collision events
 			for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 		}
@@ -92,7 +89,6 @@ void CFireFlowerWeapon::SetState(int state)
 void CFireFlowerWeapon::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
 	CMario* mario = CMario::GetInstance();
-	DebugOut(L"vc ben mario\n");
 	
 	mario->StartUntouchable();
 	
@@ -101,6 +97,6 @@ void CFireFlowerWeapon::IsCollisionWithMario(LPCOLLISIONEVENT e)
 void CFireFlowerWeapon::HandleCollisionWithMario(LPCOLLISIONEVENT e)
 {
 	CMario* mario = CMario::GetInstance();
-	DebugOut(L"vc ben weapon\n");
+	
 		mario->StartUntouchable();
 }

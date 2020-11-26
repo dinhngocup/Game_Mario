@@ -59,7 +59,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vector<LPGAMEOBJECT> bricks = scene->ghost_platforms;
 	vector<LPGAMEOBJECT> items = scene->items;
 
-	items.push_back(mario);
+	
 
 	coEvents.clear();
 
@@ -116,10 +116,10 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 						if (e->ny != 0) vy = 0;
 					}
-					else 
+					else
 						IsCollisionWithBrick(e);
 				}
-				
+
 			}
 		}
 
@@ -227,30 +227,31 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 			else {
 				nx = -1;
 			}
-				SetState(STATE_SPIN);
+			SetState(STATE_SPIN);
 		}
 	}
 	// đụng bên hông koopa
 	else if (e->nx != 0)
 	{
-		//block vx trước
-		//mario->vx = 0;
-
 		// đụng ngang koopas còn đang sống
 		if (state != STATE_DIE)
 		{
-			mario->vx = 0;
 			if (mario->is_attacking_by_spinning) {
+				mario->vx = 0;
 				SetState(STATE_DIE_BY_WEAPON);
 			}
 			else {
-				if (mario->GetLevel() > MARIO_LEVEL_SMALL)
-				{
-					mario->StartUntouchable();
+				if (mario->untouchable == 0) {
+					mario->vx = 0;
+					if (mario->GetLevel() > MARIO_LEVEL_SMALL)
+					{
+						mario->StartUntouchable();
+					}
+					// mario chết
+					else
+						mario->SetState(MARIO_STATE_DIE);
+
 				}
-				// mario chết
-				else
-					mario->SetState(MARIO_STATE_DIE);
 			}
 		}
 		else {
@@ -288,8 +289,8 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 			}
 			// mai rùa di chuyển
 			else {
-				mario->vx = 0;
 				if (mario->is_attacking_by_spinning) {
+					mario->vx = 0;
 					// đụng bên phải
 					if (e->nx > 0) {
 						e->obj->nx = -1;
@@ -299,13 +300,17 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 					SetState(STATE_DIE_BY_WEAPON);
 				}
 				else {
-					if (mario->GetLevel() > MARIO_LEVEL_SMALL)
-					{
-						mario->StartUntouchable();
+					if (mario->untouchable == 0) {
+						mario->vx = 0;
+						if (mario->GetLevel() > MARIO_LEVEL_SMALL)
+						{
+							mario->StartUntouchable();
+						}
+						// mario chết
+						else
+							mario->SetState(MARIO_STATE_DIE);
+
 					}
-					// mario chết
-					else
-						mario->SetState(MARIO_STATE_DIE);
 				}
 			}
 		}
@@ -319,7 +324,7 @@ void CKoopa::HandleCollisionWithMario(LPCOLLISIONEVENT e)
 void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 {
 
-	
+
 	if (e->obj->type == eTYPE::GOOMBA) {
 		CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 
@@ -425,7 +430,6 @@ void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 void CKoopa::IsCollisionWithBrickSpecially(LPCOLLISIONEVENT e)
 {
 	if (state == STATE_HOLD) {
-		DebugOut(L"hiii\n");
 		if (e->nx != 0) x += dx;
 		if (e->ny != 0) y += dy;
 	}
@@ -459,6 +463,29 @@ void CKoopa::IsCollisionWithGhostPlatformSpecially(LPCOLLISIONEVENT e)
 		}
 	}
 	if (e->nx != 0) x += dx;
+}
+
+void CKoopa::IsCollisionWithBrick(LPCOLLISIONEVENT e)
+{
+	if (e->ny != 0) vy = 0;
+	// đụng hộp ngang quay đầu hoặc đi hết chiều dài của viên gạch
+	if (e->nx != 0 || x + w >= e->obj->x + e->obj->w || x <= e->obj->x) {
+		vx *= -1;
+		nx *= -1;
+	}
+}
+
+void CKoopa::IsCollisionWithGhostPlatform(LPCOLLISIONEVENT e)
+{
+	if (e->nx != 0) x += dx;
+	if (e->ny < 0)
+		vy = 0;
+	else if (e->ny > 0)
+		y += dy;
+	if (x + w >= e->obj->x + e->obj->w || x <= e->obj->x) {
+		vx *= -1;
+		nx *= -1;
+	}
 }
 
 void CKoopa::AttackedByShell()

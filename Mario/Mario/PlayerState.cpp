@@ -6,12 +6,16 @@ void CPlayerState::OnKeyDown(int KeyCode)
 {
 	CMario* mario = CMario::GetInstance();
 	float current_x = mario->GetX();
-	if (mario->untouchable == 1) {
-		return;
-	}
 	CPlayerState* player_state = mario->GetState();
+		CGame* game = CGame::GetInstance();
 	switch (KeyCode)
 	{
+	case DIK_L:
+		game->SetCamYPos(1392);
+		game->SetCamXPos(5904);
+		mario->x = 5904;
+		mario->y = 1500;
+		break;
 	case DIK_K:
 		mario->ChangeState(new CGrowingUpState(level));
 		break;

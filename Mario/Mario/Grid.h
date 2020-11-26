@@ -14,11 +14,13 @@
 #include "StaticCoin.h"
 #include "FireFlowerWeapon.h"
 
-
+//173 186.25
 #define CELL_HEIGHT (692/4.0f)
 #define CELL_WIDTH (745/4.0f)
 
-#define MAX_ROW (int)(SCENE_HEIGHT/CELL_HEIGHT) + 1
+// 12 48
+//#define MAX_ROW (int)(SCENE_HEIGHT/CELL_HEIGHT) + 1
+#define MAX_ROW 13
 #define MAX_COLUMN (int)(SCENE_WIDTH/CELL_WIDTH) + 1
 
 

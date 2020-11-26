@@ -68,9 +68,15 @@ void CStandingState::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_DOWN:
-		if (level != MARIO_LEVEL_SMALL)
-			mario->ChangeState(new CCrouchingState(level));
+		//DebugOut(L"collide_with_portal %d\n", mario->collide_with_portal);
+		if (mario->collide_with_portal == 0) {
+			if (level != MARIO_LEVEL_SMALL)
+				mario->ChangeState(new CCrouchingState(level));
+		}
+		else if(mario->collide_with_portal == -1)
+			mario->is_underground = true;
 		break;
+	
 	case DIK_A:
 		if (level == RACCOON_LEVEL_BIG) {
 			mario->ChangeState(new CSpinningState(level));
@@ -81,15 +87,15 @@ void CStandingState::OnKeyDown(int KeyCode)
 			}
 			mario->number_attack++;
 			DWORD count = GetTickCount();
-			
+
 			if (count - mario->time_start_attack <= 800 && mario->number_attack <= 2) {
 				mario->ChangeState(new CAttackingState(level));
-				
+
 			}
 			else if (count - mario->time_start_attack > 800) {
 				mario->number_attack = 1;
 				mario->ChangeState(new CAttackingState(level));
-				
+
 			}
 		}
 		break;
@@ -100,9 +106,7 @@ void CStandingState::KeyState(BYTE* state)
 {
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
-	if (mario->untouchable == 1) {
-		return;
-	}
+
 	// dùng để lock việc vừa bấm A vừa bấm left right, giảm vận tốc cho đến khi bằng 0 rồi lock vx = 0 luôn
 	if (game->IsKeyDown(DIK_RIGHT) && game->IsKeyDown(DIK_LEFT)) {
 		mario->vx = 0;
@@ -115,10 +119,15 @@ void CStandingState::KeyState(BYTE* state)
 		mario->ChangeState(new CWalkingState(level));
 	}
 	else if (game->IsKeyDown(DIK_DOWN) && level != MARIO_LEVEL_SMALL) {
-		mario->ChangeState(new CCrouchingState(level));
+		if (mario->collide_with_portal == 0) {
+				mario->ChangeState(new CCrouchingState(level));
+		}
+		else if (mario->collide_with_portal == -1)
+			mario->is_underground = true;
+		
 	}
 	else if (game->IsKeyDown(DIK_Z) && level == RACCOON_LEVEL_BIG) {
 		mario->ChangeState(new CSpinningState(level));
 	}
-	
+
 }

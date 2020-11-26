@@ -18,8 +18,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	if (state != MARIO_STATE_DIE)
 		player_state->Update(dt);
-
-	vy += MARIO_GRAVITY * dt;
+	if (!dynamic_cast<CGoDownState*>(player_state))
+		vy += MARIO_GRAVITY * dt;
 
 	scene->UpdateSpeedBar(abs(vx));
 	CGameObject::Update(dt);
@@ -33,7 +33,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	coEvents.clear();
 
 	// turn off collision when die 
-	if (state != MARIO_STATE_DIE) {
+	if (state != MARIO_STATE_DIE && !dynamic_cast<CGoDownState*>(player_state)) {
 		CalcPotentialCollisions(&bricks, coEvents);
 		CalcPotentialCollisions(&enemies, coEvents);
 		CalcPotentialCollisions(&items, coEvents);
@@ -80,28 +80,78 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (state != MARIO_STATE_DIE) {
-				if (dynamic_cast<CInvisibleObject*>(e->obj)) {
+				if (dynamic_cast<CPortal*>(e->obj)) {
+
+					CPortal* portal = dynamic_cast<CPortal*>(e->obj);
+					if (e->ny != 0) {
+						vy = 0;
+						collide_with_portal = portal->direction_collision;
+						//DebugOut(L"collide_with_portal %d\n", collide_with_portal);
+						if (e->ny == portal->direction_collision && e->ny == -1) {
+							if (is_underground) {
+								// lúc này cờ underground đã bật, gọi hàm chuyển cam và set
+								// lại vị trí mario
+								ChangeState(new CGoDownState(level));
+								//portal->start_hide = GetTickCount64();
+								portal->is_activated = true;
+
+								is_underground = false;
+							}
+
+						}
+						else if (e->ny == portal->direction_collision && e->ny == 1) {
+							ChangeState(new CGoDownState(level));
+							//portal->start_hide = GetTickCount64();
+							portal->is_activated = true;
+							is_underground = false;
+
+						}
+					}
+					
+
+				}
+				else if (dynamic_cast<CInvisibleObject*>(e->obj)) {
 					IsCollisionWithGhostPlatform(e);
 				}
 				else if (dynamic_cast<CEnemy*>(e->obj)) {
-					if (is_holding && e->obj->state == STATE_HOLD || untouchable == 1) {
-
-					}
-					else if (e->obj->GetType() == eTYPE::FIRE_FLOWER_WEAPON) {
+					if (untouchable == 1) {
 						if (e->nx != 0)
-							x -= min_tx * dx + nx * 0.4f;
-						if (e->ny != 0);
-						y -= min_ty * dy + ny * 0.4f;
-						e->obj->IsCollisionWithMario(e);
-
+							x += dx;
+						if (e->ny != 0)
+							y += dy;
 					}
-					else
-						e->obj->IsCollisionWithMario(e);
+					else {
+						if (is_holding && e->obj->state == STATE_HOLD) {
+
+						}
+						else if (e->obj->GetType() == eTYPE::FIRE_FLOWER_WEAPON) {
+							if (untouchable == 0) {
+								e->obj->IsCollisionWithMario(e);
+							}
+							if (e->nx != 0)
+								x += dx;
+							if (e->ny != 0)
+								y += dy;
+						}
+						else if (e->obj->GetType() == eTYPE::FIRE_FLOWER) {
+							if (untouchable == 0) {
+								e->obj->IsCollisionWithMario(e);
+							}
+							if (e->nx != 0)
+								x += dx;
+							if (e->ny != 0)
+								y += dy;
+						}
+						else
+							e->obj->IsCollisionWithMario(e);
+					}
+
 				}
 				else if (dynamic_cast<CItem*>(e->obj)) {
 					e->obj->IsCollisionWithMario(e);
 				}
 				else {
+
 					IsCollisionWithBrick(e);
 				}
 			}
@@ -129,8 +179,13 @@ void CMario::Render()
 				offset = 6;
 		}
 
-		if (ani == RACCOON_ANI_SPINNING_BIG)
+		if (ani == RACCOON_ANI_SPINNING_BIG) {
 			spinningFlag = true;
+			if (nx > 0)
+				offset = 6;
+			else
+				offset = 0;
+		}
 
 		if (state == MARIO_STATE_HIDE_UNTOUCHABLE || state == MARIO_STATE_HIDE) alpha = 0;
 		else if (state == MARIO_STATE_UNHIDE_UNTOUCHABLE) alpha = 255;
@@ -181,6 +236,25 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 			right = left + MARIO_SMALL_BBOX_WIDTH;
 			bottom = top + MARIO_SMALL_BBOX_HEIGHT;
 		}
+
+	}
+}
+
+void CMario::GetHeightMario()
+{
+	switch (level) {
+	case MARIO_LEVEL_SMALL:
+		this->h = MARIO_SMALL_BBOX_HEIGHT;
+		break;
+	case MARIO_LEVEL_BIG:
+	case RACCOON_LEVEL_BIG:
+	case FIRE_LEVEL:
+		if (is_crouching) {
+			this->h = MARIO_CROUCH_BBOX_HEIGHT;
+		}
+		else
+			this->h = MARIO_BIG_BBOX_HEIGHT;
+		break;
 
 	}
 }
@@ -252,7 +326,7 @@ void CMario::StartUntouchable()
 	}
 	else if (level == MARIO_LEVEL_BIG) {
 		untouchable = 1;
-		DebugOut(L"before grow %d\n",untouchable);
+		//DebugOut(L"before grow %d\n", untouchable);
 		ChangeState(new CGrowingUpState(level));
 	}
 	else {

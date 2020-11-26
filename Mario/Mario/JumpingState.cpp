@@ -81,6 +81,11 @@ void CJumpingState::KeyState(BYTE* state)
 	CPlayerState::KeyState(state);
 
 	if (game->IsKeyDown(DIK_X)) {
+	
+		if (mario->collide_with_portal == 1) {
+			mario->is_underground = true;
+			return;
+		}
 		if (game->IsKeyDown(DIK_RIGHT)) {
 			if (abs(mario->vx) <= MARIO_WALKING_SPEED)
 				mario->vx = MARIO_WALKING_SPEED;

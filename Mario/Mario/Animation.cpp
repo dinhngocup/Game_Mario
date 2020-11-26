@@ -55,8 +55,7 @@ void CAnimation::Render(float x, float y, int alpha, int nx, int offset, bool sp
 	}
 	// set offset cho ani spinning
 	CMario* mario = CMario::GetInstance();
-	if (frames[currentFrame]->GetSprite()->Get() == 40064 ||
-		frames[currentFrame]->GetSprite()->Get() == 40065) {
+	if (frames[currentFrame]->GetSprite()->Get() == 40064) {
 		frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, offset,ny, 1);
 	}
 	else {
