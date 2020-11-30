@@ -8,6 +8,7 @@ protected:
 	CAnimation* animation;
 	bool is_rendered_completely = true;
 	bool is_attacked = false;
+	DWORD start_ani, start_count;
 public:
 	CPlayerState() {};
 	CPlayerState(int level) {};
@@ -25,6 +26,6 @@ public:
 	virtual void OnKeyDown(int KeyCode);
 	virtual void KeyState(BYTE* states);
 
-	void CheckState();
+	virtual void CheckState() {};
 
 };

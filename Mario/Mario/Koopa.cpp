@@ -270,6 +270,19 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 			if (mario->is_attacking_by_spinning) {
 				mario->vx = 0;
 				nx = e->nx * -1;
+
+				CStarEffect* effect;
+				if (nx > 0) {
+					effect = new CStarEffect(x + w, y + h / 2);
+				}
+				else {
+					effect = new CStarEffect(x, y + h / 2);
+				}
+				effect->start_ani = GetTickCount64();
+				CGame* game = CGame::GetInstance();
+				CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+				scene->effects.push_back(effect);
+
 				SetState(KOOPA_STATE_DIE_BY_TAIL);
 			}
 			else {

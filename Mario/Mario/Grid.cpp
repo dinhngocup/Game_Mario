@@ -3,7 +3,6 @@
 
 CGrid::CGrid(LPCWSTR objFilePath)
 {
-	//DebugOut(L"new grid\n");
 	this->objFilePath = objFilePath;
 }
 

@@ -220,6 +220,9 @@
     <ClCompile Include="GoDownState.cpp">
       <Filter>Objects\Player</Filter>
     </ClCompile>
+    <ClCompile Include="StarEffect.cpp">
+      <Filter>Objects\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -389,6 +392,9 @@
     </ClInclude>
     <ClInclude Include="GoDownState.h">
       <Filter>Objects\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="StarEffect.h">
+      <Filter>Objects\Effect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

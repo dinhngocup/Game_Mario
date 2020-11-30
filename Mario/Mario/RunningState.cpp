@@ -98,6 +98,8 @@ void CRunningState::OnKeyDown(int KeyCode)
 	switch (KeyCode) {
 	case DIK_A:
 		if (level == RACCOON_LEVEL_BIG && is_rendered_completely) {
+			start_ani = GetTickCount64();
+			start_count = GetTickCount64();
 			ani = RACCOON_ANI_SPINNING_BIG;
 			animation->ResetFlagLastFrame();
 			CPlayerState::SetAnimation(animation);
@@ -159,7 +161,6 @@ void CRunningState::KeyState(BYTE* state)
 			can_change_to_walking = true;
 			acceleration = -MARIO_ACCELERATION;
 			if (game->IsKeyDown(DIK_DOWN)) {
-				DebugOut(L"hi\n");
 				mario->is_crouching = true;
 				if (!already_added) {
 					mario->SetY(mario->GetY() + DISPARITIES);
@@ -187,10 +188,8 @@ void CRunningState::KeyState(BYTE* state)
 					if (!is_skid && mario->nx < 0) {
 						start_skid = GetTickCount64();
 						is_skid = true;
-						DebugOut(L"already_minused %d\n", already_minused);
 						if (!already_minused && mario->is_crouching) {
 							mario->SetY(mario->GetY() - DISPARITIES);
-							DebugOut(L"y %f\n", mario->GetY());
 							already_minused = true;
 						}
 						mario->is_crouching = false;
@@ -231,10 +230,8 @@ void CRunningState::KeyState(BYTE* state)
 					if (!is_skid && mario->nx > 0) {
 						start_skid = GetTickCount64();
 						is_skid = true;
-						DebugOut(L"already_minused %d\n", already_minused);
 						if (!already_minused && mario->is_crouching) {
 							mario->SetY(mario->GetY() - DISPARITIES);
-							DebugOut(L"y %f\n", mario->GetY());
 							already_minused = true;
 						}
 						mario->is_crouching = false;
@@ -267,6 +264,34 @@ void CRunningState::KeyState(BYTE* state)
 	if (game->IsKeyDown(DIK_X)) {
 		mario->time_start_jump = GetTickCount64();
 		mario->ChangeState(new CJumpingState(level));
+	}
+}
+
+void CRunningState::CheckState()
+{
+
+	CMario* mario = CMario::GetInstance();
+	if (level == FIRE_LEVEL) {
+		if (GetTickCount64() - start_ani >= 400) {
+			is_rendered_completely = true;
+			mario->is_attacking = true;
+		}
+		else
+			is_rendered_completely = false;
+	}
+	else if (level == RACCOON_LEVEL_BIG) {
+		if (GetTickCount64() - start_ani >= 600)
+			is_rendered_completely = true;
+		else {
+			is_rendered_completely = false;
+			if (GetTickCount64() - start_count >= 120) {
+				if (mario->state == MARIO_STATE_ATTACKING)
+					mario->SetState(MARIO_STATE_NO_ATTACKING);
+				else if (mario->state == MARIO_STATE_NO_ATTACKING)
+					mario->SetState(MARIO_STATE_ATTACKING);
+				start_count = GetTickCount64();
+			}
+		}
 	}
 }
 

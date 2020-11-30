@@ -17,5 +17,6 @@ public:
 	void OnKeyUp(int KeyCode);
 	void KeyState(BYTE* states);
 
+	void CheckState();
 };
 

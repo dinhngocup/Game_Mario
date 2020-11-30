@@ -2,6 +2,7 @@
 #include "Enemy.h"
 #include "Brick.h"
 #include "Mario.h"
+#include "StarEffect.h"
 
 #define GOOMBA_BBOX_WIDTH 48
 #define GOOMBA_BBOX_HEIGHT 48

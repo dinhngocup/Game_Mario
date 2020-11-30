@@ -382,8 +382,7 @@ void CPlayScene::Render()
 	float cx, cy;
 	CGame* game = CGame::GetInstance();
 	game->GetCamPos(cx, cy);
-	/*DebugOut(L"cam_x %f\n", cx);
-	DebugOut(L"cam_y %f\n", cy);*/
+	
 	if (!isMoved) {
 		map->DrawMap(0.0f, DEFAULT_CAM_Y);
 	}
@@ -398,6 +397,7 @@ void CPlayScene::Render()
 	{
 		enemies[i]->Render();
 	}
+
 	player->Render();
 
 	for (size_t i = 0; i < items.size(); i++)

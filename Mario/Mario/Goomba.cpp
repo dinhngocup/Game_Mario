@@ -240,11 +240,20 @@ void CGoomba::IsCollisionWithMario(LPCOLLISIONEVENT e)
 			if (mario->is_attacking_by_spinning) {
 				mario->vx = 0;
 				// đụng bên phải
+				UpdateWidthHeightGoomba();
+				CStarEffect* effect;
 				if (e->nx > 0) {
 					e->obj->nx = -1;
+					effect = new CStarEffect(x + w, y + h / 2);
 				}
-				else
+				else {
+					effect = new CStarEffect(x, y + h / 2);
 					e->obj->nx = 1;
+				}
+				effect->start_ani = GetTickCount64();
+				CGame* game = CGame::GetInstance();
+				CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+				scene->effects.push_back(effect);
 				SetState(GOOMBA_STATE_DIE_BY_WEAPON);
 			}
 			else {

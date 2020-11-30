@@ -157,6 +157,23 @@ void CFireFlower::SetState(int state)
 void CFireFlower::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
 	CMario* mario = CMario::GetInstance();
+	if (e->nx != 0) {
+		if (mario->is_attacking_by_spinning) {
+			CStarEffect* effect;
+			if (nx > 0) {
+				effect = new CStarEffect(x + w, y + h / 2);
+			}
+			else {
+				effect = new CStarEffect(x, y + h / 2);
+			}
+			effect->start_ani = GetTickCount64();
+			CGame* game = CGame::GetInstance();
+			CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+			scene->effects.push_back(effect);
+			SetHealth(false);
+			return;
+		}
+	}
 	mario->StartUntouchable();
 }
 

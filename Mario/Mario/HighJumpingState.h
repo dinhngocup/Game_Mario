@@ -20,6 +20,6 @@ public:
 	void OnKeyDown(int KeyCode);
 	void OnKeyUp(int KeyCode);
 	void KeyState(BYTE* state);
-
+	void CheckState();
 };
 

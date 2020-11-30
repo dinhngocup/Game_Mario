@@ -307,7 +307,6 @@ void CMario::KeyState(BYTE* states)
 
 void CMario::ChangeState(CPlayerState* newState)
 {
-	//DebugOut(L"state %s\n", player_state);
 	delete player_state;
 	player_state = NULL;
 	player_state = newState;
@@ -339,7 +338,6 @@ void CMario::StartUntouchable()
 	}
 	else if (level == MARIO_LEVEL_BIG) {
 		untouchable = 1;
-		//DebugOut(L"before grow %d\n", untouchable);
 		ChangeState(new CGrowingUpState(level));
 	}
 	else {
@@ -365,9 +363,10 @@ void CMario::StartUntouchable()
 		CTransform* transform = new CTransform(effect_x, effect_y);
 		scene->effects.push_back(transform);
 		level--;
-		player_state->SetLevel(level);
-		player_state->SetAnimation(level);
-		//DebugOut(L"levelllllllllll %d\n", level);
+		ChangeState(new CStandingState(level));
+		/*player_state->SetLevel(level);
+		player_state->SetAnimation(level);*/
+		
 	}
 }
 
@@ -413,6 +412,12 @@ void CMario::SetState(int state) {
 	case MARIO_STATE_HIDE_UNTOUCHABLE:
 		vx = 0;
 		vy = 0;
+		break;
+	case MARIO_STATE_ATTACKING:
+		is_attacking_by_spinning = true;
+		break;
+	case MARIO_STATE_NO_ATTACKING:
+		is_attacking_by_spinning = false;
 		break;
 	default:
 		break;

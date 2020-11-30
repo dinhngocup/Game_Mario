@@ -42,25 +42,28 @@ void CPlayerState::OnKeyDown(int KeyCode)
 		if (dynamic_cast<CJumpingState*>(player_state) ||
 			dynamic_cast<CHighJumpingState*>(player_state) ||
 			dynamic_cast<CFallingState*>(player_state)) {
+			player_state->start_ani = GetTickCount64();
+			player_state->start_count = GetTickCount64();
 			if (level == RACCOON_LEVEL_BIG) {
-				if (is_rendered_completely) {
+
+				if (player_state->is_rendered_completely) {
 					ani = RACCOON_ANI_SPINNING_BIG;
 					mario->animation_set->at(ani)->ResetFlagLastFrame();
 					CPlayerState::SetAnimation(mario->animation_set->at(ani));
 				}
 				if (ani == RACCOON_ANI_SPINNING_BIG) {
-					CheckState();
+					player_state->CheckState();
 				}
 			}
 			else if (level == FIRE_LEVEL) {
-				if (is_rendered_completely) {
+				if (player_state->is_rendered_completely) {
 					ani = FIRE_ANI_FLYING_THROW;
 					mario->animation_set->at(ani)->ResetFlagLastFrame();
 					CPlayerState::SetAnimation(mario->animation_set->at(ani));
 
 				}
 				if (ani == FIRE_ANI_FLYING_THROW) {
-					CheckState();
+					player_state->CheckState();
 				}
 			}
 		}
@@ -108,6 +111,8 @@ void CPlayerState::KeyState(BYTE* states)
 		dynamic_cast<CHighJumpingState*>(player_state) ||
 		dynamic_cast<CFallingState*>(player_state)) {
 		if (is_rendered_completely) {
+		player_state->start_ani = GetTickCount64();
+		player_state->start_count = GetTickCount64();
 			if (game->IsKeyDown(DIK_Z) && level == RACCOON_LEVEL_BIG) {
 				ani = RACCOON_ANI_SPINNING_BIG;
 				mario->animation_set->at(ani)->ResetFlagLastFrame();
@@ -121,54 +126,55 @@ void CPlayerState::KeyState(BYTE* states)
 			}
 		}
 		if (ani == RACCOON_ANI_SPINNING_BIG || ani == FIRE_ANI_FLYING_THROW) {
-			CheckState();
+			player_state->CheckState();
 		}
 	}
 }
 
-void CPlayerState::CheckState()
-{
-	int current_frame = animation->GetCurrentFrame();
-	CMario* mario = CMario::GetInstance();
-	//DebugOut(L"current %d\n", current_frame);
-	CPlayerState* player_state = mario->GetState();
-	if (dynamic_cast<CKickingState*>(player_state)) {
-		if (animation->NextIsLastFrame()) {
-			is_rendered_completely = true;
-		}
-		else
-			is_rendered_completely = false;
-		return;
-	}
-	if (level == RACCOON_LEVEL_BIG) {
-		if (current_frame == 0 || current_frame == 4 || current_frame == 2)
-			mario->is_attacking_by_spinning = true;
-		else
-			mario->is_attacking_by_spinning = false;
-
-	}
-	else if (level == FIRE_LEVEL) {
-		if (current_frame == 1 && !is_attacked) {
-			mario->is_attacking = true;
-			// allow throw only 1 fire ball
-			is_attacked = true;
-		}
-	}
-	
-
-	// phải render full frame mới được bật cờ render full ani
-	//if (!animation->NextIsLastFrame() && animation->IsLastFrame()) {
-	if (animation->IsLastFrame()) {
-		is_rendered_completely = true;
-		if (level == FIRE_LEVEL) {
-			is_attacked = false;
-		}
-	}
-	else {
-		is_rendered_completely = false;
-	}
-	/*DebugOut(L"attacking %d\n", mario->is_attacking);
-	DebugOut(L"is_attacked %d\n", is_attacked);*/
-}
+//
+//void CPlayerState::CheckState()
+//{
+//	int current_frame = animation->GetCurrentFrame();
+//	CMario* mario = CMario::GetInstance();
+//	DebugOut(L"frame %d\n", current_frame);
+//	CPlayerState* player_state = mario->GetState();
+//	if (dynamic_cast<CKickingState*>(player_state)) {
+//		if (animation->NextIsLastFrame()) {
+//			is_rendered_completely = true;
+//		}
+//		else
+//			is_rendered_completely = false;
+//		return;
+//	}
+//	if (level == RACCOON_LEVEL_BIG) {
+//		if (current_frame == 0 || current_frame == 4 || current_frame == 2)
+//			mario->is_attacking_by_spinning = true;
+//		else
+//			mario->is_attacking_by_spinning = false;
+//
+//	}
+//	else if (level == FIRE_LEVEL) {
+//		if (current_frame == 1 && !is_attacked) {
+//			mario->is_attacking = true;
+//			// allow throw only 1 fire ball
+//			is_attacked = true;
+//		}
+//	}
+//	
+//
+//	 phải render full frame mới được bật cờ render full ani
+//	if (!animation->NextIsLastFrame() && animation->IsLastFrame()) {
+//	/*if (animation->IsLastFrame()) {
+//		is_rendered_completely = true;
+//		if (level == FIRE_LEVEL) {
+//			is_attacked = false;
+//		}
+//	}
+//	else {
+//		is_rendered_completely = false;
+//	}*/
+//	/*DebugOut(L"attacking %d\n", mario->is_attacking);
+//	DebugOut(L"is_attacked %d\n", is_attacked);*/
+//}
 
 

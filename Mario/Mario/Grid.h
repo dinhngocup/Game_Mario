@@ -20,8 +20,9 @@
 
 // 12 48
 //#define MAX_ROW (int)(SCENE_HEIGHT/CELL_HEIGHT) + 1
+//#define MAX_COLUMN (int)(SCENE_WIDTH/CELL_WIDTH) + 1
 #define MAX_ROW 13
-#define MAX_COLUMN (int)(SCENE_WIDTH/CELL_WIDTH) + 1
+#define MAX_COLUMN 47
 
 
 class CGrid

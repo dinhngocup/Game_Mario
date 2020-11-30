@@ -87,7 +87,7 @@ void CFallingState::OnKeyDown(int KeyCode)
 	case DIK_X:
 		time_start_to_press = GetTickCount();
 		break;
-	
+
 	}
 }
 
@@ -116,6 +116,33 @@ void CFallingState::KeyState(BYTE* state)
 			DWORD now = GetTickCount();
 			if (mario->vy > 0 && now - time_start_to_press < 300)
 				mario->vy += -mario->vy * 0.5f;
+		}
+	}
+}
+
+void CFallingState::CheckState()
+{
+	CMario* mario = CMario::GetInstance();
+	if (level == FIRE_LEVEL) {
+		if (GetTickCount64() - start_ani >= 400) {
+			is_rendered_completely = true;
+			mario->is_attacking = true;
+		}
+		else
+			is_rendered_completely = false;
+	}
+	else if (level == RACCOON_LEVEL_BIG) {
+		if (GetTickCount64() - start_ani >= 600)
+			is_rendered_completely = true;
+		else {
+			is_rendered_completely = false;
+			if (GetTickCount64() - start_count >= 120) {
+				if (mario->state == MARIO_STATE_ATTACKING)
+					mario->SetState(MARIO_STATE_NO_ATTACKING);
+				else if (mario->state == MARIO_STATE_NO_ATTACKING)
+					mario->SetState(MARIO_STATE_ATTACKING);
+				start_count = GetTickCount64();
+			}
 		}
 	}
 }

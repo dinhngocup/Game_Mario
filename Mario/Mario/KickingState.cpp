@@ -6,11 +6,17 @@ CKickingState::CKickingState(int level)
 
 	this->level = level;
 	SetAnimation(level);
+	start_ani = GetTickCount64();
 }
 
 void CKickingState::Update(float dt)
 {
+	CMario* mario = CMario::GetInstance();
 
+	CheckState();
+	if (is_rendered_completely) {
+		mario->ChangeState(new CStandingState(level));
+	}
 }
 
 void CKickingState::HandleKeyboard()
@@ -46,10 +52,14 @@ void CKickingState::OnKeyUp(int KeyCode)
 
 void CKickingState::KeyState(BYTE* states)
 {
-	CMario* mario = CMario::GetInstance();
+	
+}
 
-	CPlayerState::CheckState();
-	if (is_rendered_completely) {
-		mario->ChangeState(new CStandingState(level));
+void CKickingState::CheckState()
+{
+	if (GetTickCount64() - start_ani >= 200)
+		is_rendered_completely = true;
+	else {
+		is_rendered_completely = false;
 	}
 }
