@@ -9,6 +9,7 @@ CFireFlower::CFireFlower(int flower_color, float x, float y, int w, int h)
 	start_x = x;
 	start_y = y;
 	boundaryY = start_y - h;
+	start_state = STATE_MOVING_UP;
 	SetState(STATE_MOVING_UP);
 }
 
@@ -110,7 +111,6 @@ void CFireFlower::Render()
 	}
 
 	animation_set->at(ani)->Render(x, y, 255, nx);
-	animation_set->at(PIPE_ANI)->Render(start_x - 23, start_y);
 	RenderBoundingBox();
 }
 

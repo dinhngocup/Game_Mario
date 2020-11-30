@@ -2,7 +2,7 @@
 
 CFlyingState::CFlyingState(int level)
 {
-	//OutputDebugString(L"flying\n");
+	OutputDebugString(L"flying\n");
 	CMario* mario = CMario::GetInstance();
 	mario->vy = -MARIO_JUMP_SPEED_Y;
 	this->level = level;
@@ -15,7 +15,7 @@ void CFlyingState::Update(float dt)
 
 	// chuyen trang thai falling
 	if (mario->vy == 0) {
-		if(level != RACCOON_LEVEL_BIG)
+		if (level != RACCOON_LEVEL_BIG)
 			mario->ChangeState(new CRunningState(level));
 		else {
 			mario->ChangeState(new CFallingState(level));
@@ -54,7 +54,7 @@ void CFlyingState::OnKeyDown(int KeyCode)
 	case DIK_S:
 		if (level == RACCOON_LEVEL_BIG) {
 			DWORD time_press_s = GetTickCount64();
-			if (time_press_s - mario->time_start_jump <= 2600)
+			if (time_press_s - mario->time_start_jump <= 4400)
 				mario->vy = -0.4f;
 			else {
 				mario->ChangeState(new CFallingState(level));
@@ -82,13 +82,21 @@ void CFlyingState::KeyState(BYTE* state)
 		}
 	}
 	if (game->IsKeyDown(DIK_RIGHT)) {
-		if (mario->vx < 0)
-			mario->vx = 0.2f;
+		if (level == RACCOON_LEVEL_BIG)
+			mario->vx = 0.35f;
+		else {
+			if (mario->vx < 0)
+				mario->vx = 0.2f;
+		}
 		mario->nx = 1;
 	}
 	else if (game->IsKeyDown(DIK_LEFT)) {
-		if (mario->vx > 0)
-			mario->vx = -0.2f;
+		if (level == RACCOON_LEVEL_BIG)
+			mario->vx = -0.35f;
+		else {
+			if (mario->vx > 0)
+				mario->vx = -0.2f;
+		}
 		mario->nx = -1;
 	}
 }

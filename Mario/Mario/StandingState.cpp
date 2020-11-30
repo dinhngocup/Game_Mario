@@ -8,7 +8,7 @@ CStandingState::CStandingState()
 CStandingState::CStandingState(int level)
 {
 	CMario* mario = CMario::GetInstance();
-	//OutputDebugString(L"standing\n");
+	OutputDebugString(L"standing\n");
 
 	this->level = level;
 

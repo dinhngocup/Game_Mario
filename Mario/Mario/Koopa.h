@@ -17,26 +17,32 @@
 #define KOOPA_BBOX_HEIGHT 78
 #define KOOPA_BBOX_HEIGHT_DIE 48
 
-#define STATE_WALKING 100
-#define STATE_DIE 101
-#define STATE_WALKING_SWINGS 102
-#define STATE_DIE_BY_WEAPON 103
-#define STATE_SPIN 104
-#define STATE_HOLD 105
-#define STATE_UNHOLD 106
+#define KOOPA_STATE_WALKING 100
+#define KOOPA_STATE_DIE 101
+#define KOOPA_STATE_WALKING_SWINGS 102
+#define KOOPA_STATE_DIE_BY_WEAPON 103
+#define KOOPA_STATE_SPIN 104
+#define KOOPA_STATE_HOLD 105
+#define KOOPA_STATE_UNHOLD 106
+#define KOOPA_STATE_DIE_BY_TAIL 107
 
 #define KOOPA_ANI_WALKING 0
 #define KOOPA_ANI_DIE 1
 #define KOOPA_ANI_SPIN 2
 #define KOOPA_ANI_WALKING_SWINGS 3
+#define KOOPA_ANI_ 3
 
 #define KOOPA_DISPARITIES 15
 
 
 #define KOOPA_GRAVITY 0.002f
+#define REVIVAL_TIME 5000
 
 class CKoopa : public CEnemy
 {
+	int koopa_ny = 1;
+	DWORD start_revival;
+	bool revival = false;
 public:
 	CKoopa(int state);
 	CKoopa();

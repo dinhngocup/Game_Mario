@@ -2,7 +2,7 @@
 #include "PlayScene.h"
 CHoldingState::CHoldingState(int level)
 {
-	//DebugOut(L"holding\n");
+	DebugOut(L"holding\n");
 
 	this->level = level;
 	SetAnimation(level);
@@ -38,7 +38,7 @@ void CHoldingState::Update(float dt)
 	vector<LPGAMEOBJECT> enemies = scene->enemies;
 
 	for (int i = 0; i < enemies.size(); i++) {
-		if (dynamic_cast<CKoopa*>(enemies.at(i)) && enemies.at(i)->state == STATE_HOLD) {
+		if (dynamic_cast<CKoopa*>(enemies.at(i)) && enemies.at(i)->state == KOOPA_STATE_HOLD) {
 
 			enemies.at(i)->nx = mario->nx;
 

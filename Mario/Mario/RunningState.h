@@ -14,6 +14,8 @@ private:
 	bool is_right = false;
 	bool is_left = false;
 	bool can_change_to_walking = false;
+	bool already_added = false;
+	bool already_minused = false;
 	DWORD start_skid;
 public:
 	CRunningState() {};

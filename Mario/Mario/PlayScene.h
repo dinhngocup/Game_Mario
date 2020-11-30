@@ -42,7 +42,6 @@ protected:
 	void _ParseSection_HUB(string line);
 	void _ParseSection_FONT(string line);
 	void ReadFileHub(LPCWSTR filePath);
-	int sceneWidth, sceneHeight;
 	bool isMoved;
 	int world_id, map_id;
 	CTiles *tiles;
@@ -55,6 +54,7 @@ protected:
 	int time_game;
 	int time_limit;
 public:
+	int sceneWidth, sceneHeight;
 	CGrid* grid;
 	vector<LPGAMEOBJECT> enemies;
 	vector<LPGAMEOBJECT> ghost_platforms;

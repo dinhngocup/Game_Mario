@@ -5,15 +5,29 @@ CGoDownState::CGoDownState(int level)
 	DebugOut(L"go down\n");
 	this->level = level;
 	SetAnimation(level);
+	CMario* mario = CMario::GetInstance();
+	mario->vx = 0;
 }
 
 void CGoDownState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
-	if (mario->collide_with_portal == 1)
+	DebugOut(L"start_y %f\n", start_y);
+
+	if (mario->collide_with_portal == 1) {
 		mario->vy = -0.03;
+		if (mario->y + mario->h <= start_y) {
+			mario->collide_with_portal = 0;
+			mario->ChangeState(new CFallingState(level));
+		}
+	}
 	else if (mario->collide_with_portal == -1) {
 		mario->vy = 0.03;
+		if (mario->y >= start_y) {
+			
+			mario->collide_with_portal = 0;
+			mario->ChangeState(new CFallingState(level));
+		}
 	}
 }
 

@@ -60,11 +60,18 @@ void CAnimation::Render(float x, float y, int alpha, int nx, int offset, bool sp
 	}
 	else {
 		if (spinningFlag) {
-			if (currentFrame == 0 || currentFrame == 4) {
-				frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, offset + 1);
+			if (nx < 0) {
+				if (currentFrame == 2)
+					frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, offset);
+				else
+					frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, 0);
+
 			}
 			else {
-				frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, 0);
+				if (currentFrame == 2 || currentFrame == 1 || currentFrame == 3)
+					frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, 0);
+				else
+					frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha, nx, offset);
 			}
 		}
 		else

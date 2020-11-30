@@ -6,7 +6,7 @@ CJumpingState::CJumpingState()
 
 CJumpingState::CJumpingState(int level)
 {
-	//OutputDebugString(L"jump\n");
+	OutputDebugString(L"jump\n");
 
 	this->level = level;
 
@@ -84,6 +84,7 @@ void CJumpingState::KeyState(BYTE* state)
 	
 		if (mario->collide_with_portal == 1) {
 			mario->is_underground = true;
+			mario->vx = 0;
 			return;
 		}
 		if (game->IsKeyDown(DIK_RIGHT)) {

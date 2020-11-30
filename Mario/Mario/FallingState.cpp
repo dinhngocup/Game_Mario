@@ -2,7 +2,7 @@
 
 CFallingState::CFallingState(int level)
 {
-	//OutputDebugString(L"falling\n");
+	OutputDebugString(L"falling\n");
 	CMario* mario = CMario::GetInstance();
 
 	this->level = level;

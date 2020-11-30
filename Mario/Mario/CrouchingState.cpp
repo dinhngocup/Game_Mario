@@ -2,12 +2,13 @@
 
 CCrouchingState::CCrouchingState(int level)
 {
-	//DebugOut(L"crouching\n");
 	CMario* mario = CMario::GetInstance();
 	this->level = level;
+	if (!mario->is_crouching) {
+		mario->SetY(mario->GetY() + DISPARITIES);
+	}
 	mario->is_crouching = true;
 	SetAnimation(level);
-	mario->SetY(mario->GetY() + DISPARITIES);
 }
 
 void CCrouchingState::Update(float dt)

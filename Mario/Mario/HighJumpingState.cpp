@@ -2,7 +2,7 @@
 
 CHighJumpingState::CHighJumpingState(int level)
 {
-	//DebugOut(L"high jump\n");
+	DebugOut(L"high jump\n");
 	this->level = level;
 	CMario* mario = CMario::GetInstance();
 	mario->vy = -MARIO_JUMP_SPEED_Y;
@@ -92,6 +92,7 @@ void CHighJumpingState::KeyState(BYTE* state)
 
 	if (game->IsKeyDown(DIK_S)) {
 		if (mario->collide_with_portal == 1) {
+			mario->vx = 0;
 			mario->is_underground = true;
 			return;
 		}

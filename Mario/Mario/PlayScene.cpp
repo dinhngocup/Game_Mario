@@ -89,6 +89,7 @@ void CPlayScene::_ParseSection_HUB(string line)
 
 	wstring path = ToWSTR(line);
 	ReadFileHub(path.c_str());
+	
 
 }
 
@@ -157,12 +158,14 @@ void CPlayScene::_ParseSection_STATIC_OBJECTS(string line)
 
 	int ani_set_id = atoi(tokens[5].c_str());
 	int type = atoi(tokens[6].c_str());
-	float new_cam_x, new_cam_y, start_x, direction_collision;
+	float new_cam_x, new_cam_y, start_x, start_y, direction_collision, y_change;
 	if (object_type == eTYPE::PORTAL) {
 		new_cam_x = atoi(tokens[7].c_str());
 		new_cam_y = atoi(tokens[8].c_str());
 		start_x = atoi(tokens[9].c_str());
-		direction_collision = atoi(tokens[10].c_str());
+		start_y = atoi(tokens[10].c_str());
+		direction_collision = atoi(tokens[11].c_str());
+		y_change = atoi(tokens[12].c_str());
 	}
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 
@@ -170,7 +173,7 @@ void CPlayScene::_ParseSection_STATIC_OBJECTS(string line)
 
 	switch (object_type)
 	{
-	case eTYPE::PORTAL: obj = new CPortal(x, y, w, h, new_cam_x, new_cam_y, start_x, direction_collision); obj->type = eTYPE::PORTAL;  break;
+	case eTYPE::PORTAL: obj = new CPortal(x, y, w, h, new_cam_x, new_cam_y, start_x, start_y, direction_collision, y_change); obj->type = eTYPE::PORTAL;  break;
 	case eTYPE::BRICK: obj = new CBrick(x, y, w, h); obj->type = eTYPE::BRICK;  break;
 	case eTYPE::INVISIBLE_OBJECT: obj = new CInvisibleObject(x, y, w, h); obj->type = eTYPE::INVISIBLE_OBJECT; break;
 	default:
@@ -187,7 +190,7 @@ void CPlayScene::_ParseSection_STATIC_OBJECTS(string line)
 
 	ghost_platforms.push_back(obj);
 
-
+	
 }
 
 void CPlayScene::LoadSceneResources()
@@ -298,7 +301,6 @@ void CPlayScene::Update(DWORD dt)
 
 	CMario* mario = CMario::GetInstance();
 	if (mario->GetLevel() == RACCOON_LEVEL_BIG || mario->y < DEFAULT_CAM_Y) {
-
 		if (dynamic_cast<CFallingState*>(mario->player_state) && cy >= DEFAULT_CAM_Y)
 			mario->is_flying = false;
 
@@ -310,7 +312,7 @@ void CPlayScene::Update(DWORD dt)
 				game->SetCamYPos(cy);
 		}
 		else {
-			if(game->GetCamY() == DEFAULT_CAM_Y)
+			if (game->GetCamY() == DEFAULT_CAM_Y)
 				game->SetCamYPos(DEFAULT_CAM_Y);
 		}
 
@@ -340,7 +342,15 @@ void CPlayScene::Update(DWORD dt)
 			game->SetCamXPos(cx);
 			isMoved = true;
 		}
-
+		if (mario->is_flying) {
+			if (cy < DEFAULT_CAM_Y) {
+				game->SetCamYPos(cy);
+			}
+			else {
+				game->SetCamYPos(DEFAULT_CAM_Y);
+				mario->is_flying = false;
+			}
+		}
 	}
 
 	for (size_t i = 0; i < enemies.size(); i++)
@@ -389,10 +399,6 @@ void CPlayScene::Render()
 		enemies[i]->Render();
 	}
 	player->Render();
-	for (size_t i = 0; i < ghost_platforms.size(); i++)
-	{
-		ghost_platforms[i]->Render();
-	}
 
 	for (size_t i = 0; i < items.size(); i++)
 	{
@@ -402,6 +408,10 @@ void CPlayScene::Render()
 	{
 		effects[i]->Render();
 	}
+	for (size_t i = 0; i < ghost_platforms.size(); i++)
+	{
+		ghost_platforms[i]->Render();
+	}
 	hub->Render();
 	RenderItemHub();
 }
@@ -409,6 +419,7 @@ void CPlayScene::Render()
 /*
 	Unload current scene
 */
+
 void CPlayScene::Unload()
 {
 	/*for (int i = 0; i < objects.size(); i++)

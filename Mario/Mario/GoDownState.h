@@ -8,6 +8,7 @@ class CGoDownState : public CPlayerState
 {
 	
 public:
+	float start_y;
 	CGoDownState() {};
 	CGoDownState(int level);
 

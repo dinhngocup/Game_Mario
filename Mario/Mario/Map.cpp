@@ -38,12 +38,16 @@ void CMap::DrawMap(float cam_x, float cam_y)
 	int begin_column = cam_x / w;
 	int end_column = (cam_x + game->GetScreenWidth()) / w +  1;
 
-	if (end_column > column_map)
+	/*if (end_column > column_map)
 		end_column = column_map;
+
 	if (end_row > row_map)
 		end_row = row_map;
+
 	if (begin_column < 0) begin_column = 0;
-	if (begin_row < 0) begin_row = 0;
+	if (begin_row < 0) begin_row = 0;*/
+
+
 	/*DebugOut(L"begin row %d\n", begin_row);
 	DebugOut(L"end row %d\n", end_row);
 	DebugOut(L"begin c %d\n", begin_column);

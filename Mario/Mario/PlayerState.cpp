@@ -6,6 +6,7 @@ void CPlayerState::OnKeyDown(int KeyCode)
 {
 	CMario* mario = CMario::GetInstance();
 	float current_x = mario->GetX();
+	float current_y = mario->GetY();
 	CPlayerState* player_state = mario->GetState();
 		CGame* game = CGame::GetInstance();
 	switch (KeyCode)
@@ -65,27 +66,27 @@ void CPlayerState::OnKeyDown(int KeyCode)
 		}
 		break;
 	case DIK_1:
-		mario->SetPosition(current_x, 450);
+		mario->SetPosition(current_x, 0);
 		mario->SetSpeed(0, 0);
 		mario->SetLevel(MARIO_LEVEL_SMALL);
 		mario->SetState(0);
 		mario->ChangeState(new CStandingState(MARIO_LEVEL_SMALL));
 		break;
 	case DIK_2:
-		mario->SetPosition(current_x, 450);
+		mario->SetPosition(current_x, 0);
 		mario->SetSpeed(0, 0);
 		mario->SetState(0);
 		mario->SetLevel(MARIO_LEVEL_BIG);
 		mario->ChangeState(new CStandingState(MARIO_LEVEL_BIG));
 		break;
 	case DIK_3:
-		mario->SetPosition(current_x, 450);
+		mario->SetPosition(current_x, 0);
 		mario->SetLevel(RACCOON_LEVEL_BIG);
 		mario->SetState(0);
 		mario->ChangeState(new CStandingState(RACCOON_LEVEL_BIG));
 		break;
 	case DIK_4:
-		mario->SetPosition(current_x, 450);
+		mario->SetPosition(current_x, 0);
 		mario->SetLevel(FIRE_LEVEL);
 		mario->SetState(0);
 		mario->ChangeState(new CStandingState(FIRE_LEVEL));

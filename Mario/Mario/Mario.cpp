@@ -14,6 +14,7 @@ CMario::CMario() : CGameObject()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+
 	CGame* game = CGame::GetInstance();
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	if (state != MARIO_STATE_DIE)
@@ -86,13 +87,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (e->ny != 0) {
 						vy = 0;
 						collide_with_portal = portal->direction_collision;
-						//DebugOut(L"collide_with_portal %d\n", collide_with_portal);
+						
 						if (e->ny == portal->direction_collision && e->ny == -1) {
 							if (is_underground) {
-								// lúc này cờ underground đã bật, gọi hàm chuyển cam và set
-								// lại vị trí mario
 								ChangeState(new CGoDownState(level));
-								//portal->start_hide = GetTickCount64();
+								CGoDownState* go_down_state = dynamic_cast<CGoDownState*>(player_state);
+								x = portal->x;
+								go_down_state->start_y = portal->y_change;
 								portal->is_activated = true;
 
 								is_underground = false;
@@ -101,13 +102,15 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 						else if (e->ny == portal->direction_collision && e->ny == 1) {
 							ChangeState(new CGoDownState(level));
-							//portal->start_hide = GetTickCount64();
+							CGoDownState* go_down_state = dynamic_cast<CGoDownState*>(player_state);
 							portal->is_activated = true;
+							go_down_state->start_y = portal->y_change;
+							x = portal->x;
 							is_underground = false;
 
 						}
 					}
-					
+
 
 				}
 				else if (dynamic_cast<CInvisibleObject*>(e->obj)) {
@@ -121,7 +124,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							y += dy;
 					}
 					else {
-						if (is_holding && e->obj->state == STATE_HOLD) {
+						if (is_holding && e->obj->state == KOOPA_STATE_HOLD) {
 
 						}
 						else if (e->obj->GetType() == eTYPE::FIRE_FLOWER_WEAPON) {
@@ -181,10 +184,10 @@ void CMario::Render()
 
 		if (ani == RACCOON_ANI_SPINNING_BIG) {
 			spinningFlag = true;
-			if (nx > 0)
-				offset = 6;
-			else
-				offset = 0;
+			if (nx < 0)
+				offset = -6;
+			else offset = 6;
+
 		}
 
 		if (state == MARIO_STATE_HIDE_UNTOUCHABLE || state == MARIO_STATE_HIDE) alpha = 0;
@@ -211,13 +214,19 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 	{
 		left = x;
 		right = left + MARIO_BIG_BBOX_WIDTH;
-		if (!is_crouching) {
+		if (is_crouching) {
+			top = y;
+			bottom = top + MARIO_CROUCH_BBOX_HEIGHT;
+		}
+		else if (is_attacking_by_spinning) {
+			left = x;
 			top = y;
 			bottom = top + MARIO_BIG_BBOX_HEIGHT;
+			right = left + MARIO_BIG_BBOX_WIDTH + 30;
 		}
 		else {
 			top = y;
-			bottom = top + MARIO_CROUCH_BBOX_HEIGHT;
+			bottom = top + MARIO_BIG_BBOX_HEIGHT;
 		}
 	}
 	else
@@ -245,15 +254,18 @@ void CMario::GetHeightMario()
 	switch (level) {
 	case MARIO_LEVEL_SMALL:
 		this->h = MARIO_SMALL_BBOX_HEIGHT;
+		this->w = MARIO_SMALL_BBOX_WIDTH;
 		break;
 	case MARIO_LEVEL_BIG:
 	case RACCOON_LEVEL_BIG:
 	case FIRE_LEVEL:
 		if (is_crouching) {
 			this->h = MARIO_CROUCH_BBOX_HEIGHT;
+
 		}
 		else
 			this->h = MARIO_BIG_BBOX_HEIGHT;
+		this->w = MARIO_BIG_BBOX_WIDTH;
 		break;
 
 	}
@@ -295,6 +307,7 @@ void CMario::KeyState(BYTE* states)
 
 void CMario::ChangeState(CPlayerState* newState)
 {
+	//DebugOut(L"state %s\n", player_state);
 	delete player_state;
 	player_state = NULL;
 	player_state = newState;

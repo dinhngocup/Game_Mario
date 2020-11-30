@@ -375,7 +375,7 @@ void CGrid::ResetListObj(float cam_x, float cam_y)
 
 
 		// check start pos coi có trong cam k có thì return
-		if (listResetObj[i]->start_x + listResetObj[i]->w >= cam_x && listResetObj[i]->start_x <= cam_x + game->GetScreenWidth() + 200)
+		if (listResetObj[i]->start_x + listResetObj[i]->w >= cam_x - 200 && listResetObj[i]->start_x <= cam_x + game->GetScreenWidth() + 200)
 			return;
 
 		//DebugOut(L"type %d\n", listResetObj[i]->GetType());

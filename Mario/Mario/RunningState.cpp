@@ -2,7 +2,7 @@
 #include "PlayScene.h"
 CRunningState::CRunningState(int level)
 {
-	//DebugOut(L"Running\n");
+	DebugOut(L"Running\n");
 	this->level = level;
 
 	SetAnimation(level);
@@ -13,19 +13,11 @@ CRunningState::CRunningState(int level)
 
 void CRunningState::Update(float dt)
 {
-	//DebugOut(L"update \n");
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
 	float speed_x = abs(mario->vx);
 	//DebugOut(L"vx khi running ne %f\n", speed_x);
-	// is speed low dùng để xác định lúc nào là lúc giảm tốc
-	/*
-	TH1: tốc độ chưa đạt tối đa thì rơi vô câu if(speed_x < 0.7)
-	để tăng tốc or giảm tốc tùy theo acceleration
-	TH2: đã đạt đến tốc độ tối đa thì rơi vô else để ko tăng tốc nữa
-	or rơi vô (is_max_speed && is_speed_low) để biết là đang max speed và có ý định giảm tốc
-	bởi cờ is speed low
-	*/
+
 	if (speed_x < 0.7 || (is_max_speed && is_speed_low)) {
 		is_max_speed = false;
 		mario->vx = (speed_x + acceleration * dt) * mario->nx;
@@ -33,21 +25,16 @@ void CRunningState::Update(float dt)
 	else {
 		is_max_speed = true;
 	}
-	//DebugOut(L"vx %f\n", speed_x);
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 
-	//scene->UpdateSpeedBar(speed_x);
 
 	if (speed_x < MARIO_WALKING_SPEED && can_change_to_walking && is_rendered_completely) {
-		//DebugOut(L"change to walking\n");
 		is_speed_low = false;
 		is_max_speed = false;
 		mario->is_attacking_by_spinning = false;
 		mario->ChangeState(new CWalkingState(level));
 		return;
-
 	}
-
 }
 
 void CRunningState::HandleKeyboard()
@@ -57,6 +44,7 @@ void CRunningState::HandleKeyboard()
 
 void CRunningState::SetAnimation(int level)
 {
+	CMario* mario = CMario::GetInstance();
 	this->level = level;
 	switch (level) {
 	case MARIO_LEVEL_BIG:
@@ -65,6 +53,8 @@ void CRunningState::SetAnimation(int level)
 		}
 		else if (is_skid)
 			ani = MARIO_ANI_BIG_SKID;
+		else if (mario->is_crouching)
+			ani = MARIO_ANI_BIG_CROUCHING_RIGHT;
 		else
 			ani = MARIO_ANI_BIG_WALKING_RIGHT;
 		break;
@@ -81,6 +71,8 @@ void CRunningState::SetAnimation(int level)
 		if (is_max_speed) {
 			ani = RACCOON_ANI_RUNNING_BIG;
 		}
+		else if (mario->is_crouching)
+			ani = RACCOON_ANI_BIG_CROUCHING_RIGHT;
 		else if (is_skid)
 			ani = RACCOON_ANI_SKID_BIG;
 		else
@@ -90,6 +82,8 @@ void CRunningState::SetAnimation(int level)
 		if (is_max_speed) {
 			ani = FIRE_MARIO_ANI_RUNNING;
 		}
+		else if (mario->is_crouching)
+			ani = FIRE_MARIO_ANI_CROUCHING_RIGHT;
 		else if (is_skid)
 			ani = FIRE_MARIO_ANI_SKID;
 		else
@@ -161,13 +155,22 @@ void CRunningState::KeyState(BYTE* state)
 		// ở đây ko reset 2 cờ left right, là vì nút A vẫn còn gi
 		if ((game->IsKeyDown(DIK_RIGHT) && game->IsKeyDown(DIK_LEFT)) ||
 			!game->IsKeyDown(DIK_LEFT) && !game->IsKeyDown(DIK_RIGHT)) {
-			//DebugOut(L"stopppp\n");
 			is_speed_low = true;
 			can_change_to_walking = true;
 			acceleration = -MARIO_ACCELERATION;
+			if (game->IsKeyDown(DIK_DOWN)) {
+				DebugOut(L"hi\n");
+				mario->is_crouching = true;
+				if (!already_added) {
+					mario->SetY(mario->GetY() + DISPARITIES);
+					already_added = true;
+				}
+				SetAnimation(level);
+			}
 		}
 		else if (game->IsKeyDown(DIK_RIGHT))
 		{
+			already_added = false;
 			// ko là bé chồn hoặc bé chồn đã hoàn thành việc xoay mới running
 			if ((level != RACCOON_LEVEL_BIG && level != FIRE_LEVEL) || is_rendered_completely) {
 				SetAnimation(level);
@@ -181,11 +184,18 @@ void CRunningState::KeyState(BYTE* state)
 				else
 				{
 					// bật cờ này để cho mario giảm hết tốc độ rồi quay đầu chứ hong chuyển về walking state
-				if (!is_skid && mario->nx < 0) {
-					start_skid = GetTickCount64();
+					if (!is_skid && mario->nx < 0) {
+						start_skid = GetTickCount64();
 						is_skid = true;
-				}
-					
+						DebugOut(L"already_minused %d\n", already_minused);
+						if (!already_minused && mario->is_crouching) {
+							mario->SetY(mario->GetY() - DISPARITIES);
+							DebugOut(L"y %f\n", mario->GetY());
+							already_minused = true;
+						}
+						mario->is_crouching = false;
+					}
+
 					can_change_to_walking = false;
 					is_speed_low = true;
 					acceleration = -MARIO_ACCELERATION;
@@ -194,16 +204,20 @@ void CRunningState::KeyState(BYTE* state)
 					//if (mario->vx >= 0) {
 					if (stop_skid - start_skid >= 400) {
 						is_skid = false;
+						already_minused = false;
 						mario->nx = 1;
 						is_speed_low = false;
 						acceleration = MARIO_ACCELERATION;
 					}
+
+
 					SetAnimation(level);
 				}
 
 			}
 		}
 		else if (game->IsKeyDown(DIK_LEFT)) {
+			already_added = false;
 			if ((level != RACCOON_LEVEL_BIG && level != FIRE_LEVEL) || is_rendered_completely) {
 				is_left = true;
 				SetAnimation(level);
@@ -217,6 +231,14 @@ void CRunningState::KeyState(BYTE* state)
 					if (!is_skid && mario->nx > 0) {
 						start_skid = GetTickCount64();
 						is_skid = true;
+						DebugOut(L"already_minused %d\n", already_minused);
+						if (!already_minused && mario->is_crouching) {
+							mario->SetY(mario->GetY() - DISPARITIES);
+							DebugOut(L"y %f\n", mario->GetY());
+							already_minused = true;
+						}
+						mario->is_crouching = false;
+
 					}
 					can_change_to_walking = false;
 					is_speed_low = true;
@@ -226,6 +248,7 @@ void CRunningState::KeyState(BYTE* state)
 					if (stop_skid - start_skid >= 400) {
 						mario->nx = -1;
 						is_speed_low = false;
+						already_minused = false;
 						is_skid = false;
 						acceleration = MARIO_ACCELERATION;
 					}

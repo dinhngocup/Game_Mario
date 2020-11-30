@@ -7,6 +7,11 @@
 #include "RunningState.h"
 class CWalkingState : public CPlayerState
 {
+	bool is_slowly = false;
+	bool is_left = false;
+	bool is_right = false;
+	bool is_skid = false;
+	bool already_added = false;
 public:
 	CWalkingState() {};
 	CWalkingState(int level);
