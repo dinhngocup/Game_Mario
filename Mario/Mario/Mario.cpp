@@ -14,7 +14,8 @@ CMario::CMario() : CGameObject()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-
+	if (level == FIRE_LEVEL && start_press_z == 0)
+		start_press_z = GetTickCount64();
 	CGame* game = CGame::GetInstance();
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	if (state != MARIO_STATE_DIE)
@@ -87,7 +88,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (e->ny != 0) {
 						vy = 0;
 						collide_with_portal = portal->direction_collision;
-						
+
 						if (e->ny == portal->direction_collision && e->ny == -1) {
 							if (is_underground) {
 								ChangeState(new CGoDownState(level));
@@ -153,9 +154,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else if (dynamic_cast<CItem*>(e->obj)) {
 					e->obj->IsCollisionWithMario(e);
 				}
-				else {
-
-					IsCollisionWithBrick(e);
+				else if (dynamic_cast<CBrick*>(e->obj)) {
+					CBrick* brick = dynamic_cast<CBrick*>(e->obj);
+					if (brick->state == BLING_BLING_BRICK || is_attacking_by_spinning) {
+						IsCollisionWithBlingBlingBrick(e);
+					}
+					else
+						IsCollisionWithBrick(e);
 				}
 			}
 		}
@@ -366,7 +371,7 @@ void CMario::StartUntouchable()
 		ChangeState(new CStandingState(level));
 		/*player_state->SetLevel(level);
 		player_state->SetAnimation(level);*/
-		
+
 	}
 }
 
@@ -429,6 +434,18 @@ void CMario::IsCollisionWithBrick(LPCOLLISIONEVENT e)
 	if (!dynamic_cast<CRunningState*>(player_state))
 		if (e->nx != 0) vx = 0;
 	if (e->ny != 0)	vy = 0;
+}
+
+void CMario::IsCollisionWithBlingBlingBrick(LPCOLLISIONEVENT e)
+{
+	if (e->ny != 0) {
+		vy = 0;
+	}
+	if (e->nx != 0) {
+		vx *= -1;
+		nx *= -1;
+		e->obj->SetState(BLING_BLING_BREAK);
+	}
 }
 
 

@@ -159,8 +159,10 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationSets.cpp" />
+    <ClCompile Include="Debris.cpp" />
     <ClCompile Include="FireFlowerWeapon.cpp" />
     <ClCompile Include="FireFlower.cpp" />
+    <ClCompile Include="Flower.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="GoDownState.cpp" />
     <ClCompile Include="GrowingUpState.cpp" />
@@ -216,12 +218,14 @@
     <ClInclude Include="AnimationSets.h" />
     <ClInclude Include="Coin.h" />
     <ClInclude Include="CrouchingState.h" />
+    <ClInclude Include="Debris.h" />
     <ClInclude Include="DefineLibs.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="FallingState.h" />
     <ClInclude Include="FireBall.h" />
     <ClInclude Include="FireFlower.h" />
     <ClInclude Include="FireFlowerWeapon.h" />
+    <ClInclude Include="Flower.h" />
     <ClInclude Include="FlyingState.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="GameObject.h" />

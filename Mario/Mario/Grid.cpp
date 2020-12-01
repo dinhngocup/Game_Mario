@@ -126,6 +126,16 @@ LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, flo
 		obj->type = eTYPE::FIRE_FLOWER_WEAPON;
 		break;
 	}
+	case eTYPE::FLOWER: {
+		obj = new CFlower(x, y, w, h);
+		obj->type = eTYPE::FLOWER;
+		break;
+	}
+	case eTYPE::BRICK: {
+		obj = new CBrick(x, y,w, h, BLING_BLING_BRICK);
+		obj->type = eTYPE::BRICK;
+		break;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return NULL;

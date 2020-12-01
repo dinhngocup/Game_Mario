@@ -11,6 +11,7 @@
 #include "Mushroom.h"
 #include "Leaf.h"
 #include "FireFlower.h"
+#include "Flower.h"
 #include "StaticCoin.h"
 #include "FireFlowerWeapon.h"
 

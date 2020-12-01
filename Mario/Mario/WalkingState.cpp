@@ -102,8 +102,16 @@ void CWalkingState::KeyState(BYTE* state)
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
 
-	if (game->IsKeyDown(DIK_Z) && level == RACCOON_LEVEL_BIG) {
-		mario->ChangeState(new CSpinningState(level));
+	if (game->IsKeyDown(DIK_Z)) {
+		if(level == RACCOON_LEVEL_BIG)
+			mario->ChangeState(new CSpinningState(level));
+		else if (level == FIRE_LEVEL) {
+			if (GetTickCount64() - mario->start_press_z >= 1000 || mario->start_press_z == 0) {
+				mario->press_z = true;
+				mario->ChangeState(new CAttackingState(level));
+				mario->start_press_z = GetTickCount64();
+			}
+		}
 		return;
 	}
 	if (game->IsKeyDown(DIK_RIGHT) && game->IsKeyDown(DIK_LEFT)) {

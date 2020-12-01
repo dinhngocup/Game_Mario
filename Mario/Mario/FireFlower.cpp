@@ -16,7 +16,7 @@ CFireFlower::CFireFlower(int flower_color, float x, float y, int w, int h)
 void CFireFlower::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)
 {
 	left = x;
-	top = y;
+	top = y; 
 
 	right = left + w;
 	bottom = top + h;
@@ -102,10 +102,11 @@ void CFireFlower::Render()
 			ani = GREEN_FF_ANI_ATTACKING_DOWN;
 			break;
 		case STATE_MOVING_UP:
-			ani = GREEN_FF_ANI_MOVING_UP;
-			break;
 		case STATE_MOVING_DOWN:
-			ani = GREEN_FF_ANI_MOVING_DOWN;
+			if (ny < 0)
+				ani = GREEN_FF_ANI_UP;
+			else
+				ani = GREEN_FF_ANI_DOWN;
 			break;
 		}
 	}

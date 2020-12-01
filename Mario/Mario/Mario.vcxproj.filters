@@ -223,6 +223,12 @@
     <ClCompile Include="StarEffect.cpp">
       <Filter>Objects\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Flower.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Debris.cpp">
+      <Filter>Objects\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -394,6 +400,12 @@
       <Filter>Objects\Player</Filter>
     </ClInclude>
     <ClInclude Include="StarEffect.h">
+      <Filter>Objects\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Flower.h">
+      <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Debris.h">
       <Filter>Objects\Effect</Filter>
     </ClInclude>
   </ItemGroup>

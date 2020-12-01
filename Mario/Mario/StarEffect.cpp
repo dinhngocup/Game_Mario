@@ -7,6 +7,8 @@ CStarEffect::CStarEffect(float x, float y)
 	SetAnimationSet(ani_set);
 	this->x = x;
 	this->y = y;
+	generate_id++;
+	this->id = generate_id;
 	DebugOut(L"x%f \n", x);
 	DebugOut(L"y%f \n", y);
 }

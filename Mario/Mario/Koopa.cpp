@@ -104,8 +104,16 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (state != KOOPA_STATE_DIE_BY_WEAPON) {
 				if (dynamic_cast<CBrick*>(e->obj)) {
+					CBrick* brick = dynamic_cast<CBrick*>(e->obj);
 					if (state == KOOPA_STATE_HOLD || state == KOOPA_STATE_WALKING_SWINGS) {
 						IsCollisionWithBrickSpecially(e);
+					}
+					else if (state == KOOPA_STATE_SPIN) {
+						if (brick->state == NORMAL_BRICK)
+							IsCollisionWithBrick(e);
+						else if (brick->state == BLING_BLING_BRICK) {
+							IsCollisionWithBlingBlingBrick(e);
+						}
 					}
 					else
 						IsCollisionWithBrick(e);
@@ -548,6 +556,18 @@ void CKoopa::IsCollisionWithGhostPlatform(LPCOLLISIONEVENT e)
 			vx *= -1;
 			nx *= -1;
 		}
+}
+
+void CKoopa::IsCollisionWithBlingBlingBrick(LPCOLLISIONEVENT e)
+{
+	if (e->ny != 0) {
+		vy = 0;
+	}
+	if (e->nx != 0) {
+		vx *= -1;
+		nx *= -1;
+		e->obj->SetState(BLING_BLING_BREAK);
+	}
 }
 
 void CKoopa::AttackedByShell()

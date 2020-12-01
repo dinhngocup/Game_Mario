@@ -151,15 +151,20 @@ void CFireBall::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 	else
 		e->obj->nx = 1;
 	switch (e->obj->type) {
-	case eTYPE::KOOPA: {
-		CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
-		koopa->SetState(KOOPA_STATE_DIE_BY_WEAPON);
-		break;
-	}
-	case eTYPE::GOOMBA: {
-		CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-		goomba->SetState(GOOMBA_STATE_DIE_BY_WEAPON);
-		break;
-	}
+		case eTYPE::KOOPA: {
+			CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+			koopa->SetState(KOOPA_STATE_DIE_BY_WEAPON);
+			break;
+		}
+		case eTYPE::GOOMBA: {
+			CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+			goomba->SetState(GOOMBA_STATE_DIE_BY_WEAPON);
+			break;
+		}
+		case eTYPE::FLOWER: 
+		case eTYPE::FIRE_FLOWER: {
+			e->obj->SetHealth(false);
+			break;
+		}
 	}
 }

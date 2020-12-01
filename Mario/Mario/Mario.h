@@ -28,6 +28,8 @@ class CMario : public CGameObject
 	int coin_number = 0;
 	vector <int> cards;
 public:
+	DWORD start_press_z = 0;
+	bool press_z;
 	int untouchable;
 	int ani;
 	CPlayerState *player_state;
@@ -82,4 +84,5 @@ public:
 
 	CPlayerState* GetState() { return player_state; }
 	void IsCollisionWithBrick(LPCOLLISIONEVENT e);
+	void IsCollisionWithBlingBlingBrick(LPCOLLISIONEVENT e);
 };

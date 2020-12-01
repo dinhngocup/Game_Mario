@@ -8,7 +8,7 @@ void CPlayerState::OnKeyDown(int KeyCode)
 	float current_x = mario->GetX();
 	float current_y = mario->GetY();
 	CPlayerState* player_state = mario->GetState();
-		CGame* game = CGame::GetInstance();
+	CGame* game = CGame::GetInstance();
 	switch (KeyCode)
 	{
 	case DIK_L:
@@ -111,18 +111,33 @@ void CPlayerState::KeyState(BYTE* states)
 		dynamic_cast<CHighJumpingState*>(player_state) ||
 		dynamic_cast<CFallingState*>(player_state)) {
 		if (is_rendered_completely) {
-		player_state->start_ani = GetTickCount64();
-		player_state->start_count = GetTickCount64();
-			if (game->IsKeyDown(DIK_Z) && level == RACCOON_LEVEL_BIG) {
-				ani = RACCOON_ANI_SPINNING_BIG;
+			player_state->start_ani = GetTickCount64();
+			player_state->start_count = GetTickCount64();
+			if (game->IsKeyDown(DIK_Z)) {
+				if (level == RACCOON_LEVEL_BIG) {
+					ani = RACCOON_ANI_SPINNING_BIG;
+				}
+				else if (level == FIRE_LEVEL) {
+					ani = FIRE_ANI_FLYING_THROW;
+					mario->press_z = true;
+					mario->start_press_z = GetTickCount64();
+				}
 				mario->animation_set->at(ani)->ResetFlagLastFrame();
 				CPlayerState::SetAnimation(mario->animation_set->at(ani));
 			}
-			else if (!game->IsKeyDown(DIK_Z) && level == RACCOON_LEVEL_BIG) {
-				if (dynamic_cast<CFallingState*>(player_state))
-					ani = RACCOON_ANI_FALLING_BIG;
-				else
-					ani = RACCOON_ANI_BIG_JUMPING_RIGHT;
+			else if (!game->IsKeyDown(DIK_Z)) {
+				if (level == RACCOON_LEVEL_BIG) {
+					if (dynamic_cast<CFallingState*>(player_state))
+						ani = RACCOON_ANI_FALLING_BIG;
+					else
+						ani = RACCOON_ANI_BIG_JUMPING_RIGHT;
+				}
+				else if (level == FIRE_LEVEL) {
+					if (dynamic_cast<CFallingState*>(player_state))
+						ani = FIRE_MARIO_ANI_FALLING;
+					else
+						ani = FIRE_MARIO_ANI_JUMPING_RIGHT;
+				}
 			}
 		}
 		if (ani == RACCOON_ANI_SPINNING_BIG || ani == FIRE_ANI_FLYING_THROW) {

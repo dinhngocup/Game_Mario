@@ -260,6 +260,10 @@ void CPlayScene::Update(DWORD dt)
 		float y = player->GetY();
 		grid->AddObjectIntoGrid(eTYPE::FIRE_BALL, x, y, 20, 0, 0, eTYPE_OBJECT::ITEM, 0, player->nx);
 
+		if (player->press_z) {
+			grid->AddObjectIntoGrid(eTYPE::FIRE_BALL, x-20, y, 20, 0, 0, eTYPE_OBJECT::ITEM, 0, player->nx);
+		}
+		player->press_z = false;
 		player->is_attacking = false;
 	}
 
@@ -422,10 +426,7 @@ void CPlayScene::Render()
 
 void CPlayScene::Unload()
 {
-	/*for (int i = 0; i < objects.size(); i++)
-		delete objects[i];
-
-	objects.clear();*/
+	
 	for (LPGAMEOBJECT obj : enemies)
 		delete obj;
 	enemies.clear();
@@ -433,6 +434,14 @@ void CPlayScene::Unload()
 	for (LPGAMEOBJECT obj : items)
 		delete obj;
 	items.clear();
+
+	for (LPGAMEOBJECT obj : ghost_platforms)
+		delete obj;
+	ghost_platforms.clear();
+
+	for (LPGAMEOBJECT obj : effects)
+		delete obj;
+	effects.clear();
 
 	player = NULL;
 	map = NULL;

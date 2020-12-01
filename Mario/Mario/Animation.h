@@ -33,7 +33,7 @@ public:
 		lastFrame = false;
 		nextIsLastFrame = false;
 	}
-	void Render(float x, float y, int alpha = 255, int nx = 1, int offset = 0, bool spinningFlag = false, int ny = 1);
+	void Render(float x, float y, int alpha = 255, int nx = 1, int offset = 0, bool spinningFlag = false, int ny = 1, int scale = 3);
 };
 
 typedef CAnimation* LPANIMATION;

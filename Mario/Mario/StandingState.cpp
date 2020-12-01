@@ -126,8 +126,16 @@ void CStandingState::KeyState(BYTE* state)
 			mario->is_underground = true;
 		
 	}
-	else if (game->IsKeyDown(DIK_Z) && level == RACCOON_LEVEL_BIG) {
-		mario->ChangeState(new CSpinningState(level));
+	else if (game->IsKeyDown(DIK_Z)) {
+		if (level == RACCOON_LEVEL_BIG)
+			mario->ChangeState(new CSpinningState(level));
+		else if (level == FIRE_LEVEL) {
+			if (GetTickCount64() - mario->start_press_z >= 1000) {
+				mario->press_z = true;
+				mario->ChangeState(new CAttackingState(level));
+				mario->start_press_z = GetTickCount64();
+			}
+		}
 	}
 
 }

@@ -59,6 +59,7 @@ public:
 	void IsCollisionWithGhostPlatformSpecially(LPCOLLISIONEVENT e);
 	void IsCollisionWithBrick(LPCOLLISIONEVENT e);
 	void IsCollisionWithGhostPlatform(LPCOLLISIONEVENT e);
+	void IsCollisionWithBlingBlingBrick(LPCOLLISIONEVENT e);
 	void AttackedByShell();
 	
 };
