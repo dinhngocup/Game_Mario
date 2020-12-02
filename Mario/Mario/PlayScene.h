@@ -54,6 +54,7 @@ protected:
 	int time_game;
 	int time_limit;
 public:
+	int time_scale = 1;
 	int sceneWidth, sceneHeight;
 	CGrid* grid;
 	vector<LPGAMEOBJECT> enemies;

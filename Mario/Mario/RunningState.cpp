@@ -2,7 +2,7 @@
 #include "PlayScene.h"
 CRunningState::CRunningState(int level)
 {
-	DebugOut(L"Running\n");
+	//DebugOut(L"Running\n");
 	this->level = level;
 
 	SetAnimation(level);
@@ -269,8 +269,10 @@ void CRunningState::KeyState(BYTE* state)
 
 void CRunningState::CheckState()
 {
-
 	CMario* mario = CMario::GetInstance();
+	int current_frame = animation->GetCurrentFrame();
+	//DebugOut(L"frame %d\n", current_frame);
+	//DebugOut(L"attack %d\n", mario->is_attacking_by_spinning);
 	if (level == FIRE_LEVEL) {
 		if (GetTickCount64() - start_ani >= 400) {
 			is_rendered_completely = true;

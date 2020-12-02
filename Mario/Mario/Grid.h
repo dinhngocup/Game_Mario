@@ -14,6 +14,7 @@
 #include "Flower.h"
 #include "StaticCoin.h"
 #include "FireFlowerWeapon.h"
+#include "ButtonP.h"
 
 //173 186.25
 #define CELL_HEIGHT (692/4.0f)

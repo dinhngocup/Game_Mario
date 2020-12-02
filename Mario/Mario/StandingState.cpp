@@ -8,8 +8,8 @@ CStandingState::CStandingState()
 CStandingState::CStandingState(int level)
 {
 	CMario* mario = CMario::GetInstance();
-	OutputDebugString(L"standing\n");
-
+	//OutputDebugString(L"standing\n");
+	mario->is_attacking_by_spinning = false;
 	this->level = level;
 
 	mario->vx = 0;

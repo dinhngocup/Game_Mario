@@ -2,11 +2,11 @@
 
 CFallingState::CFallingState(int level)
 {
-	OutputDebugString(L"falling\n");
+	//OutputDebugString(L"falling\n");
 	CMario* mario = CMario::GetInstance();
 
 	this->level = level;
-
+	mario->collide_with_portal = 0;
 	SetAnimation(level);
 }
 

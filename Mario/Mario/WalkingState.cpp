@@ -5,7 +5,7 @@ CWalkingState::CWalkingState(int level)
 {
 	OutputDebugString(L"walking\n");
 	this->level = level;
-
+	
 	SetAnimation(level);
 }
 

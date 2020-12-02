@@ -249,6 +249,7 @@ void CPlayScene::LoadSceneResources()
 
 void CPlayScene::Update(DWORD dt)
 {
+	DWORD dt_after = dt * time_scale;
 	if (player->is_attacking) {
 		float x;
 		if (player->nx > 0) {
@@ -273,16 +274,17 @@ void CPlayScene::Update(DWORD dt)
 
 	for (size_t i = 0; i < items.size(); i++)
 	{
-		items[i]->Update(dt);
+		items[i]->Update(dt_after);
 		items[i]->is_in_grid = false;
 	}
 	for (size_t i = 0; i < ghost_platforms.size(); i++)
 	{
-		ghost_platforms[i]->Update(dt);
+		ghost_platforms[i]->Update(dt_after);
 	}
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
-		enemies[i]->Update(dt);
+		
+		enemies[i]->Update(dt_after);
 		enemies[i]->is_in_grid = false;
 	}
 	for (size_t i = 0; i < effects.size(); i++)
@@ -290,7 +292,7 @@ void CPlayScene::Update(DWORD dt)
 		effects[i]->Update(dt);
 	}
 	player->Update(dt);
-	UpdateHub(dt);
+	UpdateHub(dt_after);
 
 	grid->UpdatePositionInGrid(game->GetCamX(), DEFAULT_CAM_Y);
 
@@ -454,7 +456,7 @@ void CPlayScene::Unload()
 void CPlayScene::UpdateHub(DWORD dt)
 {
 	DWORD now = GetTickCount64();
-	if (now - previousTime >= 1000)
+	if (now - previousTime >= 1000 && time_scale != 0)
 	{
 		previousTime = GetTickCount64();
 		// need to custom, time should be saved in hub

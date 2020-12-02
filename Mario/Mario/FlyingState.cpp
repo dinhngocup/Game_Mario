@@ -2,7 +2,7 @@
 
 CFlyingState::CFlyingState(int level)
 {
-	OutputDebugString(L"flying\n");
+	//OutputDebugString(L"flying\n");
 	CMario* mario = CMario::GetInstance();
 	mario->vy = -MARIO_JUMP_SPEED_Y;
 	this->level = level;

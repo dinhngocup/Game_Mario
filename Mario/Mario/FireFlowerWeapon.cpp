@@ -25,7 +25,7 @@ void CFireFlowerWeapon::GetBoundingBox(float& left, float& top, float& right, fl
 
 void CFireFlowerWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	//DebugOut(L"vu khi ban lua\n");
+	
 	CGame* game = CGame::GetInstance();
 	CMario* mario = CMario::GetInstance();
 	if (GetX() >= game->GetCamX() + game->GetScreenWidth() ||
@@ -61,6 +61,7 @@ void CFireFlowerWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			float rdx = 0;
 			float rdy = 0;
 			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+			DebugOut(L"cham weapon\n");
 
 			HandleCollisionWithMario(coEventsResult[0]);
 			x += dx;
@@ -89,7 +90,7 @@ void CFireFlowerWeapon::SetState(int state)
 void CFireFlowerWeapon::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
 	CMario* mario = CMario::GetInstance();
-	
+	ableToCheckCollision = false;
 	mario->StartUntouchable();
 	
 }
@@ -97,6 +98,6 @@ void CFireFlowerWeapon::IsCollisionWithMario(LPCOLLISIONEVENT e)
 void CFireFlowerWeapon::HandleCollisionWithMario(LPCOLLISIONEVENT e)
 {
 	CMario* mario = CMario::GetInstance();
-	
-		mario->StartUntouchable();
+	ableToCheckCollision = false;
+	mario->StartUntouchable();
 }

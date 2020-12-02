@@ -6,7 +6,7 @@ CJumpingState::CJumpingState()
 
 CJumpingState::CJumpingState(int level)
 {
-	OutputDebugString(L"jump\n");
+	//OutputDebugString(L"jump\n");
 
 	this->level = level;
 

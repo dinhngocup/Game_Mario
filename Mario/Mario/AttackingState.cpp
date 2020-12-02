@@ -2,7 +2,7 @@
 
 CAttackingState::CAttackingState(int level)
 {
-	DebugOut(L"Attacking\n");
+	//DebugOut(L"Attacking\n");
 	this->level = level;
 	SetAnimation();
 	start_ani = GetTickCount64();

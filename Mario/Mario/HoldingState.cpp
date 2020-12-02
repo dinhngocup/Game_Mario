@@ -2,7 +2,7 @@
 #include "PlayScene.h"
 CHoldingState::CHoldingState(int level)
 {
-	DebugOut(L"holding\n");
+	//DebugOut(L"holding\n");
 
 	this->level = level;
 	SetAnimation(level);

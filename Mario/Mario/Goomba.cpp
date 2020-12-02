@@ -327,8 +327,9 @@ void CGoomba::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 			goomba->vx *= -1;
 		}
 		if (e->ny != 0) {
-			y += dy;
-
+			if (e->ny < 0)
+				y += dy;
+			else y -= dy;
 		}
 	}
 	else if (e->obj->type == eTYPE::KOOPA) {

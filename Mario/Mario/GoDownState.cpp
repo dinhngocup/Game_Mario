@@ -1,23 +1,29 @@
 #include "GoDownState.h"
+#include "PlayScene.h"
 
 CGoDownState::CGoDownState(int level)
 {
-	DebugOut(L"go down\n");
+	//DebugOut(L"go down\n");
+	CMario* mario = CMario::GetInstance();
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	this->level = level;
 	SetAnimation(level);
-	CMario* mario = CMario::GetInstance();
 	mario->vx = 0;
+	scene->time_scale = 0;
 }
 
 void CGoDownState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
-	DebugOut(L"start_y %f\n", start_y);
+	CGame* game = CGame::GetInstance();
 
 	if (mario->collide_with_portal == 1) {
 		mario->vy = -0.03;
 		if (mario->y + mario->h <= start_y) {
 			mario->collide_with_portal = 0;
+			CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+			scene->time_scale = 1;
 			mario->ChangeState(new CFallingState(level));
 		}
 	}
@@ -26,6 +32,8 @@ void CGoDownState::Update(float dt)
 		if (mario->y >= start_y) {
 			
 			mario->collide_with_portal = 0;
+			CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+			scene->time_scale = 1;
 			mario->ChangeState(new CFallingState(level));
 		}
 	}

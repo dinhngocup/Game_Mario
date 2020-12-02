@@ -2,12 +2,13 @@
 
 CStaticCoin::CStaticCoin(float x, float y)
 {
-
+	DebugOut(L"new\n");
+	this->x = x;
+	this->y = y;
 }
 
 void CStaticCoin::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 {
-
 }
 
 void CStaticCoin::Render()

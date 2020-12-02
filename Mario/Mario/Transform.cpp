@@ -1,4 +1,5 @@
 #include "Transform.h"
+#include "PlayScene.h"
 
 void CTransform::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)
 {
@@ -30,8 +31,11 @@ void CTransform::Render()
 void CTransform::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CMario* mario = CMario::GetInstance();
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	if (GetTickCount64() - start_ani >= 480) {
 		SetHealth(false);
+		scene->time_scale = 1;
 		mario->SetState(MARIO_STATE_UNHIDE_UNTOUCHABLE);
 		mario->unhide_start = GetTickCount64();
 	}

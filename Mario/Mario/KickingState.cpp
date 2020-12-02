@@ -2,7 +2,7 @@
 
 CKickingState::CKickingState(int level)
 {
-	DebugOut(L"kicking\n");
+	//DebugOut(L"kicking\n");
 
 	this->level = level;
 	SetAnimation(level);

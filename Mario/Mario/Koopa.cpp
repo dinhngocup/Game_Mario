@@ -115,8 +115,9 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							IsCollisionWithBlingBlingBrick(e);
 						}
 					}
-					else
+					else {
 						IsCollisionWithBrick(e);
+					}
 				}
 				else if (dynamic_cast<CInvisibleObject*>(e->obj)) {
 					if (state == KOOPA_STATE_WALKING_SWINGS)
@@ -474,7 +475,9 @@ void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 					koopa->vx *= -1;
 				} 
 				if (e->ny != 0) {
-					y += dy;
+					if (e->ny < 0)
+						y += dy;
+					else y -= dy;
 				}
 			}
 		}
@@ -526,9 +529,10 @@ void CKoopa::IsCollisionWithBrick(LPCOLLISIONEVENT e)
 		if (state == KOOPA_STATE_DIE_BY_TAIL)
 			vx = 0;
 	}
+
 	// đụng hộp ngang quay đầu hoặc đi hết chiều dài của viên gạch
 	if (state != KOOPA_STATE_SPIN) {
-		if (e->nx != 0 || x + w >= e->obj->x + e->obj->w || x <= e->obj->x) {
+		if (e->nx != 0 || x + w >= e->obj->x + e->obj->w || x + w / 3 <= e->obj->x) {
 			vx *= -1;
 			nx *= -1;
 		}
@@ -560,6 +564,7 @@ void CKoopa::IsCollisionWithGhostPlatform(LPCOLLISIONEVENT e)
 
 void CKoopa::IsCollisionWithBlingBlingBrick(LPCOLLISIONEVENT e)
 {
+		
 	if (e->ny != 0) {
 		vy = 0;
 	}

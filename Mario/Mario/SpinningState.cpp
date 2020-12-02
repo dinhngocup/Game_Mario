@@ -7,7 +7,7 @@ CSpinningState::CSpinningState(int level)
 	this->level = level;
 	SetAnimation();
 	start_ani = GetTickCount64();
-	//DebugOut(L"spinning\n");
+	DebugOut(L"spinning\n");
 	start_count = GetTickCount64();
 	mario->SetState(MARIO_STATE_ATTACKING);
 }
@@ -53,6 +53,7 @@ void CSpinningState::KeyState(BYTE* state)
 		start_ani = GetTickCount64();
 		// Đè nút A và phím qua trái phải thì chạy nhanh
 		if (game->IsKeyDown(DIK_A) && (game->IsKeyDown(DIK_RIGHT) || game->IsKeyDown(DIK_LEFT))) {
+			mario->is_attacking_by_spinning = false;
 			mario->ChangeState(new CRunningState(level));
 		}
 		else if (game->IsKeyDown(DIK_Z)) {

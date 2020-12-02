@@ -29,7 +29,7 @@ void CDebris::Render()
 
 void CDebris::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	DebugOut(L"hi\n");
+	//DebugOut(L"hi\n");
 	CGame* game = CGame::GetInstance();
 	vy += DEBRIS_GRAVITY * dt;
 	CGameObject::Update(dt);

@@ -2,7 +2,7 @@
 
 CHighJumpingState::CHighJumpingState(int level)
 {
-	DebugOut(L"high jump\n");
+	//DebugOut(L"high jump\n");
 	this->level = level;
 	CMario* mario = CMario::GetInstance();
 	mario->vy = -MARIO_JUMP_SPEED_Y;

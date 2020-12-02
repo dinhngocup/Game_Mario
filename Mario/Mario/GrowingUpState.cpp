@@ -1,8 +1,10 @@
 #include "GrowingUpState.h"
+#include "PlayScene.h"
 
 CGrowingUpState::CGrowingUpState(int level)
 {
 	CMario* mario = CMario::GetInstance();
+	CGame* game = CGame::GetInstance();
 	this->level = level;
 	SetAnimation(this->level);
 	start_ani1 = GetTickCount64();
@@ -10,11 +12,16 @@ CGrowingUpState::CGrowingUpState(int level)
 	if (level == MARIO_LEVEL_SMALL)
 		limit = 1100;
 	else limit = 700;
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+	scene->time_scale = 0;
 }
 
 void CGrowingUpState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+
 	if (GetTickCount64() - start_ani1 >= 1800) {
 		mario->untouchable = 0;
 		int level_mario = mario->GetLevel();
@@ -26,6 +33,7 @@ void CGrowingUpState::Update(float dt)
 		}
 		mario->SetLevel(level_mario);
 		mario->SetState(MARIO_STATE_IDLE);
+		scene->time_scale = 1;
 		if (abs(mario->vx) > MARIO_WALKING_SPEED)
 			mario->ChangeState(new CRunningState(level_mario));
 		else if (abs(mario->vx) == MARIO_WALKING_SPEED)

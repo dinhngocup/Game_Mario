@@ -132,8 +132,13 @@ LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, flo
 		break;
 	}
 	case eTYPE::BRICK: {
-		obj = new CBrick(x, y,w, h, BLING_BLING_BRICK);
+		obj = new CBrick(x, y, w, h, BLING_BLING_BRICK, extra);
 		obj->type = eTYPE::BRICK;
+		break;
+	}
+	case eTYPE::BUTTON_P: {
+		obj = new CButtonP(x, y);
+		obj->type = eTYPE::BUTTON_P;
 		break;
 	}
 	default:
@@ -355,7 +360,9 @@ void CGrid::ReadFileObj()
 		int ani_id = atoi(tokens[5].c_str());
 		int type = atoi(tokens[6].c_str());
 		int extra = 0;
-		if (object_type == 2 || object_type == 3 || object_type == 6 || object_type == 11)
+		if (object_type == 2 || object_type == 3 ||
+			object_type == 6 || object_type == 11 ||
+			object_type == 1)
 			extra = atoi(tokens[7].c_str());
 
 		AddObjectIntoGrid(object_type, x, y, w, h, ani_id, type, extra);
