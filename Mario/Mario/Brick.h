@@ -24,6 +24,11 @@
 #define MUSHROOM_LEVEL_UP 2
 
 #define BUTTON_P_ANI	21
+
+#define P_BUTTON_W 48
+#define P_BUTTON_H 48
+#define P_BUTTON_DISPARITY	48
+
 class CBrick : public CGameObject
 {
 	int bonus;

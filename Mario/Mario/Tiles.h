@@ -30,7 +30,7 @@ public:
 
 	int GetFrameWidth();
 	int GetFrameHeight();
-
+	void ClearTileSet();
 	vector<LPSPRITE> GetTiles();
 };
 

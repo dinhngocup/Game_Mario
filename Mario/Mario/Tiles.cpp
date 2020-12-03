@@ -31,6 +31,19 @@ int CTiles::GetFrameHeight()
 	return frame_height;
 }
 
+void CTiles::ClearTileSet()
+{
+	for (LPSPRITE tile : tiles) {
+		delete tile;
+	}
+	tiles.clear();
+
+	LPDIRECT3DTEXTURE9 tex = CTextures::GetInstance()->Get(40);
+	if (tex != NULL) tex->Release();
+
+
+}
+
 vector<LPSPRITE> CTiles::GetTiles()
 {
 	return tiles;
@@ -41,8 +54,7 @@ void CTiles::LoadTiles()
 	// chỉ số i,j có thể đổi thành cột và hàng được ko?
 	// nếu đổi thành cột và hàng thì khi push vào vector tiles sẽ push theo chiều dọc, cột này qua cột kia
 	// trong khi tile map mình đọc theo hàng ngang, hàng này đến hàng kia
-	
-
+	CGame* game = CGame::GetInstance();
 	int index = 0;
 	for (int i = 0; i < row_tile; i++)
 		for (int j = 0; j < column_tile; j++) {
@@ -50,10 +62,12 @@ void CTiles::LoadTiles()
 			int left = j * frame_width;
 			int width = frame_width;
 			int height = frame_height;
-			
+
 			LPSPRITE tile = new CSprite(index, left, top, width, height, tex);
 			tiles.push_back(tile);
+			
 			index++;
+
 		}
 }
 

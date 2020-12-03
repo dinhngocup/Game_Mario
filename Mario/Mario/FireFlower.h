@@ -25,7 +25,15 @@
 #define RED_FLOWER 1
 #define GREEN_FLOWER 2
 
-#define FF_SPEED 0.1f
+#define FF_SPEED 0.08f
+#define FF_TIME_ATTACKING	1000
+#define FF_TIME_HIDE	1700
+
+#define FF_MIN_BOUNDARY		72
+#define FF_MAX_BOUNDARY		120
+
+#define BOUNDARY_ANGLE	-192
+
 class CFireFlower : public CEnemy
 {
 	int ny;

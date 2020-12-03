@@ -37,17 +37,17 @@ void CFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else y += dy;
 	}
 	else if (state == STATE_TOP) {
-		if (GetTickCount64() - start_count >= 2000) {
+		if (GetTickCount64() - start_count >= TIME_FLOWER_ON_TOP) {
 			SetState(STATE_MOVING_DOWN);
 		}
 	}
 	else {
 		// state là hide
-		if (mario->x >= start_x - 24 - 48 && mario->x <= start_x - 24 + 96 + 48) {
+		if (mario->x >= start_x - FLOWER_MIN_BOUNDARY && mario->x <= start_x + FLOWER_MAX_BOUNDARY) {
 
 		}
 		else {
-			if (GetTickCount64() - start_count >= 2000) {
+			if (GetTickCount64() - start_count >= TIME_FLOWER_HIDE) {
 				SetState(STATE_MOVING_UP);
 			}
 		}

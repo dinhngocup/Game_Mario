@@ -57,7 +57,7 @@ void CKickingState::KeyState(BYTE* states)
 
 void CKickingState::CheckState()
 {
-	if (GetTickCount64() - start_ani >= 200)
+	if (GetTickCount64() - start_ani >= TIME_KICKING)
 		is_rendered_completely = true;
 	else {
 		is_rendered_completely = false;

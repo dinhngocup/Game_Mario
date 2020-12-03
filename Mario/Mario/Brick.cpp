@@ -82,7 +82,7 @@ void CBrick::CreateBonus()
 	switch (bonus) {
 	case P_BUTTON:
 		SetState(EMPTY_BRICK);
-		scene->grid->AddObjectIntoGrid(eTYPE::BUTTON_P, x, y - 48, 48, 48, BUTTON_P_ANI, eTYPE_OBJECT::ITEM);
+		scene->grid->AddObjectIntoGrid(eTYPE::BUTTON_P, x, y - P_BUTTON_DISPARITY, P_BUTTON_W, P_BUTTON_H, BUTTON_P_ANI, eTYPE_OBJECT::ITEM);
 		break;
 	}
 }

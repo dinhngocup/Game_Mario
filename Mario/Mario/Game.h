@@ -55,7 +55,6 @@ class CGame
 	int screen_height;
 
 	unordered_map<int, LPSCENE> scenes;
-	int current_scene;
 
 	void _ParseSection_SETTINGS(string line);
 	void _ParseSection_SCENES(string line);
@@ -67,6 +66,7 @@ class CGame
 	void _ParseSection_ANIMATION_SETS(string line);
 
 public:
+	int current_scene;
 	void _ParseSection_TEXTURES(string line);
 
 	void InitKeyboard();

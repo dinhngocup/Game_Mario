@@ -9,8 +9,8 @@ CStarEffect::CStarEffect(float x, float y)
 	this->y = y;
 	generate_id++;
 	this->id = generate_id;
-	DebugOut(L"x%f \n", x);
-	DebugOut(L"y%f \n", y);
+	//DebugOut(L"x%f \n", x);
+	//DebugOut(L"y%f \n", y);
 }
 
 void CStarEffect::Render()
@@ -21,7 +21,7 @@ void CStarEffect::Render()
 
 void CStarEffect::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (GetTickCount64() - start_ani >= 90) {
+	if (GetTickCount64() - start_ani >= TIME_STAR_EFFECT) {
 		SetHealth(false);
 	}
 }

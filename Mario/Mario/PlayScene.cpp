@@ -59,6 +59,8 @@ void CPlayScene::_ParseSection_INFO(string line)
 
 void CPlayScene::_ParseSection_TILESET(string line)
 {
+	DebugOut(L"done load tile\n");
+
 	// tách chuỗi nhận được thành những từ riêng biệt phân cách bởi dấu tab (line)
 	vector<string> tokens = split(line);
 
@@ -89,7 +91,7 @@ void CPlayScene::_ParseSection_HUB(string line)
 
 	wstring path = ToWSTR(line);
 	ReadFileHub(path.c_str());
-	
+
 
 }
 
@@ -115,7 +117,7 @@ void CPlayScene::ReadFileHub(LPCWSTR filePath)
 {
 	ifstream f;
 	f.open(filePath);
-
+	//hub
 	int quantity, card_pos_X;
 	f >> quantity >> card_pos_X;
 
@@ -124,16 +126,34 @@ void CPlayScene::ReadFileHub(LPCWSTR filePath)
 	for (int i = 0; i < quantity; i++) {
 		Number number;
 		f >> number.x >> number.y >> number.id;
-		numbers.push_back(number);
+		hub->numbers.push_back(number);
 	}
+
+	// end scene title row 1
+	f >> quantity;
+	for (int i = 0; i < quantity; i++) {
+		Number number;
+		f >> number.x >> number.y >> number.id;
+		hub->end_scene_letters_1.push_back(number);
+	}
+
+	// end scene title row 2
+	f >> quantity;
+	for (int i = 0; i < quantity; i++) {
+		Number number;
+		f >> number.x >> number.y >> number.id;
+		hub->end_scene_letters_2.push_back(number);
+	}
+	f >> card_in_title_X >> card_in_title_Y;
 	f.close();
+
 }
 
 void CPlayScene::_ParseSection_MAP(string line)
 {
 	// skip empty line
 	if (line == "") return;
-
+	DebugOut(L"done load map\n");
 	wstring path = ToWSTR(line);
 	this->map = new CMap();
 	map->ReadMap(path.c_str());
@@ -190,7 +210,7 @@ void CPlayScene::_ParseSection_STATIC_OBJECTS(string line)
 
 	ghost_platforms.push_back(obj);
 
-	
+
 }
 
 void CPlayScene::LoadSceneResources()
@@ -198,9 +218,12 @@ void CPlayScene::LoadSceneResources()
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
 
 	player = CMario::GetInstance();
+	if (player->GetLevel() == 0) {
+		player->SetLevel(MARIO_LEVEL_SMALL);
+	}
 	player->SetPosition(100, 1000);
-	player->SetLevel(MARIO_LEVEL_SMALL);
 	player->ChangeState(new CStandingState(player->GetLevel()));
+
 
 	LPANIMATION_SET ani_set = CAnimationSets::GetInstance()->Get(1);
 
@@ -262,7 +285,7 @@ void CPlayScene::Update(DWORD dt)
 		grid->AddObjectIntoGrid(eTYPE::FIRE_BALL, x, y, 20, 0, 0, eTYPE_OBJECT::ITEM, 0, player->nx);
 
 		if (player->press_z) {
-			grid->AddObjectIntoGrid(eTYPE::FIRE_BALL, x-20, y, 20, 0, 0, eTYPE_OBJECT::ITEM, 0, player->nx);
+			grid->AddObjectIntoGrid(eTYPE::FIRE_BALL, x - 20, y, 20, 0, 0, eTYPE_OBJECT::ITEM, 0, player->nx);
 		}
 		player->press_z = false;
 		player->is_attacking = false;
@@ -274,7 +297,11 @@ void CPlayScene::Update(DWORD dt)
 
 	for (size_t i = 0; i < items.size(); i++)
 	{
-		items[i]->Update(dt_after);
+		if (items[i]->GetType() == eTYPE::RANDOM_BONUS) {
+			items[i]->Update(dt);
+		}
+		else
+			items[i]->Update(dt_after);
 		items[i]->is_in_grid = false;
 	}
 	for (size_t i = 0; i < ghost_platforms.size(); i++)
@@ -283,7 +310,6 @@ void CPlayScene::Update(DWORD dt)
 	}
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
-		
 		enemies[i]->Update(dt_after);
 		enemies[i]->is_in_grid = false;
 	}
@@ -381,6 +407,9 @@ void CPlayScene::Update(DWORD dt)
 		}
 	}
 	hub->SetHubPos(game->GetCamX(), game->GetCamY());
+	if (mario_end_bonus != 0) {
+		EndScene(dt);
+	}
 }
 
 void CPlayScene::Render()
@@ -388,7 +417,7 @@ void CPlayScene::Render()
 	float cx, cy;
 	CGame* game = CGame::GetInstance();
 	game->GetCamPos(cx, cy);
-	
+
 	if (!isMoved) {
 		map->DrawMap(0.0f, DEFAULT_CAM_Y);
 	}
@@ -396,7 +425,6 @@ void CPlayScene::Render()
 		map->DrawMap(cx, cy);
 
 	}
-	//map->DrawMap(cx, cy);
 
 
 	for (size_t i = 0; i < enemies.size(); i++)
@@ -420,6 +448,7 @@ void CPlayScene::Render()
 	}
 	hub->Render();
 	RenderItemHub();
+	RenderTitle();
 }
 
 /*
@@ -428,7 +457,7 @@ void CPlayScene::Render()
 
 void CPlayScene::Unload()
 {
-	
+
 	for (LPGAMEOBJECT obj : enemies)
 		delete obj;
 	enemies.clear();
@@ -446,10 +475,19 @@ void CPlayScene::Unload()
 	effects.clear();
 
 	player = NULL;
-	map = NULL;
-	tiles = NULL;
-	hub = NULL;
-	numbers.clear();
+	if (tiles != NULL) {
+		tiles->ClearTileSet();
+		//delete tiles;
+	}
+	if (grid != NULL) {
+		grid->ClearGrid();
+		delete grid;
+	}
+	if (map != NULL) {
+		map->ClearMap();
+		delete map;
+	}
+
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
@@ -503,7 +541,7 @@ void CPlayScene::UpdateHub(DWORD dt)
 				temp = temp / 10;
 			}
 		}
-		numbers.at(i).id = n;
+		hub->numbers.at(i).id = n;
 	}
 }
 
@@ -513,27 +551,52 @@ void CPlayScene::RenderItemHub()
 	hub->GetHubPos(hub_x, hub_y);
 
 	// all number in hub
-	for (int i = 0; i < numbers.size(); i++)
+	for (int i = 0; i < hub->numbers.size(); i++)
 	{
-		CFont* number = hub->GetFont(numbers.at(i).id);
-		number->Draw(numbers.at(i).x + hub_x, numbers.at(i).y + hub_y);
+		CFont* number = hub->GetFont(hub->numbers.at(i).id);
+		number->Draw(hub->numbers.at(i).x + hub_x, hub->numbers.at(i).y + hub_y);
 	}
 	// cards
 	vector<int> cards = player->GetCards();
 	for (int i = 0; i < cards.size(); i++)
 	{
-		int card_sprite_id = hub->GetCardId(cards.at(i));
-		float x;
-		hub->GetCardPosX(x);
-		CSprites::GetInstance()->Get(card_sprite_id)->DrawFlipX(hub_x + x + 72 * i, hub_y);
+		if (cards.at(i) != mario_end_bonus || !hide_card) {
+			int card_sprite_id = hub->GetCardId(cards.at(i));
+			float x;
+			hub->GetCardPosX(x);
+			CSprites::GetInstance()->Get(card_sprite_id)->DrawFlipX(hub_x + x + 72 * i, hub_y);
+
+		}
 	}
+}
+
+void CPlayScene::RenderTitle()
+{
+	if (allow_render_first_row_title)
+		for (int i = 0; i < hub->end_scene_letters_1.size(); i++)
+		{
+			CFont* end_scene_letter = hub->GetFont(hub->end_scene_letters_1.at(i).id);
+			end_scene_letter->Draw(hub->end_scene_letters_1.at(i).x, hub->end_scene_letters_1.at(i).y);
+		}
+	if (allow_render_second_row_title) {
+		for (int i = 0; i < hub->end_scene_letters_2.size(); i++)
+		{
+			CFont* end_scene_letter = hub->GetFont(hub->end_scene_letters_2.at(i).id);
+			end_scene_letter->Draw(hub->end_scene_letters_2.at(i).x, hub->end_scene_letters_2.at(i).y);
+
+		}
+		int card_sprite_id = hub->GetCardId(mario_end_bonus);
+		CSprites::GetInstance()->Get(card_sprite_id)->DrawFlipX(card_in_title_X, card_in_title_Y);
+
+	}
+
 }
 
 void CPlayScene::UpdateSpeedBar(float mario_speed)
 {
 	if (mario_speed <= 0.3f) {
 		for (int i = 15; i <= 20; i++) {
-			numbers.at(i).id = 38;
+			hub->numbers.at(i).id = 38;
 		}
 		return;
 	}
@@ -544,10 +607,10 @@ void CPlayScene::UpdateSpeedBar(float mario_speed)
 	int out_bound = 15 + boundary + 1;
 
 	for (int i = 15; i <= 15 + boundary; i++) {
-		numbers.at(i).id = 37;
+		hub->numbers.at(i).id = 37;
 	}
 	for (int i = out_bound; i <= 20; i++) {
-		numbers.at(i).id = 38;
+		hub->numbers.at(i).id = 38;
 	}
 	if (mario_speed >= 0.7) {
 		if (!is_updated_bar) {
@@ -557,17 +620,54 @@ void CPlayScene::UpdateSpeedBar(float mario_speed)
 		DWORD now = GetTickCount64();
 		if (now - previousTimeUpdateSpeedBar > 200) {
 			is_updated_bar = false;
-			if (numbers.at(21).id == 40)
-				numbers.at(21).id = 39;
+			if (hub->numbers.at(21).id == 40)
+				hub->numbers.at(21).id = 39;
 			else
-				numbers.at(21).id = 40;
+				hub->numbers.at(21).id = 40;
 		}
 	}
 	else {
-		numbers.at(21).id = 40;
+		hub->numbers.at(21).id = 40;
 		is_updated_bar = false;
 	}
 
+}
+
+void CPlayScene::EndScene(DWORD dt)
+{
+	CMario* mario = CMario::GetInstance();
+	CGame* game = CGame::GetInstance();
+	// tí nữa hẳn bật =)))
+	//mario->MarioAutoGoToX();
+	if (!allow_render_second_row_title &&
+		GetTickCount64() - start_count >= 1000 && start_count != 0) {
+		//DebugOut(L"endscene %d\n", mario_end_bonus);
+		allow_render_second_row_title = true;
+		mario->AddCard(mario_end_bonus);
+		mario->AddScore(CARD_SCORE);
+		start_count = GetTickCount64();
+	}
+	if (GetTickCount64() - start_count >= 3000 && start_count != 0 && time_game > 0) {
+		DWORD now = GetTickCount64();
+		if (start_flicker_card == 0)
+			start_flicker_card = GetTickCount64();
+		if (now - start_flicker_card >= 200) {
+			hide_card = !hide_card;
+			start_flicker_card = GetTickCount64();
+		}
+		if (now - previousTime >= 40)
+		{
+			previousTime = GetTickCount64();
+			time_game--;
+		}
+		if (time_game == 0)
+			start_count = GetTickCount64();
+
+	}
+	if (time_game == 0 && GetTickCount64() - start_count >= 2000) {
+		DebugOut(L"chuyen scene \n");
+		game->SwitchScene(2);
+	}
 }
 
 void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)

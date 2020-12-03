@@ -10,6 +10,12 @@
 
 #define FLOWER_SPEED 0.1f
 
+#define TIME_FLOWER_ON_TOP 2000
+#define TIME_FLOWER_HIDE 2000
+
+#define FLOWER_MIN_BOUNDARY		72
+#define FLOWER_MAX_BOUNDARY		120
+
 class CFlower : public CEnemy
 {
 	DWORD start_count;

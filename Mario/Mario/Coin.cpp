@@ -4,7 +4,7 @@ CCoin::CCoin(float x, float y)
 {
 	this->x = x;
 	this->y = y;
-	vy = -0.7f;
+	vy = COIN_VY;
 	start_y = y;
 }
 

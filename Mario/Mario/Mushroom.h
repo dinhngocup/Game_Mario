@@ -10,6 +10,9 @@
 #define MUSHROOM_STATE_HIDE 0
 #define MUSHROOM_STATE_UNHIDE 1
 #define MUSHROOM_SCORE 1000
+
+#define MUSHROOM_VX 0.08f
+
 class CMushroom : public CItem
 {
 public:

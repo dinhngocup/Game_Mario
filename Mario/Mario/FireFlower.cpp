@@ -45,17 +45,17 @@ void CFireFlower::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else y += dy;
 	}
 	else if (state == STATE_ATTACKING_UP || state == STATE_ATTACKING_DOWN) {
-		if (GetTickCount64() - start_count >= 1000) {
+		if (GetTickCount64() - start_count >= FF_TIME_ATTACKING) {
 			SetState(STATE_MOVING_DOWN);
 		}
 	}
 	else {
 		// state là hide
-		if (mario->x >= start_x - 24 - 48 && mario->x <= start_x - 24 + 96 + 48) {
+		if (mario->x >= start_x - FF_MIN_BOUNDARY && mario->x <= start_x + FF_MAX_BOUNDARY) {
 
 		}
 		else {
-			if (GetTickCount64() - start_count >= 1700) {
+			if (GetTickCount64() - start_count >= FF_TIME_HIDE) {
 				SetState(STATE_MOVING_UP);
 			}
 		}
@@ -184,7 +184,7 @@ void CFireFlower::CreateWeapon()
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	CMario* mario = CMario::GetInstance();
 	int angle = 0;
-	if (mario->x >= start_x - 24 + 48 * 4 * nx * -1) {
+	if (mario->x >= start_x - 24 + BOUNDARY_ANGLE * nx) {
 		angle = 1;
 	}
 	scene->grid->AddObjectIntoGrid(eTYPE::FIRE_FLOWER_WEAPON, x + 10 * nx * -1, y + 10, 24, 24, ANI_FF_WEAPON, eTYPE_OBJECT::ITEM, ny, nx, angle);

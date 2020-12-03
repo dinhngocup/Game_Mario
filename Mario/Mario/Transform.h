@@ -3,6 +3,12 @@
 #include "Mario.h"
 
 #define ANI_TRANSFORM 10
+#define TIME_TRANSFORM_EFFECT 480
+
+#define TRANSFORM_EFFECT_W	16
+#define TRANSFORM_EFFECT_H	16
+
+
 class CTransform : public CGameObject
 {
 private:

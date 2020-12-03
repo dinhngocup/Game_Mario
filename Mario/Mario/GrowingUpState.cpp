@@ -10,8 +10,8 @@ CGrowingUpState::CGrowingUpState(int level)
 	start_ani1 = GetTickCount64();
 	start_ani2 = GetTickCount64();
 	if (level == MARIO_LEVEL_SMALL)
-		limit = 1100;
-	else limit = 700;
+		limit = TIME_LIMIT_FROM_SMALL_TO_BIG;
+	else limit = TIME_LIMIT_FROM_BIG_TO_SMALL;
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	scene->time_scale = 0;
 }
@@ -22,7 +22,7 @@ void CGrowingUpState::Update(float dt)
 	CGame* game = CGame::GetInstance();
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 
-	if (GetTickCount64() - start_ani1 >= 1800) {
+	if (GetTickCount64() - start_ani1 >= TIME_GROWING_UP) {
 		mario->untouchable = 0;
 		int level_mario = mario->GetLevel();
 		if (level == MARIO_LEVEL_SMALL) {
@@ -42,46 +42,46 @@ void CGrowingUpState::Update(float dt)
 			mario->ChangeState(new CStandingState(level_mario));
 	}
 	else if (GetTickCount64() - start_ani1 <= limit) {
-		if (GetTickCount64() - start_ani2 >= 200) {
+		if (GetTickCount64() - start_ani2 >= TIME_CHANGE_STATE_WITHIN_GROWING_UP) {
 			start_ani2 = GetTickCount64();
 			if (level == MARIO_LEVEL_SMALL) {
 				if (mario->state == MARIO_STATE_SMALL_GROW_UP) {
 					mario->SetState(MARIO_STATE_BIG_GROW_UP);
-					mario->y -= 12;
+					mario->y -= DISPARITY_SMALL_TO_MIDDLE_MARIO;
 
 				}
 				else if (mario->state == MARIO_STATE_BIG_GROW_UP) {
 					mario->SetState(MARIO_STATE_SMALL_GROW_UP);
-					mario->y += 12;
+					mario->y += DISPARITY_SMALL_TO_MIDDLE_MARIO;
 				}
 
 			}
 			else {
 				if (mario->state == MARIO_STATE_BIG_END_GROW_UP) {
 					mario->SetState(MARIO_STATE_BIG_GROW_UP);
-					mario->y += 22;
+					mario->y += DISPARITY_BIG_TO_MIDDLE_MARIO - 2;
 
 				}
 				else if (mario->state == MARIO_STATE_BIG_GROW_UP) {
 					mario->SetState(MARIO_STATE_BIG_END_GROW_UP);
-					mario->y -= 24;
+					mario->y -= DISPARITY_BIG_TO_MIDDLE_MARIO;
 				}
 			}
 
 		}
 	}
 	else {
-		if (GetTickCount64() - start_ani2 >= 200) {
+		if (GetTickCount64() - start_ani2 >= TIME_CHANGE_STATE_WITHIN_GROWING_UP) {
 			start_ani2 = GetTickCount64();
 			if (level == MARIO_LEVEL_SMALL) {
 				if (mario->state == MARIO_STATE_BIG_END_GROW_UP) {
 					mario->SetState(MARIO_STATE_BIG_GROW_UP);
-					mario->y += 24;
+					mario->y += DISPARITY_BIG_TO_MIDDLE_MARIO;
 
 				}
 				else if (mario->state == MARIO_STATE_BIG_GROW_UP) {
 					mario->SetState(MARIO_STATE_BIG_END_GROW_UP);
-					mario->y -= 24;
+					mario->y -= DISPARITY_BIG_TO_MIDDLE_MARIO;
 				}
 
 			}
@@ -89,12 +89,12 @@ void CGrowingUpState::Update(float dt)
 				
 				if (mario->state == MARIO_STATE_SMALL_GROW_UP) {
 					mario->SetState(MARIO_STATE_BIG_GROW_UP);
-					mario->y -= 12;
+					mario->y -= DISPARITY_SMALL_TO_MIDDLE_MARIO;
 
 				}
 				else if (mario->state == MARIO_STATE_BIG_GROW_UP) {
 					mario->SetState(MARIO_STATE_SMALL_GROW_UP);
-					mario->y += 12;
+					mario->y += DISPARITY_SMALL_TO_MIDDLE_MARIO;
 				}
 			}
 		}

@@ -11,6 +11,17 @@
 
 #define BUTTON_PRESSED_HEIGHT 21
 
+#define TIME_CONVERT_COIN_TO_BLINGBLING	3000
+
+#define BLINGBLING_WIDTH	48
+#define BLINGBLING_HEIGHT	48
+
+#define COIN_WIDTH	14
+#define COIN_HEIGHT	16
+
+#define COIN_ANI	14
+#define BLINGBLING_ANI	3
+#define BUTTON_P_DISPARITY	27
 class CButtonP : public CItem
 {
 	bool is_pressed = false;

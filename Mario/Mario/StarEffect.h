@@ -3,6 +3,7 @@
 #include "Mario.h"
 
 #define ANI_TRANSFORM 18
+#define TIME_STAR_EFFECT 90
 
 class CStarEffect : public CGameObject
 {

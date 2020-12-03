@@ -22,11 +22,8 @@
 #define TIME_LENGTH 3
 #define COIN_LENGTH 2
 #define TOTAL_NUMBER_IN_HUB 14
-struct Number
-{
-	float x, y;
-	int id;
-};
+#define CARD_SCORE	12000
+
 
 class CPlayScene : public CScene
 {
@@ -47,13 +44,20 @@ protected:
 	CTiles *tiles;
 	CMap* map;
 	CHub* hub;
-	vector<Number> numbers;
+	
 	DWORD previousTime;
 	DWORD previousTimeUpdateSpeedBar;
 	bool is_updated_bar = false;
 	int time_game;
 	int time_limit;
 public:
+	DWORD start_count = 0;
+	DWORD start_flicker_card = 0;
+	bool hide_card = false;
+	bool allow_render_first_row_title = false, allow_render_second_row_title = false;
+	float card_in_title_X, card_in_title_Y;
+	// last card mario got in that scene
+	int mario_end_bonus = 0;
 	int time_scale = 1;
 	int sceneWidth, sceneHeight;
 	CGrid* grid;
@@ -70,6 +74,7 @@ public:
 	virtual void Unload();
 	void UpdateHub(DWORD dt);
 	void RenderItemHub();
+	void RenderTitle();
 	void UpdateSpeedBar(float mario_speed);
 	CMario* GetPlayer() { return player; }
 	
@@ -78,6 +83,7 @@ public:
 	void SetGhostPlatformsInScene(vector<LPGAMEOBJECT> listGhostPlatform) { ghost_platforms = listGhostPlatform; }
 	void SetItemsInScene(vector<LPGAMEOBJECT> listItem) { items = listItem; }
 
+	void EndScene(DWORD dt);
 };
 
 class CPlayScenceKeyHandler : public CScenceKeyHandler

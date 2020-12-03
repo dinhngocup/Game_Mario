@@ -36,7 +36,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (revival) {
 		if (GetTickCount64() - start_revival >= REVIVAL_TIME){
 			CMario* mario = CMario::GetInstance();
-			y -= 30;
+			y -= KOOPA_REVIVAL_DISPARITY;
 			SetState(KOOPA_STATE_WALKING);
 			nx = mario->nx;
 			revival = false;
@@ -52,7 +52,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		else {
 			if (mario->is_skid || vx == 0) {
-				x = mario->x + 27.0f * mario->nx;
+				x = mario->x + KOOPA_DIRECTION_DISTANCE * mario->nx;
 				mario->is_skid = false;
 			}
 			else {
@@ -191,7 +191,6 @@ void CKoopa::SetState(int state)
 		break;
 	case KOOPA_STATE_DIE:
 		start_revival = GetTickCount64();
-		//y += 28;
 		revival = true;
 		vx = 0;
 		vy = 0;
@@ -208,8 +207,8 @@ void CKoopa::SetState(int state)
 		start_revival = GetTickCount64();
 		revival = true;
 		//y += KOOPA_DISPARITIES;
-		vx = 0.4f * nx;
-		vy = -0.5f;
+		vx = KOOPA_SPEED_X_DIE_BY_WEAPON * nx;
+		vy = -KOOPA_SPEED_Y_DIE_BY_WEAPON;
 		koopa_ny = -1;
 		break;
 	case KOOPA_STATE_WALKING_SWINGS:
@@ -224,12 +223,12 @@ void CKoopa::SetState(int state)
 		vy = 0;
 		break;
 	case KOOPA_STATE_HOLD:
-		y -= 10;
-		x -= 10 * nx;
+		y -= KOOPA_HOLD;
+		x -= KOOPA_HOLD * nx;
 		break;
 	case KOOPA_STATE_UNHOLD:
-		y += 10;
-		x += 10 * nx;
+		y += KOOPA_UNHOLD;
+		x += KOOPA_UNHOLD * nx;
 		break;
 	}
 

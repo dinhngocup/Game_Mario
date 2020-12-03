@@ -130,7 +130,7 @@ void CStandingState::KeyState(BYTE* state)
 		if (level == RACCOON_LEVEL_BIG)
 			mario->ChangeState(new CSpinningState(level));
 		else if (level == FIRE_LEVEL) {
-			if (GetTickCount64() - mario->start_press_z >= 1000) {
+			if (GetTickCount64() - mario->start_press_z >= TIME_BLOCK_PRESS_Z) {
 				mario->press_z = true;
 				mario->ChangeState(new CAttackingState(level));
 				mario->start_press_z = GetTickCount64();

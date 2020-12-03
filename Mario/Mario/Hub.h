@@ -5,13 +5,20 @@
 #include "GameConst.h"
 
 #define MUSHROOM_CARD 1
-#define FIRE_FLOWER_CARD 2
-#define STAR_MAN_CARD 3
+#define STAR_MAN_CARD 2
+#define FIRE_FLOWER_CARD 3
 
 
 #define MUSHROOM_CARD_SPRITE_ID 40041
 #define FIRE_FLOWER_CARD_SPRITE_ID 40042
 #define STAR_MAN_CARD_SPRITE_ID 40043
+
+struct Number
+{
+	float x, y;
+	int id;
+};
+
 class CHub
 {
 	vector<CFont*> letters;
@@ -20,6 +27,10 @@ class CHub
 	float card_posX;
 	float hub_posX, hub_posY;
 public:
+	vector<Number> numbers;
+	vector<Number> end_scene_letters_1;
+	vector<Number> end_scene_letters_2;
+
 	static CHub* GetInstance();
 	int GetTimeLimit() { return time_limit; }
 	void AddFont(CFont* letter);

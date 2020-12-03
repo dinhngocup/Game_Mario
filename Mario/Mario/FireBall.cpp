@@ -12,9 +12,9 @@ CFireBall::CFireBall(float start_x, float start_y, int nx)
 	//OutputDebugString(L"new fire ball\n");
 	generate_id++;
 	this->id = generate_id;
-	w = 24;
-	h = 24;
-	vx = 0.9f * nx;
+	w = FIRE_BALL_W;
+	h = FIRE_BALL_H;
+	vx = FIRE_BALL_VX * nx;
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 	LPANIMATION_SET ani_set = animation_sets->Get(ANI_FIRE_BALL);
 	SetAnimationSet(ani_set);

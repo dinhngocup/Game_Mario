@@ -97,7 +97,7 @@ void CHighJumpingState::KeyState(BYTE* state)
 			return;
 		}
 		DWORD time_press_s = GetTickCount64();
-		if (time_press_s - mario->time_start_jump <= 300) {
+		if (time_press_s - mario->time_start_jump <= TIME_MAX_JUMP) {
 			mario->vy = -MARIO_JUMP_SPEED_Y;
 		}
 	}
@@ -120,7 +120,7 @@ void CHighJumpingState::CheckState()
 {
 	CMario* mario = CMario::GetInstance();
 	if (level == FIRE_LEVEL) {
-		if (GetTickCount64() - start_ani >= 400) {
+		if (GetTickCount64() - start_ani >= TIME_THROWING_FIRE) {
 			is_rendered_completely = true;
 			mario->is_attacking = true;
 		}
@@ -128,13 +128,12 @@ void CHighJumpingState::CheckState()
 			is_rendered_completely = false;
 	}
 	else if (level == RACCOON_LEVEL_BIG) {
-		if (GetTickCount64() - start_ani >= 600) {
+		if (GetTickCount64() - start_ani >= TIME_SPINNING) {
 			is_rendered_completely = true;
 		}
 		else {
-			DebugOut(L"hi1\n");
 			is_rendered_completely = false;
-			if (GetTickCount64() - start_count >= 120) {
+			if (GetTickCount64() - start_count >= TIME_CONVERT_SPINNING_STATE) {
 				if (mario->state == MARIO_STATE_ATTACKING)
 					mario->SetState(MARIO_STATE_NO_ATTACKING);
 				else if (mario->state == MARIO_STATE_NO_ATTACKING)

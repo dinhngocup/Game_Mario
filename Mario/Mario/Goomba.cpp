@@ -54,7 +54,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			change = false;
 			changed = true;
 		}*/
-		if (GetTickCount64() - start_walking >= 1000) {
+		if (GetTickCount64() - start_walking >= GOOMBA_TIME_WALKING) {
 			SetState(GOOMBA_STATE_JUMPING_SWINGS_CLOSE);
 		}
 	}
@@ -89,7 +89,6 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (coEvents.size() == 0)
 	{
-
 		x += dx;
 		y += dy;
 	}
@@ -190,8 +189,8 @@ void CGoomba::SetState(int state)
 		break;
 	case GOOMBA_STATE_DIE_BY_WEAPON:
 		y += GOOMBA_DISPARITIES;
-		vx = 0.4f * nx;
-		vy = -0.5f;
+		vx = GOOMBA_SPEED_X_DIE_BY_WEAPON * nx;
+		vy = -GOOMBA_SPEED_Y_DIE_BY_WEAPON;
 		ableToCheckCollision = false;
 		break;
 	case GOOMBA_STATE_WALKING_SWINGS:
@@ -277,7 +276,7 @@ void CGoomba::IsCollisionWithBrickSpecially(LPCOLLISIONEVENT e)
 	if (e->ny != 0) {
 		if (e->ny < 0) {
 			if (state == GOOMBA_STATE_WALKING_SWINGS_OPEN) {
-				if (index < 3)
+				if (index < MAX_JUMP_QUANTITY)
 					SetState(GOOMBA_STATE_JUMPING_SWINGS_CLOSE);
 				else {
 					index = 0;
@@ -388,18 +387,20 @@ void CGoomba::UpdateWidthHeightGoomba()
 {
 	switch (state) {
 	case GOOMBA_STATE_WALKING:
-		w = 48;
-		h = 48;
+	case GOOMBA_STATE_DIE:
+		w = GOOMBA_BBOX_WIDTH_WALKING;
+		h = GOOMBA_BBOX_WIDTH_WALKING;
 		break;
 	case GOOMBA_STATE_WALKING_SWINGS_CLOSE:
-		w = 60;
-		h = 57;
+		w = GOOMBA_BBOX_WIDTH_WALKING_SWINGS_CLOSE;
+		h = GOOMBA_BBOX_HEIGHT_WALKING_SWINGS_CLOSE;
 		break;
 	case GOOMBA_STATE_WALKING_SWINGS_OPEN:
 	case GOOMBA_STATE_WALKING_SWINGS:
-		w = 60;
-		h = 72;
+		w = GOOMBA_BBOX_WIDTH_WALKING_SWINGS;
+		h = GOOMBA_BBOX_HEIGHT_WALKING_SWINGS;
 		break;
+
 	}
 }
 

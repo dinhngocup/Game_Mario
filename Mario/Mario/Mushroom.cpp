@@ -92,7 +92,7 @@ void CMushroom::SetState(int state)
 	CMario* mario = CMario::GetInstance();
 	switch (state) {
 	case MUSHROOM_STATE_UNHIDE:
-		vx = 0.08f * mario->nx;
+		vx = MUSHROOM_VX * mario->nx;
 		nx = 1;
 		break;
 	}

@@ -11,6 +11,9 @@
 #define STATE_FLYING 1
 #define LEAF_SCORE 1000
 
+#define LEAF_VY -0.9f
+#define LEAF_BOUNDARY	50
+
 class CLeaf : public CItem
 {
 	DWORD start_time;

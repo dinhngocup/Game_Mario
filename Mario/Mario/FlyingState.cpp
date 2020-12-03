@@ -55,7 +55,7 @@ void CFlyingState::OnKeyDown(int KeyCode)
 		if (level == RACCOON_LEVEL_BIG) {
 			DWORD time_press_s = GetTickCount64();
 			if (time_press_s - mario->time_start_jump <= 4400)
-				mario->vy = -0.4f;
+				mario->vy = MARIO_FLYING_SPEED;
 			else {
 				mario->ChangeState(new CFallingState(level));
 			}
@@ -83,7 +83,7 @@ void CFlyingState::KeyState(BYTE* state)
 	}
 	if (game->IsKeyDown(DIK_RIGHT)) {
 		if (level == RACCOON_LEVEL_BIG)
-			mario->vx = 0.35f;
+			mario->vx = WALKING_ON_THE_AIR;
 		else {
 			if (mario->vx < 0)
 				mario->vx = 0.2f;
@@ -92,7 +92,7 @@ void CFlyingState::KeyState(BYTE* state)
 	}
 	else if (game->IsKeyDown(DIK_LEFT)) {
 		if (level == RACCOON_LEVEL_BIG)
-			mario->vx = -0.35f;
+			mario->vx = -WALKING_ON_THE_AIR;
 		else {
 			if (mario->vx > 0)
 				mario->vx = -0.2f;

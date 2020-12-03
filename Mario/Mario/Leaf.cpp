@@ -4,7 +4,7 @@ CLeaf::CLeaf(float x, float y)
 {
 	this->x = x;
 	this->y = y;
-	vy = -0.9f;
+	vy = LEAF_VY;
 	start_x = x;
 	start_y = y;
 	SetState(STATE_FLYING);
@@ -19,7 +19,7 @@ void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		if (state == STATE_FLYING)
 			SetState(STATE_FALLING);
 		else {
-			if(abs(x + dx - start_x) >= 50) {
+			if(abs(x + dx - start_x) >= LEAF_BOUNDARY) {
 				vx *= -1;
 				nx *= -1;
 			}

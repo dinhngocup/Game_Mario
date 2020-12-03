@@ -15,6 +15,7 @@
 #include "StaticCoin.h"
 #include "FireFlowerWeapon.h"
 #include "ButtonP.h"
+#include "RandomBonus.h"
 
 //173 186.25
 #define CELL_HEIGHT (692/4.0f)
@@ -52,5 +53,6 @@ public:
 	void ReadFileObj();
 	void ReloadGrid();
 	void ResetListObj(float cam_x, float cam_y);
+	void ClearGrid();
 };
 

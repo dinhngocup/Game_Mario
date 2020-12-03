@@ -16,7 +16,7 @@
 
 class CMario : public CGameObject
 {
-	int level;
+	int level = 0;
 	DWORD untouchable_start;
 	int time_flicker;
 
@@ -85,4 +85,6 @@ public:
 	CPlayerState* GetState() { return player_state; }
 	void IsCollisionWithBrick(LPCOLLISIONEVENT e);
 	void IsCollisionWithBlingBlingBrick(LPCOLLISIONEVENT e);
+
+	void MarioAutoGoToX();
 };

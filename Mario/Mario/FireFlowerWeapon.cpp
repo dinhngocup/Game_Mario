@@ -4,7 +4,7 @@ CFireFlowerWeapon::CFireFlowerWeapon(float start_x, float start_y, int nx, int n
 {
 	generate_id++;
 	this->id = generate_id;
-	vy = 0.07f * ny;
+	vy = FF_WEAPON_SPEED_Y * ny;
 	if (angle == 0) {
 		vx = SPEED_MAX * nx * -1;
 	}
@@ -19,8 +19,8 @@ void CFireFlowerWeapon::GetBoundingBox(float& left, float& top, float& right, fl
 {
 	left = x;
 	top = y;
-	right = left + 24;
-	bottom = top + 24;
+	right = left + FF_WEAPON_BB_WIDTH;
+	bottom = top + FF_WEAPON_BB_HEIGHT;
 }
 
 void CFireFlowerWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -61,7 +61,7 @@ void CFireFlowerWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			float rdx = 0;
 			float rdy = 0;
 			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-			DebugOut(L"cham weapon\n");
+			DebugOut(L"cham weapon FIRE FLOWER\n");
 
 			HandleCollisionWithMario(coEventsResult[0]);
 			x += dx;

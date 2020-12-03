@@ -14,7 +14,7 @@ void CHoldingState::Update(float dt)
 
 	float speed_x = abs(mario->vx);
 
-	if (speed_x < 0.7 || (is_max_speed && is_speed_low)) {
+	if (speed_x < MAX_SPEED_RUNNING || (is_max_speed && is_speed_low)) {
 		is_max_speed = false;
 		mario->vx = (speed_x + acceleration * dt) * mario->nx;
 	}
@@ -136,7 +136,7 @@ void CHoldingState::KeyState(BYTE* states)
 				acceleration = -MARIO_ACCELERATION;
 				mario->nx = 1;
 				DWORD stop_skid = GetTickCount64();
-				if (stop_skid - start_skid >= 400) {
+				if (stop_skid - start_skid >= TIME_SKID) {
 					is_speed_low = false;
 					acceleration = MARIO_ACCELERATION;
 				}
@@ -162,7 +162,7 @@ void CHoldingState::KeyState(BYTE* states)
 				acceleration = -MARIO_ACCELERATION;
 				mario->nx = -1;
 				DWORD stop_skid = GetTickCount64();
-				if (stop_skid - start_skid >= 400) {
+				if (stop_skid - start_skid >= TIME_SKID) {
 					mario->nx = -1;
 					is_speed_low = false;
 					acceleration = MARIO_ACCELERATION;

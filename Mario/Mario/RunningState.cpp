@@ -18,7 +18,7 @@ void CRunningState::Update(float dt)
 	float speed_x = abs(mario->vx);
 	//DebugOut(L"vx khi running ne %f\n", speed_x);
 
-	if (speed_x < 0.7 || (is_max_speed && is_speed_low)) {
+	if (speed_x < MAX_SPEED_RUNNING || (is_max_speed && is_speed_low)) {
 		is_max_speed = false;
 		mario->vx = (speed_x + acceleration * dt) * mario->nx;
 	}
@@ -274,7 +274,7 @@ void CRunningState::CheckState()
 	//DebugOut(L"frame %d\n", current_frame);
 	//DebugOut(L"attack %d\n", mario->is_attacking_by_spinning);
 	if (level == FIRE_LEVEL) {
-		if (GetTickCount64() - start_ani >= 400) {
+		if (GetTickCount64() - start_ani >= TIME_THROWING_FIRE) {
 			is_rendered_completely = true;
 			mario->is_attacking = true;
 		}
@@ -282,11 +282,11 @@ void CRunningState::CheckState()
 			is_rendered_completely = false;
 	}
 	else if (level == RACCOON_LEVEL_BIG) {
-		if (GetTickCount64() - start_ani >= 600)
+		if (GetTickCount64() - start_ani >= TIME_SPINNING)
 			is_rendered_completely = true;
 		else {
 			is_rendered_completely = false;
-			if (GetTickCount64() - start_count >= 120) {
+			if (GetTickCount64() - start_count >= TIME_CONVERT_SPINNING_STATE) {
 				if (mario->state == MARIO_STATE_ATTACKING)
 					mario->SetState(MARIO_STATE_NO_ATTACKING);
 				else if (mario->state == MARIO_STATE_NO_ATTACKING)

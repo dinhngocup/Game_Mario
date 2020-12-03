@@ -12,15 +12,15 @@ void CButtonP::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 {
 	CGame* game = CGame::GetInstance();
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
-	if (GetTickCount64() - start_press >= 3000 && start_press != 0) {
+	if (GetTickCount64() - start_press >= TIME_CONVERT_COIN_TO_BLINGBLING && start_press != 0) {
 		int size = 0;
 		for (LPGAMEOBJECT coin : scene->items) {
 			if (coin->GetType() == eTYPE::STATIC_COIN) {
-				scene->grid->AddObjectIntoGrid(eTYPE::BRICK, coin->x, coin->y, 48, 48, 3, eTYPE_OBJECT::ITEM);
+				scene->grid->AddObjectIntoGrid(eTYPE::BRICK, coin->x, coin->y, BLINGBLING_WIDTH, BLINGBLING_HEIGHT, BLINGBLING_ANI, eTYPE_OBJECT::ITEM);
 				coin->SetHealth(false);
 			}
 		}
-		DebugOut(L"size %d\n", size);
+		//DebugOut(L"size %d\n", size);
 		start_press = 0;
 	}
 
@@ -43,7 +43,7 @@ void CButtonP::SetState(int state)
 	CGameObject::SetState(state);
 	if (state == STATE_PRESSED) {
 		// convert all bling bling brick into coin
-		y += 27;
+		y += BUTTON_P_DISPARITY;
 		DebugOut(L"convert all bling bling brick into coin\n");
 		CreateBonus();
 	}
@@ -56,11 +56,11 @@ void CButtonP::CreateBonus()
 	int size = 0;
 	for (LPGAMEOBJECT blingbling : scene->items) {
 		if (blingbling->GetType() == eTYPE::BRICK && blingbling->state == BLING_BLING_BRICK) {
-			scene->grid->AddObjectIntoGrid(eTYPE::STATIC_COIN, blingbling->x, blingbling->y, 14, 16, 14, eTYPE_OBJECT::ITEM);
+			scene->grid->AddObjectIntoGrid(eTYPE::STATIC_COIN, blingbling->x, blingbling->y, COIN_WIDTH, COIN_HEIGHT, COIN_ANI, eTYPE_OBJECT::ITEM);
 			blingbling->SetHealth(false);
 		}
 	}
-	DebugOut(L"size %d\n", size);
+	//DebugOut(L"size %d\n", size);
 }
 
 void CButtonP::IsCollisionWithMario(LPCOLLISIONEVENT e)

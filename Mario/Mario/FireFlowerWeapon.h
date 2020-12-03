@@ -5,8 +5,14 @@
 
 #define ANI_FF_WEAPON	4
 
-#define SPEED_MAX 0.2
+#define SPEED_MAX 0.15
 #define SPEED_MIN 0.1
+
+#define FF_WEAPON_SPEED_Y 0.07F
+
+#define FF_WEAPON_BB_WIDTH	24
+#define FF_WEAPON_BB_HEIGHT	24
+
 class CFireFlowerWeapon : public CEnemy
 {
 public:

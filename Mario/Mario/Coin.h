@@ -3,8 +3,12 @@
 #include "Game.h"
 #include "Item.h"
 #include "Mario.h"
+
 #define COIN_GRAVITY 0.002f
 #define COIN_SCORE 100
+
+#define COIN_VY -0.7f
+
 class CCoin : public CItem
 {
 public:

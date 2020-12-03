@@ -19,5 +19,6 @@ public:
 	void DrawMap(float cam_x, float cam_y);
 	int GetWidthScene();
 	int GetHeightScene();
+	void ClearMap();
 };
 

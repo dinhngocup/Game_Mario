@@ -19,7 +19,7 @@ void CGoDownState::Update(float dt)
 	CGame* game = CGame::GetInstance();
 
 	if (mario->collide_with_portal == 1) {
-		mario->vy = -0.03;
+		mario->vy = -GO_DOWN_SPEED;
 		if (mario->y + mario->h <= start_y) {
 			mario->collide_with_portal = 0;
 			CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
@@ -28,7 +28,7 @@ void CGoDownState::Update(float dt)
 		}
 	}
 	else if (mario->collide_with_portal == -1) {
-		mario->vy = 0.03;
+		mario->vy = GO_DOWN_SPEED;
 		if (mario->y >= start_y) {
 			
 			mario->collide_with_portal = 0;

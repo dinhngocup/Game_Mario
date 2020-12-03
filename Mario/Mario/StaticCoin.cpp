@@ -2,7 +2,7 @@
 
 CStaticCoin::CStaticCoin(float x, float y)
 {
-	DebugOut(L"new\n");
+	//DebugOut(L"new\n");
 	this->x = x;
 	this->y = y;
 }

@@ -141,6 +141,11 @@ LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, flo
 		obj->type = eTYPE::BUTTON_P;
 		break;
 	}
+	case eTYPE::RANDOM_BONUS: {
+		obj = new CRandomBonus(x, y);
+		obj->type = eTYPE::RANDOM_BONUS;
+		break;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return NULL;
@@ -428,6 +433,21 @@ void CGrid::ResetListObj(float cam_x, float cam_y)
 		size--;
 
 	}
+}
+
+void CGrid::ClearGrid()
+{
+	for (LPGAMEOBJECT obj : enemies)
+		delete obj;
+	enemies.clear();
+
+	for (LPGAMEOBJECT obj : items)
+		delete obj;
+	items.clear();
+
+	for (LPGAMEOBJECT obj : bonus)
+		delete obj;
+	bonus.clear();
 }
 
 

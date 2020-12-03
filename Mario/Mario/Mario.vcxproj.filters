@@ -232,6 +232,9 @@
     <ClCompile Include="ButtonP.cpp">
       <Filter>Objects\Bonus</Filter>
     </ClCompile>
+    <ClCompile Include="RandomBonus.cpp">
+      <Filter>Objects\Bonus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -412,6 +415,9 @@
       <Filter>Objects\Effect</Filter>
     </ClInclude>
     <ClInclude Include="ButtonP.h">
+      <Filter>Objects\Bonus</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomBonus.h">
       <Filter>Objects\Bonus</Filter>
     </ClInclude>
   </ItemGroup>

@@ -19,7 +19,7 @@ void CWalkingState::Update(float dt)
 
 	if (is_slowly) {
 		float speed = abs(mario->vx);
-		mario->vx = (speed - 0.0008 * dt) * mario->nx;
+		mario->vx = (speed - MARIO_WALKING_ACCELERATION * dt) * mario->nx;
 		if (!is_skid) {
 			if (mario->nx > 0 && mario->vx <= 0 || mario->nx < 0 && mario->vx >= 0) {
 				if (mario->is_crouching) {
@@ -106,7 +106,7 @@ void CWalkingState::KeyState(BYTE* state)
 		if(level == RACCOON_LEVEL_BIG)
 			mario->ChangeState(new CSpinningState(level));
 		else if (level == FIRE_LEVEL) {
-			if (GetTickCount64() - mario->start_press_z >= 1000 || mario->start_press_z == 0) {
+			if (GetTickCount64() - mario->start_press_z >= TIME_BLOCK_PRESS_Z || mario->start_press_z == 0) {
 				mario->press_z = true;
 				mario->ChangeState(new CAttackingState(level));
 				mario->start_press_z = GetTickCount64();
@@ -142,11 +142,11 @@ void CWalkingState::KeyState(BYTE* state)
 			mario->number_attack++;
 			DWORD count = GetTickCount();
 
-			if (count - mario->time_start_attack <= 1000 && mario->number_attack <= 2) {
+			if (count - mario->time_start_attack <= TIME_BLOCK_PRESS_Z && mario->number_attack <= 2) {
 				mario->ChangeState(new CAttackingState(level));
 
 			}
-			else if (count - mario->time_start_attack > 1000) {
+			else if (count - mario->time_start_attack > TIME_BLOCK_PRESS_Z) {
 				mario->number_attack = 1;
 				mario->ChangeState(new CAttackingState(level));
 

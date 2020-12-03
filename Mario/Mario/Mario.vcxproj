@@ -177,6 +177,7 @@
     <ClCompile Include="Leaf.cpp" />
     <ClCompile Include="Mushroom.cpp" />
     <ClCompile Include="Portal.cpp" />
+    <ClCompile Include="RandomBonus.cpp" />
     <ClCompile Include="StarEffect.cpp" />
     <ClCompile Include="StaticCoin.cpp" />
     <ClCompile Include="Transform.cpp" />
@@ -252,6 +253,7 @@
     <ClInclude Include="ObjectType.h" />
     <ClInclude Include="PlayerState.h" />
     <ClInclude Include="Portal.h" />
+    <ClInclude Include="RandomBonus.h" />
     <ClInclude Include="RunningState.h" />
     <ClInclude Include="SpinningState.h" />
     <ClInclude Include="Sprite.h" />

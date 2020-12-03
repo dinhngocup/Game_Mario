@@ -52,7 +52,7 @@ void CAttackingState::KeyState(BYTE* state)
 void CAttackingState::CheckState()
 {
 	CMario* mario = CMario::GetInstance();
-	if (GetTickCount64() - start_ani >= 400)
+	if (GetTickCount64() - start_ani >= TIME_THROWING_FIRE)
 		is_rendered_completely = true;
 	else
 		is_rendered_completely = false;

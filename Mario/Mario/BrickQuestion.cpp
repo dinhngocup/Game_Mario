@@ -13,9 +13,9 @@ void CBrickQuestion::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 {
 	if (state == STATE_EMPTY && !is_lifted) {
 		if (vy == 0)
-			vy -= 0.02 * dt;
+			vy -= BRICK_QUESTION_SPEED_Y_LIFT * dt;
 		else
-			vy += 0.005 * dt;
+			vy += SPEED_Y_FALLING * dt;
 		if (y >= start_y && vy > 0) {
 			y = start_y;
 			vy = 0;

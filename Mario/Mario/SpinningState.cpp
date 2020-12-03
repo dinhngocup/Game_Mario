@@ -92,11 +92,11 @@ void CSpinningState::KeyState(BYTE* state)
 void CSpinningState::CheckState()
 {
 	CMario* mario = CMario::GetInstance();
-	if (GetTickCount64() - start_ani >= 600)
+	if (GetTickCount64() - start_ani >= TIME_SPINNING)
 		is_rendered_completely = true;
 	else {
 		is_rendered_completely = false;
-		if (GetTickCount64() - start_count >= 120) {
+		if (GetTickCount64() - start_count >= TIME_CONVERT_SPINNING_STATE) {
 			if (mario->state == MARIO_STATE_ATTACKING)
 				mario->SetState(MARIO_STATE_NO_ATTACKING);
 			else if(mario->state == MARIO_STATE_NO_ATTACKING)

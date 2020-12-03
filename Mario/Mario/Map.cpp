@@ -4,7 +4,7 @@
 #include "DefineLibs.h"
 
 CMap::CMap() {
-	
+	DebugOut(L"new mapo\n");
 };
 
 void CMap::ReadMap(LPCWSTR filePath)
@@ -70,4 +70,9 @@ int CMap::GetWidthScene()
 int CMap::GetHeightScene()
 {
 	return height_scene;
+}
+
+void CMap::ClearMap()
+{
+	memset(tile_map, 0, sizeof(tile_map[0][0]) * 500 * 500);
 }

@@ -3,8 +3,10 @@
 #include "Game.h"
 #include "Item.h"
 #include "Mario.h"
+
 #define STATIC_COIN_GRAVITY 0.002f
 #define STATIC_COIN_SCORE 50
+
 class CStaticCoin : public CItem
 {
 public:

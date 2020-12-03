@@ -13,7 +13,7 @@
 101	textures\pipe2.png	255	255	255
 102	textures\pipe3.png	255	255	255
 103	textures\debris.png	163	73	164
-
+104	textures\roulette.png	0	183	239
 
 # id	left	top	width	height	texture_id
 [SPRITES]
@@ -337,6 +337,25 @@
 40083	178	144	16	16	10
 40084	200	153	16	7	10
 
+##################################################
+# random bonus (white star) (fire flower)
+40085	201	121	16	16	10
+40086	309	121	16	16	10
+
+##################################################
+# random bonus (mushroom which mario got)
+40087	257	373	16	16	104
+40088	449	377	16	16	104
+40089	470	401	16	16	104
+
+# random bonus (star which mario got)
+40090	297	373	16	16	104
+40091	491	377	16	16	104
+
+# random bonus (mushroom which mario got)
+40092	277	374	16	16	104
+40093	470	377	16	16	104
+
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
@@ -592,6 +611,23 @@
 747	40082	100	40083	100
 748	40084	100
 
+# ==== MUSHROOM BONUS ====
+749	40049	100
+
+# ==== STAR BONUS ====
+750	40085	100
+
+# ==== FIRE FLOWER BONUS ====
+751	40086	100
+
+# ==== MUSHROOM BONUS WHICH MARIO GOT ====
+752	40087	100	40088	100	40089	100
+
+# ==== STAR BONUS WHICH MARIO GOT ====
+753	40090	100	40091	100	40089	100
+
+# ==== FIRE FLOWER BONUS WHICH MARIO GOT ====
+754	40092	100	40093	100	40089	100
 
 #
 # id	ani1	ani2	ani3
@@ -640,7 +676,8 @@
 20	745
 # BUTTON P
 21	747	748
-
+# RANDOM BONUS
+22	749	750	751	752	753	754
 
 
 
