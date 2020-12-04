@@ -235,6 +235,9 @@
     <ClCompile Include="RandomBonus.cpp">
       <Filter>Objects\Bonus</Filter>
     </ClCompile>
+    <ClCompile Include="PointBonus.cpp">
+      <Filter>Objects\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -419,6 +422,9 @@
     </ClInclude>
     <ClInclude Include="RandomBonus.h">
       <Filter>Objects\Bonus</Filter>
+    </ClInclude>
+    <ClInclude Include="PointBonus.h">
+      <Filter>Objects\Effect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

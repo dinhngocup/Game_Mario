@@ -44,7 +44,7 @@ void CButtonP::SetState(int state)
 	if (state == STATE_PRESSED) {
 		// convert all bling bling brick into coin
 		y += BUTTON_P_DISPARITY;
-		DebugOut(L"convert all bling bling brick into coin\n");
+		//DebugOut(L"convert all bling bling brick into coin\n");
 		CreateBonus();
 	}
 }

@@ -1,4 +1,5 @@
 #include "Coin.h"
+#include "PlayScene.h"
 
 CCoin::CCoin(float x, float y)
 {
@@ -11,12 +12,14 @@ CCoin::CCoin(float x, float y)
 void CCoin::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 {
 	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 
 	vy += COIN_GRAVITY * dt;
 	CGameObject::Update(dt, colliable_objects);
 	if (y + dy >= start_y - 80 && vy >0) {
 		CMario* mario = CMario::GetInstance();
-		mario->AddScore(COIN_SCORE);
+		CPointBonus* point = new CPointBonus(x, y + 14 * 3, STATE_100_POINTS);
+		scene->effects.push_back(point);
 		mario->AddCoin();
 		SetHealth(false);
 		ableToCheckCollision = false;

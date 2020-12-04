@@ -1,8 +1,7 @@
 #pragma once
-#include "Game.h"
-#include "Font.h"
 #include "Sprites.h"
 #include "GameConst.h"
+#include "Font.h"
 
 #define MUSHROOM_CARD 1
 #define STAR_MAN_CARD 2
@@ -21,6 +20,7 @@ struct Number
 
 class CHub
 {
+	CHub() {}
 	vector<CFont*> letters;
 	static CHub* __instance;
 	int time_limit = 300;
@@ -30,7 +30,8 @@ public:
 	vector<Number> numbers;
 	vector<Number> end_scene_letters_1;
 	vector<Number> end_scene_letters_2;
-
+	vector<Number> time_up_title;
+	float card_in_title_X, card_in_title_Y;
 	static CHub* GetInstance();
 	int GetTimeLimit() { return time_limit; }
 	void AddFont(CFont* letter);

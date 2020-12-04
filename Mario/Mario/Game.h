@@ -5,7 +5,7 @@
 #include <Windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
-
+#include "Hub.h"
 
 #define DIRECTINPUT_VERSION 0x0800
 
@@ -14,6 +14,8 @@
 #define SECTION_SPRITES 3
 #define SECTION_ANIMATIONS 4
 #define SECTION_ANIMATION_SETS	5
+#define SECTION_HUB 6
+#define SECTION_FONT 7
 
 
 #define MAX_SCENE_LINE	1024
@@ -28,6 +30,7 @@ using namespace std;
 class CGame
 {
 	static CGame* __instance;
+	CHub* hub_game;
 	HWND hWnd;									// Window handle
 
 	LPDIRECT3D9 d3d = NULL;						// Direct3D handle
@@ -59,6 +62,9 @@ class CGame
 	void _ParseSection_SETTINGS(string line);
 	void _ParseSection_SCENES(string line);
 	void _ParseSection_RESOURCES(string line);
+	void _ParseSection_HUB(string line);
+	void _ParseSection_FONT(string line);
+	void ReadFileHub(LPCWSTR filePath);
 
 	// utils used to load resources
 	void _ParseSection_SPRITES(string line);

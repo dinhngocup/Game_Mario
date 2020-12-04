@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "Mario.h"
 
-#define ANI_TRANSFORM 18
+#define ANI_STAR_EFFECT 18
 #define TIME_STAR_EFFECT 90
 
 class CStarEffect : public CGameObject

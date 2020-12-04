@@ -10,7 +10,7 @@ class CFallingState : public CPlayerState
 	bool is_falling_slowly = false;
 	DWORD time_start_to_press;
 public:
-	CFallingState() {};
+	//CFallingState() {};
 	CFallingState(int level);
 
 	~CFallingState() {};

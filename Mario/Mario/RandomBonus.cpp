@@ -3,7 +3,7 @@
 
 CRandomBonus::CRandomBonus(float x, float y)
 {
-	DebugOut(L"NEW RANDOM BONUS \n");
+	//DebugOut(L"NEW RANDOM BONUS \n");
 	this->x = x;
 	this->y = y;
 	SetState(STATE_RANDOM_BONUS_MUSHROOM);

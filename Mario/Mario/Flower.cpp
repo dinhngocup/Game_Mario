@@ -99,6 +99,10 @@ void CFlower::IsCollisionWithMario(LPCOLLISIONEVENT e)
 			CGame* game = CGame::GetInstance();
 			CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 			scene->effects.push_back(effect);
+
+			CPointBonus* point = new CPointBonus(x, y + h, STATE_100_POINTS);
+			scene->effects.push_back(point);
+
 			SetHealth(false);
 			return;
 		}

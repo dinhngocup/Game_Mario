@@ -4,7 +4,6 @@
 
 CSprite::CSprite(int id, int left, int top, int width, int height, LPDIRECT3DTEXTURE9 tex)
 {
-	DebugOut(L"hiii %d\n", id);
 	this->id = id;
 	this->left = left;
 	this->top = top;

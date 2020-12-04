@@ -14,6 +14,7 @@ CGrowingUpState::CGrowingUpState(int level)
 	else limit = TIME_LIMIT_FROM_BIG_TO_SMALL;
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	scene->time_scale = 0;
+	mario->unhide_start = 0;
 }
 
 void CGrowingUpState::Update(float dt)
@@ -23,23 +24,45 @@ void CGrowingUpState::Update(float dt)
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 
 	if (GetTickCount64() - start_ani1 >= TIME_GROWING_UP) {
-		mario->untouchable = 0;
+		
 		int level_mario = mario->GetLevel();
-		if (level == MARIO_LEVEL_SMALL) {
-			level_mario++;
+		if (mario->unhide_start == 0) {
+			scene->time_scale = 1;
+			if (level == MARIO_LEVEL_SMALL) {
+				level_mario++;
+			}
+			else {
+				level_mario--;
+			}
+			mario->SetLevel(level_mario);
+			if (level_mario == MARIO_LEVEL_BIG) {
+				mario->untouchable = 0;
+				mario->SetState(MARIO_STATE_IDLE);
+				mario->ChangeState(new CStandingState(level_mario));
+				return;
+			}
+			mario->unhide_start = GetTickCount64();
+			mario->untouchable_start = GetTickCount64();
+			mario->SetState(MARIO_END_GROWING);
+			mario->ChangeState(new CStandingState(level_mario));
+
+		}
+		/*if (GetTickCount64() - mario->untouchable_start <= 2000) {
+
+		if (GetTickCount64() - mario->unhide_start >= 100 && mario->unhide_start !=0) {
+			if (mario->state == MARIO_STATE_HIDE_UNTOUCHABLE)
+				mario->SetState(MARIO_STATE_UNHIDE_UNTOUCHABLE);
+			else
+				mario->SetState(MARIO_STATE_HIDE_UNTOUCHABLE);
+			mario->unhide_start = GetTickCount64();
+		}
+		
 		}
 		else {
-			level_mario--;
-		}
-		mario->SetLevel(level_mario);
-		mario->SetState(MARIO_STATE_IDLE);
-		scene->time_scale = 1;
-		if (abs(mario->vx) > MARIO_WALKING_SPEED)
-			mario->ChangeState(new CRunningState(level_mario));
-		else if (abs(mario->vx) == MARIO_WALKING_SPEED)
-			mario->ChangeState(new CWalkingState(level_mario));
-		else
+			mario->untouchable = 0;
 			mario->ChangeState(new CStandingState(level_mario));
+		}*/
+
 	}
 	else if (GetTickCount64() - start_ani1 <= limit) {
 		if (GetTickCount64() - start_ani2 >= TIME_CHANGE_STATE_WITHIN_GROWING_UP) {

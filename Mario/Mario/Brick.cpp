@@ -41,8 +41,10 @@ void CBrick::SetState(int state)
 
 void CBrick::BreakBrick()
 {
+	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
 	SetHealth(false);
+	mario->AddScore(BLINGBLING_SCORE);
 	// create 4 debris with x,y,top, left
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	for (int i = 0; i < 2; i++) {

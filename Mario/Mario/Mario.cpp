@@ -17,6 +17,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGame* game = CGame::GetInstance();
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+	if ((state == MARIO_STATE_DIE && y > game->GetCamY() + 560 ||
+		y > game->GetCamY() + 560) && !scene->time_up) {
+		DebugOut(L"handle mario die\n");
+		MinusLive();
+		scene->mario_die = true;
+		//level = MARIO_LEVEL_SMALL;
+		return;
+	}
 	if (state == MARIO_AUTO_GO && x > game->GetCamX() + game->GetScreenWidth()) {
 		DebugOut(L"stop mario\n");
 		vx = 0;
@@ -50,6 +58,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (untouchable == 1) {
 		if (!dynamic_cast<CGrowingUpState*>(player_state)) {
+		
 			if (GetTickCount64() - untouchable_start >= time_flicker
 				&& GetTickCount64() - untouchable_start < MARIO_UNTOUCHABLE_TIME) {
 				if (GetTickCount64() - unhide_start >= 100) {
@@ -220,7 +229,8 @@ void CMario::Render()
 
 		if (dynamic_cast<CRunningState*>(player_state) && level != RACCOON_LEVEL_BIG && level != FIRE_LEVEL)
 			player_state->SetAnimation(level);
-		this->ani = player_state->GetAnimation();
+		if(!dynamic_cast<CGrowingUpState*>(player_state))
+			this->ani = player_state->GetAnimation();
 
 		if (level == RACCOON_LEVEL_BIG) {
 			if (nx > 0)
@@ -244,8 +254,16 @@ void CMario::Render()
 			ani = MARIO_ANI_BIG_GROW_UP;
 		else if (state == MARIO_STATE_BIG_END_GROW_UP)
 			ani = MARIO_ANI_BIG_IDLE_RIGHT;
-	}
 
+		if (state == MARIO_END_GROWING) {
+			if (level == MARIO_LEVEL_SMALL)
+				ani = MARIO_ANI_SMALL_IDLE_RIGHT;
+			else 
+				ani = MARIO_ANI_BIG_IDLE_RIGHT;
+
+		}
+	}
+	//DebugOut(L"ani%d", ani);
 	animation_set->at(ani)->Render(x, y, alpha, nx, offset, spinningFlag);
 
 	RenderBoundingBox();
@@ -267,7 +285,7 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 			left = x;
 			top = y;
 			bottom = top + MARIO_BIG_BBOX_HEIGHT;
-			right = left + MARIO_BIG_BBOX_WIDTH + 30;
+			right = left + MARIO_BIG_BBOX_WIDTH;
 		}
 		else {
 			top = y;
@@ -451,11 +469,16 @@ void CMario::Reset()
 
 void CMario::SetState(int state) {
 	CGameObject::SetState(state);
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 
 	switch (state)
 	{
 	case MARIO_STATE_DIE:
+		player_state = NULL;
 		vy = -MARIO_DIE_DEFLECT_SPEED;
+		vx = 0;
+		scene->time_scale = 0;
 		break;
 	case MARIO_STATE_HIDE_UNTOUCHABLE:
 		vx = 0;

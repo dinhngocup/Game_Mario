@@ -4,7 +4,6 @@
 #include "DefineLibs.h"
 
 CMap::CMap() {
-	DebugOut(L"new mapo\n");
 };
 
 void CMap::ReadMap(LPCWSTR filePath)

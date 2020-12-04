@@ -320,6 +320,8 @@ CGame* CGame::GetInstance()
 #define GAME_FILE_SECTION_SETTINGS 1
 #define GAME_FILE_SECTION_SCENES 2
 #define GAME_FILE_SECTION_RESOURCES 3
+#define GAME_FILE_SECTION_HUB 4
+#define GAME_FILE_SECTION_FONT 5
 
 void CGame::_ParseSection_SETTINGS(string line)
 {
@@ -353,6 +355,76 @@ void CGame::_ParseSection_RESOURCES(string line)
 	LoadResources(path.c_str());
 }
 
+void CGame::_ParseSection_HUB(string line)
+{
+	if (line == "") return;
+
+	wstring path = ToWSTR(line);
+	ReadFileHub(path.c_str());
+}
+
+void CGame::_ParseSection_FONT(string line)
+{
+	vector<string> tokens = split(line);
+	if (tokens.size() < 5) return;
+
+	int l = atof(tokens[0].c_str());
+	int t = atof(tokens[1].c_str());
+
+	int w = atof(tokens[2].c_str());
+	int h = atof(tokens[3].c_str());
+
+	int textID = atoi(tokens[4].c_str());
+
+	CFont* letter = new CFont(l, t, w, h, textID);
+	hub_game->AddFont(letter);
+}
+
+void CGame::ReadFileHub(LPCWSTR filePath)
+{
+	ifstream f;
+	f.open(filePath);
+	//hub
+	int quantity, card_pos_X;
+	f >> quantity >> card_pos_X;
+
+	hub_game->SetCardPosX(card_pos_X);
+
+	for (int i = 0; i < quantity; i++) {
+		Number number;
+		f >> number.x >> number.y >> number.id;
+		hub_game->numbers.push_back(number);
+	}
+
+	// end scene title row 1
+	f >> quantity;
+	for (int i = 0; i < quantity; i++) {
+		Number number;
+		f >> number.x >> number.y >> number.id;
+		hub_game->end_scene_letters_1.push_back(number);
+	}
+
+	// end scene title row 2
+	f >> quantity;
+	for (int i = 0; i < quantity; i++) {
+		Number number;
+		f >> number.x >> number.y >> number.id;
+		hub_game->end_scene_letters_2.push_back(number);
+	}
+	f >> hub_game->card_in_title_X >> hub_game->card_in_title_Y;
+
+	// time up title
+	f >> quantity;
+	for (int i = 0; i < quantity; i++) {
+		Number number;
+		f >> number.x >> number.y >> number.id;
+		hub_game->time_up_title.push_back(number);
+	}
+	f.close();
+}
+
+
+
 /*
 	Load game campaign file and load/initiate first scene
 */
@@ -376,6 +448,8 @@ void CGame::Load(LPCWSTR gameFile)
 		if (line == "[SETTINGS]") { section = GAME_FILE_SECTION_SETTINGS; continue; }
 		if (line == "[SCENES]") { section = GAME_FILE_SECTION_SCENES; continue; }
 		if (line == "[RESOURCES]") { section = GAME_FILE_SECTION_RESOURCES; continue; }
+		if (line == "[HUB_PATH]") { section = GAME_FILE_SECTION_HUB; continue; }
+		if (line == "[FONT]") { section = GAME_FILE_SECTION_FONT; continue; }
 
 		//
 		// data section
@@ -385,6 +459,8 @@ void CGame::Load(LPCWSTR gameFile)
 		case GAME_FILE_SECTION_SETTINGS: { _ParseSection_SETTINGS(line); break; }
 		case GAME_FILE_SECTION_SCENES: _ParseSection_SCENES(line); break;
 		case GAME_FILE_SECTION_RESOURCES: _ParseSection_RESOURCES(line); break;
+		case GAME_FILE_SECTION_HUB: _ParseSection_HUB(line); break;
+		case GAME_FILE_SECTION_FONT: _ParseSection_FONT(line); break;
 		}
 	}
 	f.close();
@@ -461,7 +537,7 @@ void CGame::_ParseSection_ANIMATIONS(string line)
 	LPANIMATION ani = new CAnimation();
 
 	int ani_id = atoi(tokens[0].c_str());
-	for (int i = 1; i < tokens.size(); i += 2)	// why i+=2 ?  sprite_id | frame_time  
+	for (int i = 1; i < tokens.size(); i += 2)
 	{
 		int sprite_id = atoi(tokens[i].c_str());
 		int frame_time = atoi(tokens[i + 1].c_str());
@@ -509,7 +585,7 @@ void CGame::LoadResources(LPCWSTR resourceFile)
 	int flag = SECTION_UNKNOWN;
 
 	char str[MAX_SCENE_LINE];
-
+	hub_game = CHub::GetInstance();
 	while (f.getline(str, MAX_SCENE_LINE))
 	{
 		string line(str);

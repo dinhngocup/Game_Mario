@@ -1,6 +1,5 @@
 #pragma once
 #include "DefineLibs.h"
-#include "Game.h"
 #include "Textures.h"
 
 class CFont

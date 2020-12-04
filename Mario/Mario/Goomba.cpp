@@ -123,6 +123,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						IsCollisionWithGhostPlatform(e);
 				}
 				else if (dynamic_cast<CEnemy*>(e->obj)) {
+
 					IsCollisionWithEnemy(e);
 				}
 				else if (dynamic_cast<CBrick*>(e->obj)) {
@@ -142,8 +143,9 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (state == GOOMBA_STATE_DIE_BY_WEAPON || state == GOOMBA_STATE_DIE) {
 		if (y > game->GetCamY() + game->GetScreenHeight() ||
 			x > game->GetCamX() + game->GetScreenWidth() ||
-			x < game->GetCamX())
+			x < game->GetCamX()) {
 			SetHealth(false);
+		}
 	}
 }
 
@@ -170,7 +172,7 @@ void CGoomba::Render()
 	else
 		animation_set->at(ani)->Render(x, y, 255, 1, 0, 0, ny);
 
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void CGoomba::SetState(int state)
@@ -180,12 +182,13 @@ void CGoomba::SetState(int state)
 	{
 	case GOOMBA_STATE_WALKING:
 		vx = 0;
-		vx = -GOOMBA_WALKING_SPEED;
+		vx = nx * GOOMBA_WALKING_SPEED;
 		break;
 	case GOOMBA_STATE_DIE:
 		y += GOOMBA_DISPARITIES;
 		vx = 0;
 		vy = 0;
+		ableToCheckCollision = false;
 		break;
 	case GOOMBA_STATE_DIE_BY_WEAPON:
 		y += GOOMBA_DISPARITIES;
@@ -215,23 +218,47 @@ void CGoomba::IsCollisionWithMario(LPCOLLISIONEVENT e)
 
 	CMario* mario = CMario::GetInstance();
 	// nhảy lên đầu nấm
-	if (e->ny < 0)
-	{
-		if (state != GOOMBA_STATE_DIE)
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+
+	if (e->ny != 0) {
+		if (e->ny < 0)
 		{
-			if (state == GOOMBA_STATE_WALKING_SWINGS) {
-				SetState(GOOMBA_STATE_WALKING);
+			if (state != GOOMBA_STATE_DIE)
+			{
+				if (state == GOOMBA_STATE_WALKING_SWINGS ||
+					state == GOOMBA_STATE_WALKING_SWINGS_OPEN ||
+					state == GOOMBA_STATE_WALKING_SWINGS_CLOSE ||
+					state == GOOMBA_STATE_JUMPING_SWINGS_CLOSE) {
+					SetState(GOOMBA_STATE_WALKING);
+				}
+				else {
+					CPointBonus* point = new CPointBonus(x, y, STATE_100_POINTS);
+					scene->effects.push_back(point);
+					SetState(GOOMBA_STATE_DIE);
+				}
+				mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
-			else
-				SetState(GOOMBA_STATE_DIE);
-			mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
+			else {
+				mario->vy = 0;
+			}
 		}
 		else {
-			mario->vy = 0;
+			mario->y -= dy;
+			if (mario->untouchable == 0) {
+				mario->vx = 0;
+				if (mario->GetLevel() != MARIO_LEVEL_SMALL)
+				{
+					mario->StartUntouchable();
+				}
+				else
+					mario->SetState(MARIO_STATE_DIE);
+
+			}
 		}
 	}
 	// đụng bên hông nấm
-	else if (e->nx != 0)
+	if (e->nx != 0)
 	{
 		// đụng ngang nấm còn đang sống
 		if (state != GOOMBA_STATE_DIE)
@@ -253,6 +280,10 @@ void CGoomba::IsCollisionWithMario(LPCOLLISIONEVENT e)
 				CGame* game = CGame::GetInstance();
 				CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 				scene->effects.push_back(effect);
+
+				CPointBonus* point = new CPointBonus(x, y, STATE_100_POINTS);
+				scene->effects.push_back(point);
+
 				SetState(GOOMBA_STATE_DIE_BY_WEAPON);
 			}
 			else {
@@ -338,6 +369,10 @@ void CGoomba::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 				AttackedByShell();
 				koopa->x += dx;
 			}
+			else if (koopa->state == KOOPA_STATE_HOLD) {
+				koopa->AttackedByShell();
+				AttackedByShell();
+			}
 			else if (koopa->state == KOOPA_STATE_DIE) {
 				if (e->ny > 0)
 					SetState(GOOMBA_STATE_DIE);
@@ -362,11 +397,15 @@ void CGoomba::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 				AttackedByShell();
 				koopa->x += dx;
 			}
+			else if (koopa->state == KOOPA_STATE_HOLD) {
+				koopa->AttackedByShell();
+				AttackedByShell();
+			}
 			else if (koopa->state == KOOPA_STATE_DIE) {
 				vx *= -1;
 			}
 			else if (koopa->state == KOOPA_STATE_WALKING_SWINGS || koopa->state == KOOPA_STATE_WALKING) {
-				if (nx * e->nx > 0) {
+				if (nx * e->nx < 0) {
 					vx *= -1;
 					nx *= -1;
 					koopa->vx *= -1;

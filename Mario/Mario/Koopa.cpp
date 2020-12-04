@@ -34,7 +34,7 @@ void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (revival) {
-		if (GetTickCount64() - start_revival >= REVIVAL_TIME){
+		if (GetTickCount64() - start_revival >= REVIVAL_TIME && state != KOOPA_STATE_DIE_BY_WEAPON) {
 			CMario* mario = CMario::GetInstance();
 			y -= KOOPA_REVIVAL_DISPARITY;
 			SetState(KOOPA_STATE_WALKING);
@@ -51,7 +51,9 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			SetState(KOOPA_STATE_SPIN);
 		}
 		else {
-			if (mario->is_skid || vx == 0) {
+
+			//if (mario->is_skid || vx == 0) {
+			if (mario->is_skid) {
 				x = mario->x + KOOPA_DIRECTION_DISTANCE * mario->nx;
 				mario->is_skid = false;
 			}
@@ -152,8 +154,10 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (state == KOOPA_STATE_DIE_BY_WEAPON) {
 		if (y > game->GetCamY() + game->GetScreenHeight() ||
 			x > game->GetCamX() + game->GetScreenWidth() ||
-			x < game->GetCamX())
+			x < game->GetCamX()) {
+			//DebugOut(L"hiiii\n");
 			SetHealth(false);
+		}
 	}
 }
 
@@ -238,38 +242,60 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
 
 	CMario* mario = CMario::GetInstance();
-	// nhảy lên đầu koopa
-	if (e->ny < 0)
-	{
-		if (state != KOOPA_STATE_DIE)
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+	if (e->ny != 0) {
+
+		if (e->ny < 0)
 		{
-			// rùa có cánh
-			if (state == KOOPA_STATE_WALKING_SWINGS) {
-				SetState(KOOPA_STATE_WALKING);
-			}
-			// rùa ko cánh, rùa spin
-			else {
-				if (koopa_ny == 1)
-					SetState(KOOPA_STATE_DIE);
-				else {
-					SetState(KOOPA_STATE_DIE);
-					koopa_ny = -1;
+			if (state != KOOPA_STATE_DIE)
+			{
+				// rùa có cánh
+				if (state == KOOPA_STATE_WALKING_SWINGS) {
+					CPointBonus* point = new CPointBonus(x, y, STATE_100_POINTS);
+					scene->effects.push_back(point);
+					SetState(KOOPA_STATE_WALKING);
 				}
-			}
+				// rùa ko cánh, rùa spin
+				else {
+					if (koopa_ny == 1)
+						SetState(KOOPA_STATE_DIE);
+					else {
+						SetState(KOOPA_STATE_DIE);
+						koopa_ny = -1;
+					}
+					CPointBonus* point = new CPointBonus(x, y, STATE_100_POINTS);
+					scene->effects.push_back(point);
+				}
 				mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
+			}
+			else {
+				mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
+				if (mario->x <= x) {
+					nx = 1;
+				}
+				else {
+					nx = -1;
+				}
+				SetState(KOOPA_STATE_SPIN);
+			}
 		}
 		else {
-			mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
-			if (mario->x <= x) {
-				nx = 1;
+			mario->y -= dy;
+			if (mario->untouchable == 0) {
+				mario->vx = 0;
+				if (mario->GetLevel() != MARIO_LEVEL_SMALL)
+				{
+					mario->StartUntouchable();
+				}
+				else
+					mario->SetState(MARIO_STATE_DIE);
+
 			}
-			else {
-				nx = -1;
-			}
-			SetState(KOOPA_STATE_SPIN);
 		}
+
 	}
-	// đụng bên hông koopa
+	// nhảy lên đầu koopa
 	else if (e->nx != 0)
 	{
 		// đụng ngang koopas còn đang sống
@@ -277,7 +303,7 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 		{
 			if (mario->is_attacking_by_spinning) {
 				mario->vx = 0;
-				nx = e->nx * -1;
+				nx =(int) e->nx * -1;
 
 				CStarEffect* effect;
 				if (nx > 0) {
@@ -290,6 +316,9 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 				CGame* game = CGame::GetInstance();
 				CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 				scene->effects.push_back(effect);
+
+				CPointBonus* point = new CPointBonus(x, y, STATE_100_POINTS);
+				scene->effects.push_back(point);
 
 				SetState(KOOPA_STATE_DIE_BY_TAIL);
 			}
@@ -350,6 +379,8 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 					}
 					else
 						e->obj->nx = 1;
+					CPointBonus* point = new CPointBonus(x, y, STATE_100_POINTS);
+					scene->effects.push_back(point);
 					SetState(KOOPA_STATE_DIE_BY_WEAPON);
 				}
 				else {
@@ -384,6 +415,10 @@ void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 				goomba->AttackedByShell();
 				x += dx;
 			}
+			else if (state == KOOPA_STATE_HOLD) {
+				goomba->AttackedByShell();
+				AttackedByShell();
+			}
 			else if (state == KOOPA_STATE_DIE) {
 				if (e->ny < 0) {
 					goomba->SetState(GOOMBA_STATE_DIE);
@@ -409,11 +444,16 @@ void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 				goomba->AttackedByShell();
 				x += dx;
 			}
+			else if (state == KOOPA_STATE_HOLD) {
+				//DebugOut(L"hhuhu\n");
+				goomba->AttackedByShell();
+				AttackedByShell();
+			}
 			else if (state == KOOPA_STATE_DIE) {
 				goomba->vx *= -1;
 			}
 			else if (state == KOOPA_STATE_WALKING_SWINGS || state == KOOPA_STATE_WALKING) {
-				if (nx * e->nx > 0) {
+				if (nx * e->nx < 0) {
 					vx *= -1;
 					nx *= -1;
 					goomba->vx *= -1;
@@ -422,57 +462,37 @@ void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 				else {
 					vx *= -1;
 					nx *= -1;
-				}
-			}
-		}
-
-
-
-
-
-		if (state == KOOPA_STATE_SPIN || state == KOOPA_STATE_HOLD) {
-			CEnemy* enemy = dynamic_cast<CEnemy*>(e->obj);
-			enemy->AttackedByShell();
-			x += dx;
-		}
-		else if (state == KOOPA_STATE_WALKING_SWINGS) {
-			vy = -KOOPA_JUMP_SPEED_Y;
-			vx = nx * KOOPA_JUMP_SPEED_X;
-			goomba->y -= dy;
-		}
-		else {
-			if (e->nx != 0 || e->ny != 0) {
-				if (nx * e->nx > 0) {
-					vx *= -1;
-					nx *= -1;
-					goomba->vx *= -1;
-					goomba->nx *= -1;
-				}
-				else {
-					goomba->vx *= -1;
-					goomba->nx *= -1;
 				}
 			}
 		}
 	}
 	else if (e->obj->type == eTYPE::KOOPA) {
 		CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
-		if (state == KOOPA_STATE_SPIN || state == KOOPA_STATE_HOLD) {
+		if (state == KOOPA_STATE_SPIN) {
 			CEnemy* enemy = dynamic_cast<CEnemy*>(e->obj);
 			enemy->AttackedByShell();
 			x += dx;
 		}
+		else if (state == KOOPA_STATE_HOLD) {
+			CEnemy* enemy = dynamic_cast<CEnemy*>(e->obj);
+			enemy->AttackedByShell();
+			AttackedByShell();
+		}
 		else {
 			// những state còn lại đụng phải spin hoặc hold
-			if (koopa->state == KOOPA_STATE_SPIN || koopa->state == KOOPA_STATE_HOLD) {
+			if (koopa->state == KOOPA_STATE_SPIN) {
 				AttackedByShell();
 				koopa->x += dx;
+			}
+			else if (koopa->state == KOOPA_STATE_HOLD) {
+				AttackedByShell();
+				koopa->AttackedByShell();
 			}
 			else {
 				if (e->nx != 0) {
 					vx *= -1;
 					koopa->vx *= -1;
-				} 
+				}
 				if (e->ny != 0) {
 					if (e->ny < 0)
 						y += dy;
@@ -548,7 +568,11 @@ void CKoopa::IsCollisionWithGhostPlatform(LPCOLLISIONEVENT e)
 {
 	if (e->nx != 0) x += dx;
 	if (e->ny < 0) {
-		vy = 0;
+		if (state == KOOPA_STATE_HOLD) {
+			y += dy;
+		}
+		else
+			vy = 0;
 		if (state == KOOPA_STATE_DIE_BY_TAIL)
 			vx = 0;
 	}
@@ -563,7 +587,7 @@ void CKoopa::IsCollisionWithGhostPlatform(LPCOLLISIONEVENT e)
 
 void CKoopa::IsCollisionWithBlingBlingBrick(LPCOLLISIONEVENT e)
 {
-		
+
 	if (e->ny != 0) {
 		vy = 0;
 	}

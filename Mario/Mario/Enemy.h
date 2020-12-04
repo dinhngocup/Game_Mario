@@ -6,7 +6,7 @@
 class CEnemy : public CGameObject
 {
 protected:
-	int start_state;
+	int start_state = 0;
 public:
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx = 0, int dy = 0) {};
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
@@ -21,7 +21,7 @@ public:
 	virtual void AttackedByShell() {};
 	
 	void ResetPosition() {
-		DebugOut(L"hi\n");
+		nx = -1;
 		this->x = start_x;
 		this->y = start_y;
 		SetState(start_state);

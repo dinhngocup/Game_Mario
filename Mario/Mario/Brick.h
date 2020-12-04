@@ -29,6 +29,8 @@
 #define P_BUTTON_H 48
 #define P_BUTTON_DISPARITY	48
 
+#define BLINGBLING_SCORE 10
+
 class CBrick : public CGameObject
 {
 	int bonus;

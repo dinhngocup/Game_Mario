@@ -41,7 +41,7 @@ class CFireFlower : public CEnemy
 	DWORD start_count;
 	float boundaryY, boundaryX_max, boudaryX_min, boundaryX_middle;
 public: 
-	CFireFlower() {};
+	//CFireFlower() {};
 	CFireFlower(int state, float x, float y, int w, int h);
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx = 0, int dy = 0);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

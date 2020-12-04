@@ -61,7 +61,7 @@ void CFireFlowerWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			float rdx = 0;
 			float rdy = 0;
 			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-			DebugOut(L"cham weapon FIRE FLOWER\n");
+			//DebugOut(L"cham weapon FIRE FLOWER\n");
 
 			HandleCollisionWithMario(coEventsResult[0]);
 			x += dx;

@@ -17,7 +17,6 @@
 class CMario : public CGameObject
 {
 	int level = 0;
-	DWORD untouchable_start;
 	int time_flicker;
 
 	float start_x;			// initial position of Mario at scene
@@ -27,7 +26,9 @@ class CMario : public CGameObject
 	int score = 0;
 	int coin_number = 0;
 	vector <int> cards;
+	int lives = MARIO_DEFAULT_LIVE;
 public:
+	DWORD untouchable_start;
 	DWORD start_press_z = 0;
 	bool press_z;
 	int untouchable;
@@ -64,6 +65,9 @@ public:
 	void UpLevel();
 	int GetScore() { return score; }
 	int GetCoin() { return coin_number; }
+	int GetLives() { return lives; }
+	void AddLive() { this->lives++; }
+	void MinusLive() { this->lives--; }
 	void AddScore(int score) { this->score += score; }
 	void AddCoin() { this->coin_number++; }
 	void Reset();

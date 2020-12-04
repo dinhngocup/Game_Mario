@@ -3,7 +3,7 @@
 CStarEffect::CStarEffect(float x, float y)
 {
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(ANI_TRANSFORM);
+	LPANIMATION_SET ani_set = animation_sets->Get(ANI_STAR_EFFECT);
 	SetAnimationSet(ani_set);
 	this->x = x;
 	this->y = y;

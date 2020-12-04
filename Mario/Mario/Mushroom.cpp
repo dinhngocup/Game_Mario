@@ -108,7 +108,10 @@ void CMushroom::IsCollisionWithMario(LPCOLLISIONEVENT e)
 	SetHealth(false);
 	ableToCheckCollision = false;
 	mario->ChangeState(new CGrowingUpState(mario->GetLevel()));
-	mario->AddScore(MUSHROOM_SCORE);
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+	CPointBonus* point = new CPointBonus(x, y + h, STATE_1000_POINTS);
+	scene->effects.push_back(point);
 }
 
 void CMushroom::IsCollisionWithBrick(LPCOLLISIONEVENT e)
@@ -130,7 +133,10 @@ void CMushroom::HandleCollisionWithMario(LPCOLLISIONEVENT e)
 	SetHealth(false);
 	ableToCheckCollision = false;
 	mario->ChangeState(new CGrowingUpState(mario->GetLevel()));
-	mario->AddScore(MUSHROOM_SCORE);
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+	CPointBonus* point = new CPointBonus(x, y + h, STATE_1000_POINTS);
+	scene->effects.push_back(point);
 }
 
 void CMushroom::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)

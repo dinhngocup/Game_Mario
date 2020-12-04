@@ -1,4 +1,5 @@
 ﻿#include "Font.h"
+#include "Game.h"
 
 CFont::CFont(int left, int top, int w, int h, int textID)
 {

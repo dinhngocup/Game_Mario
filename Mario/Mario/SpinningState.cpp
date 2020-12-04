@@ -7,7 +7,7 @@ CSpinningState::CSpinningState(int level)
 	this->level = level;
 	SetAnimation();
 	start_ani = GetTickCount64();
-	DebugOut(L"spinning\n");
+	//DebugOut(L"spinning\n");
 	start_count = GetTickCount64();
 	mario->SetState(MARIO_STATE_ATTACKING);
 }

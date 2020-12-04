@@ -85,7 +85,7 @@ void CFallingState::OnKeyDown(int KeyCode)
 	{
 	case DIK_S:
 	case DIK_X:
-		time_start_to_press = GetTickCount();
+		time_start_to_press = GetTickCount64();
 		break;
 
 	}
@@ -113,7 +113,7 @@ void CFallingState::KeyState(BYTE* state)
 	}
 	if (level == RACCOON_LEVEL_BIG) {
 		if (game->IsKeyDown(DIK_S) || game->IsKeyDown(DIK_X)) {
-			DWORD now = GetTickCount();
+			DWORD now = GetTickCount64();
 			if (mario->vy > 0 && now - time_start_to_press < 300)
 				mario->vy += -mario->vy * 0.5f;
 		}

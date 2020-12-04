@@ -1,4 +1,5 @@
 #include "Leaf.h"
+#include "PlayScene.h"
 
 CLeaf::CLeaf(float x, float y)
 {
@@ -86,13 +87,17 @@ void CLeaf::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
 	// e is leaf
 	CMario* mario = CMario::GetInstance();
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+
 	mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
 	int level = mario->GetLevel() + 1;
 	mario->SetLevel(level);
 	mario->player_state->SetAnimation(level);
-	mario->AddScore(LEAF_SCORE);
+	
 	mario->UpLevel();
-
+	CPointBonus* point = new CPointBonus(x, y + h, STATE_1000_POINTS);
+	scene->effects.push_back(point);
 	SetHealth(false);
 	ableToCheckCollision = false;
 }
@@ -101,12 +106,16 @@ void CLeaf::HandleCollisionWithMario(LPCOLLISIONEVENT e)
 {
 	// e is mario
 	CMario* mario = CMario::GetInstance();
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+
 	mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
 	int level = mario->GetLevel() + 1;
 	mario->UpLevel();
 	mario->SetLevel(level);
 	mario->player_state->SetAnimation(level);
-	mario->AddScore(LEAF_SCORE);
+	CPointBonus* point = new CPointBonus(x, y + h, STATE_1000_POINTS);
+	scene->effects.push_back(point);
 
 	SetHealth(false);
 	ableToCheckCollision = false;

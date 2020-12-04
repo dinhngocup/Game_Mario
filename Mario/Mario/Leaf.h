@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "Mario.h"
 #include "Item.h"
+#include "PointBonus.h"
 
 #define LEAF_GRAVITY 0.002f
 #define LEAF_RANGE	60
@@ -11,7 +12,7 @@
 #define STATE_FLYING 1
 #define LEAF_SCORE 1000
 
-#define LEAF_VY -0.9f
+#define LEAF_VY -0.5f
 #define LEAF_BOUNDARY	50
 
 class CLeaf : public CItem

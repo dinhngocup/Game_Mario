@@ -13,7 +13,6 @@
 #include "BrickQuestion.h"
 #include "Goomba.h"
 #include "Grid.h"
-#include "Hub.h"
 #include "Transform.h"
 #include "Portal.h"
 
@@ -36,26 +35,28 @@ protected:
 	void _ParseSection_MAP(string line);
 	void _ParseSection_STATIC_OBJECTS(string line);
 	void _ParseSection_TILESET(string line);
-	void _ParseSection_HUB(string line);
+	/*void _ParseSection_HUB(string line);
 	void _ParseSection_FONT(string line);
-	void ReadFileHub(LPCWSTR filePath);
+	void ReadFileHub(LPCWSTR filePath);*/
 	bool isMoved;
-	int world_id, map_id;
+	int world_id;
 	CTiles *tiles;
 	CMap* map;
-	CHub* hub;
+	
 	
 	DWORD previousTime;
 	DWORD previousTimeUpdateSpeedBar;
 	bool is_updated_bar = false;
 	int time_game;
 	int time_limit;
+	DWORD time_up_count;
 public:
+	bool time_up = false;
+	bool mario_die = false;
 	DWORD start_count = 0;
 	DWORD start_flicker_card = 0;
 	bool hide_card = false;
 	bool allow_render_first_row_title = false, allow_render_second_row_title = false;
-	float card_in_title_X, card_in_title_Y;
 	// last card mario got in that scene
 	int mario_end_bonus = 0;
 	int time_scale = 1;
@@ -77,7 +78,7 @@ public:
 	void RenderTitle();
 	void UpdateSpeedBar(float mario_speed);
 	CMario* GetPlayer() { return player; }
-	
+	void HandleMarioDie();
 
 	void SetEnemiesInScene(vector<LPGAMEOBJECT> listEnemy) { enemies.clear(); enemies = listEnemy; }
 	void SetGhostPlatformsInScene(vector<LPGAMEOBJECT> listGhostPlatform) { ghost_platforms = listGhostPlatform; }

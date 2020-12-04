@@ -9,6 +9,8 @@
 #include "ObjectType.h"
 #include "MarioConst.h"
 #include "StandingState.h"
+#include "Font.h"
+#include "Hub.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
@@ -28,8 +30,6 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define SCENE_SECTION_MAP	2
 #define SCENE_SECTION_STATIC_OBJECTS	3
 #define SCENE_SECTION_OBJECTS	4
-#define SCENE_SECTION_HUB_PATH	5
-#define SCENE_SECTION_FONT	6
 
 #define MAX_SCENE_LINE 1024
 
@@ -50,16 +50,15 @@ void CPlayScene::_ParseSection_INFO(string line)
 {
 	vector<string> tokens = split(line);
 
-	if (tokens.size() < 3) return; // skip invalid lines
+	if (tokens.size() < 2) return; // skip invalid lines
 
 	world_id = atoi(tokens[0].c_str());
-	map_id = atoi(tokens[1].c_str());
-	time_limit = atoi(tokens[2].c_str());
+	
+	time_limit = atoi(tokens[1].c_str());
 }
 
 void CPlayScene::_ParseSection_TILESET(string line)
 {
-	DebugOut(L"done load tile\n");
 
 	// tách chuỗi nhận được thành những từ riêng biệt phân cách bởi dấu tab (line)
 	vector<string> tokens = split(line);
@@ -83,77 +82,84 @@ void CPlayScene::_ParseSection_TILESET(string line)
 	tiles->LoadTiles();
 
 }
-
-void CPlayScene::_ParseSection_HUB(string line)
-{
-	// skip empty line
-	if (line == "") return;
-
-	wstring path = ToWSTR(line);
-	ReadFileHub(path.c_str());
-
-
-}
-
-void CPlayScene::_ParseSection_FONT(string line)
-{
-	vector<string> tokens = split(line);
-	if (tokens.size() < 5) return;
-
-	int l = atof(tokens[0].c_str());
-	int t = atof(tokens[1].c_str());
-
-	int w = atof(tokens[2].c_str());
-	int h = atof(tokens[3].c_str());
-
-	int textID = atoi(tokens[4].c_str());
-
-	CFont* letter = new CFont(l, t, w, h, textID);
-	hub->AddFont(letter);
-
-}
-
-void CPlayScene::ReadFileHub(LPCWSTR filePath)
-{
-	ifstream f;
-	f.open(filePath);
-	//hub
-	int quantity, card_pos_X;
-	f >> quantity >> card_pos_X;
-
-	hub->SetCardPosX(card_pos_X);
-
-	for (int i = 0; i < quantity; i++) {
-		Number number;
-		f >> number.x >> number.y >> number.id;
-		hub->numbers.push_back(number);
-	}
-
-	// end scene title row 1
-	f >> quantity;
-	for (int i = 0; i < quantity; i++) {
-		Number number;
-		f >> number.x >> number.y >> number.id;
-		hub->end_scene_letters_1.push_back(number);
-	}
-
-	// end scene title row 2
-	f >> quantity;
-	for (int i = 0; i < quantity; i++) {
-		Number number;
-		f >> number.x >> number.y >> number.id;
-		hub->end_scene_letters_2.push_back(number);
-	}
-	f >> card_in_title_X >> card_in_title_Y;
-	f.close();
-
-}
+//
+//void CPlayScene::_ParseSection_HUB(string line)
+//{
+//	 skip empty line
+//	if (line == "") return;
+//
+//	wstring path = ToWSTR(line);
+//	ReadFileHub(path.c_str());
+//
+//
+//}
+//
+//void CPlayScene::_ParseSection_FONT(string line)
+//{
+//	vector<string> tokens = split(line);
+//	if (tokens.size() < 5) return;
+//
+//	int l = atof(tokens[0].c_str());
+//	int t = atof(tokens[1].c_str());
+//
+//	int w = atof(tokens[2].c_str());
+//	int h = atof(tokens[3].c_str());
+//
+//	int textID = atoi(tokens[4].c_str());
+//
+//	CFont* letter = new CFont(l, t, w, h, textID);
+//	hub->AddFont(letter);
+//
+//}
+//
+//void CPlayScene::ReadFileHub(LPCWSTR filePath)
+//{
+//	ifstream f;
+//	f.open(filePath);
+//	hub
+//	int quantity, card_pos_X;
+//	f >> quantity >> card_pos_X;
+//
+//	hub->SetCardPosX(card_pos_X);
+//
+//	for (int i = 0; i < quantity; i++) {
+//		Number number;
+//		f >> number.x >> number.y >> number.id;
+//		hub->numbers.push_back(number);
+//	}
+//
+//	 end scene title row 1
+//	f >> quantity;
+//	for (int i = 0; i < quantity; i++) {
+//		Number number;
+//		f >> number.x >> number.y >> number.id;
+//		hub->end_scene_letters_1.push_back(number);
+//	}
+//
+//	 end scene title row 2
+//	f >> quantity;
+//	for (int i = 0; i < quantity; i++) {
+//		Number number;
+//		f >> number.x >> number.y >> number.id;
+//		hub->end_scene_letters_2.push_back(number);
+//	}
+//	f >> hub->card_in_title_X >> hub->card_in_title_Y;
+//
+//	 time up title
+//	f >> quantity;
+//	for (int i = 0; i < quantity; i++) {
+//		Number number;
+//		f >> number.x >> number.y >> number.id;
+//		hub->time_up_title.push_back(number);
+//	}
+//	f.close();
+//
+//}
 
 void CPlayScene::_ParseSection_MAP(string line)
 {
 	// skip empty line
 	if (line == "") return;
-	DebugOut(L"done load map\n");
 	wstring path = ToWSTR(line);
 	this->map = new CMap();
 	map->ReadMap(path.c_str());
@@ -223,12 +229,13 @@ void CPlayScene::LoadSceneResources()
 	}
 	player->SetPosition(100, 1000);
 	player->ChangeState(new CStandingState(player->GetLevel()));
-
+	player->SetState(MARIO_STATE_IDLE);
+	player->nx = 1;
 
 	LPANIMATION_SET ani_set = CAnimationSets::GetInstance()->Get(1);
 
 	player->SetAnimationSet(ani_set);
-	hub = CHub::GetInstance();
+	CHub* hub = CHub::GetInstance();
 
 	ifstream f;
 	f.open(sceneFilePath);
@@ -245,8 +252,8 @@ void CPlayScene::LoadSceneResources()
 		if (line == "[MAP]") { section = SCENE_SECTION_MAP; continue; }
 		if (line == "[STATIC_OBJECTS]") { section = SCENE_SECTION_STATIC_OBJECTS; continue; }
 		if (line == "[OBJECTS]") { section = SCENE_SECTION_OBJECTS; continue; }
-		if (line == "[HUB_PATH]") { section = SCENE_SECTION_HUB_PATH; continue; }
-		if (line == "[FONT]") { section = SCENE_SECTION_FONT; continue; }
+		/*if (line == "[HUB_PATH]") { section = SCENE_SECTION_HUB_PATH; continue; }
+		if (line == "[FONT]") { section = SCENE_SECTION_FONT; continue; }*/
 
 		switch (section) {
 		case SCENE_SECTION_INFO:_ParseSection_INFO(line); break;
@@ -254,8 +261,8 @@ void CPlayScene::LoadSceneResources()
 		case SCENE_SECTION_MAP: {_ParseSection_MAP(line); break; }
 		case SCENE_SECTION_STATIC_OBJECTS: {_ParseSection_STATIC_OBJECTS(line); break; }
 		case SCENE_SECTION_OBJECTS:_ParseSection_OBJECTS(line); break;
-		case SCENE_SECTION_HUB_PATH:_ParseSection_HUB(line); break;
-		case SCENE_SECTION_FONT:_ParseSection_FONT(line); break;
+		/*case SCENE_SECTION_HUB_PATH:_ParseSection_HUB(line); break;
+		case SCENE_SECTION_FONT:_ParseSection_FONT(line); break;*/
 		}
 	}
 
@@ -267,7 +274,10 @@ void CPlayScene::LoadSceneResources()
 
 	DebugOut(L"[INFO] Done loading resources of this scene %s\n", sceneFilePath);
 	time_game = time_limit;
+	time_scale = 1;
 	previousTime = GetTickCount64();
+	CGame* game = CGame::GetInstance();
+	game->SetCamYPos(DEFAULT_CAM_Y);
 }
 
 void CPlayScene::Update(DWORD dt)
@@ -290,7 +300,7 @@ void CPlayScene::Update(DWORD dt)
 		player->press_z = false;
 		player->is_attacking = false;
 	}
-
+	CHub* hub = CHub::GetInstance();
 	CGame* game = CGame::GetInstance();
 
 	grid->GetListObjInGrid(game->GetCamX(), game->GetCamY());
@@ -332,59 +342,60 @@ void CPlayScene::Update(DWORD dt)
 	cy -= game->GetScreenHeight() / 2;
 
 	CMario* mario = CMario::GetInstance();
-	if (mario->GetLevel() == RACCOON_LEVEL_BIG || mario->y < DEFAULT_CAM_Y) {
-		if (dynamic_cast<CFallingState*>(mario->player_state) && cy >= DEFAULT_CAM_Y)
-			mario->is_flying = false;
+	if (player->state != MARIO_STATE_DIE) {
+		if (mario->GetLevel() == RACCOON_LEVEL_BIG || mario->y < DEFAULT_CAM_Y) {
+			if (dynamic_cast<CFallingState*>(mario->player_state) && cy >= DEFAULT_CAM_Y)
+				mario->is_flying = false;
 
-		if (mario->is_flying && cy < DEFAULT_CAM_Y) {
-			if (cy <= 145.0f) {
-				game->SetCamYPos(145.0f);
-			}
-			else
-				game->SetCamYPos(cy);
-		}
-		else {
-			if (game->GetCamY() == DEFAULT_CAM_Y)
-				game->SetCamYPos(DEFAULT_CAM_Y);
-		}
-
-		if (cx <= 0)
-		{
-			game->SetCamXPos(0.0f);
-		}
-		else if (cx >= sceneWidth - game->GetScreenWidth()) {
-			game->SetCamXPos(sceneWidth - game->GetScreenWidth());
-		}
-		else
-		{
-			game->SetCamXPos(cx);
-			isMoved = true;
-		}
-	}
-	else {
-		if (cx <= 0)
-		{
-			game->SetCamPos(0.0f, DEFAULT_CAM_Y);
-		}
-		else if (cx >= sceneWidth - game->GetScreenWidth()) {
-			game->SetCamPos(sceneWidth - game->GetScreenWidth(), DEFAULT_CAM_Y);
-		}
-		else
-		{
-			game->SetCamXPos(cx);
-			isMoved = true;
-		}
-		if (mario->is_flying) {
-			if (cy < DEFAULT_CAM_Y) {
-				game->SetCamYPos(cy);
+			if (mario->is_flying && cy < DEFAULT_CAM_Y) {
+				if (cy <= 145.0f) {
+					game->SetCamYPos(145.0f);
+				}
+				else
+					game->SetCamYPos(cy);
 			}
 			else {
-				game->SetCamYPos(DEFAULT_CAM_Y);
-				mario->is_flying = false;
+				if (game->GetCamY() == DEFAULT_CAM_Y)
+					game->SetCamYPos(DEFAULT_CAM_Y);
+			}
+
+			if (cx <= 0)
+			{
+				game->SetCamXPos(0.0f);
+			}
+			else if (cx >= sceneWidth - game->GetScreenWidth()) {
+				game->SetCamXPos(sceneWidth - game->GetScreenWidth());
+			}
+			else
+			{
+				game->SetCamXPos(cx);
+				isMoved = true;
+			}
+		}
+		else {
+			if (cx <= 0)
+			{
+				game->SetCamPos(0.0f, DEFAULT_CAM_Y);
+			}
+			else if (cx >= sceneWidth - game->GetScreenWidth()) {
+				game->SetCamPos(sceneWidth - game->GetScreenWidth(), DEFAULT_CAM_Y);
+			}
+			else
+			{
+				game->SetCamXPos(cx);
+				isMoved = true;
+			}
+			if (mario->is_flying) {
+				if (cy < DEFAULT_CAM_Y) {
+					game->SetCamYPos(cy);
+				}
+				else {
+					game->SetCamYPos(DEFAULT_CAM_Y);
+					mario->is_flying = false;
+				}
 			}
 		}
 	}
-
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
 		if (!enemies[i]->GetHealth()) {
@@ -410,10 +421,23 @@ void CPlayScene::Update(DWORD dt)
 	if (mario_end_bonus != 0) {
 		EndScene(dt);
 	}
+	if (time_up && GetTickCount64() - time_up_count >= 3000) {
+		DebugOut(L"handle time up\n");
+		time_up = false;
+		player->MinusLive();
+		// chuyen ve scene map
+		HandleMarioDie();
+		return;
+	}
+	if (mario_die) {
+		HandleMarioDie();
+		return;
+	}
 }
 
 void CPlayScene::Render()
 {
+	CHub* hub = CHub::GetInstance();
 	float cx, cy;
 	CGame* game = CGame::GetInstance();
 	game->GetCamPos(cx, cy);
@@ -457,7 +481,6 @@ void CPlayScene::Render()
 
 void CPlayScene::Unload()
 {
-
 	for (LPGAMEOBJECT obj : enemies)
 		delete obj;
 	enemies.clear();
@@ -473,34 +496,47 @@ void CPlayScene::Unload()
 	for (LPGAMEOBJECT obj : effects)
 		delete obj;
 	effects.clear();
-
-	player = NULL;
-	if (tiles != NULL) {
-		tiles->ClearTileSet();
-		//delete tiles;
-	}
 	if (grid != NULL) {
 		grid->ClearGrid();
 		delete grid;
+	}
+	player = NULL;
+	if (tiles != NULL) {
+		tiles->ClearTileSet();
 	}
 	if (map != NULL) {
 		map->ClearMap();
 		delete map;
 	}
 
+
+	LPDIRECT3DTEXTURE9 tex = CTextures::GetInstance()->Get(-100);
+	if (tex != NULL) tex->Release();
+	tex = CTextures::GetInstance()->Get(-200);
+	if (tex != NULL) tex->Release();
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
 void CPlayScene::UpdateHub(DWORD dt)
 {
+	CHub* hub = CHub::GetInstance();
+
 	DWORD now = GetTickCount64();
 	if (now - previousTime >= 1000 && time_scale != 0)
 	{
 		previousTime = GetTickCount64();
 		// need to custom, time should be saved in hub
-		time_game--;
+		if (time_game > 0)
+			time_game--;
+		else if (time_game == 0 && player->state != MARIO_STATE_DIE) {
+			// xử lý end time
+			DebugOut(L"end time\n");
+			player->SetState(MARIO_STATE_DIE);
+			time_up = true;
+			time_up_count = GetTickCount64();
+		}
 	}
-
+	
 	for (int i = 0; i < TOTAL_NUMBER_IN_HUB; i++)
 	{
 		int n = 0;
@@ -511,6 +547,7 @@ void CPlayScene::UpdateHub(DWORD dt)
 		}
 		else if (i >= 1 && i <= 2) {
 			// get coin number
+
 			temp = player->GetCoin();
 			for (int j = 0; j < (COIN_LENGTH + 1) - i; j++)
 			{
@@ -520,7 +557,7 @@ void CPlayScene::UpdateHub(DWORD dt)
 		}
 		else if (i == 3) {
 			// get map number
-			n = map_id;
+			n = player->GetLives();
 		}
 		else if (i >= 4 && i <= 10) {
 			// get score
@@ -547,6 +584,7 @@ void CPlayScene::UpdateHub(DWORD dt)
 
 void CPlayScene::RenderItemHub()
 {
+	CHub* hub = CHub::GetInstance();
 	float hub_x, hub_y;
 	hub->GetHubPos(hub_x, hub_y);
 
@@ -556,13 +594,14 @@ void CPlayScene::RenderItemHub()
 		CFont* number = hub->GetFont(hub->numbers.at(i).id);
 		number->Draw(hub->numbers.at(i).x + hub_x, hub->numbers.at(i).y + hub_y);
 	}
+	//DebugOut(L"size %d\n", hub->numbers.size());
 	// cards
 	vector<int> cards = player->GetCards();
 	for (int i = 0; i < cards.size(); i++)
 	{
-		if (cards.at(i) != mario_end_bonus || !hide_card) {
-			int card_sprite_id = hub->GetCardId(cards.at(i));
+		if (i != cards.size() - 1 || (i == cards.size() - 1 && !hide_card)) {
 			float x;
+			int card_sprite_id = hub->GetCardId(cards.at(i));
 			hub->GetCardPosX(x);
 			CSprites::GetInstance()->Get(card_sprite_id)->DrawFlipX(hub_x + x + 72 * i, hub_y);
 
@@ -572,6 +611,8 @@ void CPlayScene::RenderItemHub()
 
 void CPlayScene::RenderTitle()
 {
+	CHub* hub = CHub::GetInstance();
+	CGame* game = CGame::GetInstance();
 	if (allow_render_first_row_title)
 		for (int i = 0; i < hub->end_scene_letters_1.size(); i++)
 		{
@@ -586,14 +627,22 @@ void CPlayScene::RenderTitle()
 
 		}
 		int card_sprite_id = hub->GetCardId(mario_end_bonus);
-		CSprites::GetInstance()->Get(card_sprite_id)->DrawFlipX(card_in_title_X, card_in_title_Y);
+		CSprites::GetInstance()->Get(card_sprite_id)->DrawFlipX(hub->card_in_title_X, hub->card_in_title_Y);
 
+	}
+	if (time_up) {
+		for (int i = 0; i < hub->time_up_title.size(); i++)
+		{
+			CFont* number = hub->GetFont(hub->time_up_title.at(i).id);
+			number->Draw(hub->time_up_title.at(i).x + game->GetCamX(), hub->time_up_title.at(i).y + game->GetCamY());
+		}
 	}
 
 }
 
 void CPlayScene::UpdateSpeedBar(float mario_speed)
 {
+	CHub* hub = CHub::GetInstance();
 	if (mario_speed <= 0.3f) {
 		for (int i = 15; i <= 20; i++) {
 			hub->numbers.at(i).id = 38;
@@ -633,12 +682,22 @@ void CPlayScene::UpdateSpeedBar(float mario_speed)
 
 }
 
+void CPlayScene::HandleMarioDie()
+{
+	time_scale = 0;
+	CGame* game = CGame::GetInstance();
+	mario_die = false;
+	player->SetLevel(MARIO_LEVEL_SMALL);
+	// nếu đúng là chuyển qua scene world map nha !!!!!!
+	game->SwitchScene(game->current_scene);
+}
+
 void CPlayScene::EndScene(DWORD dt)
 {
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
 	// tí nữa hẳn bật =)))
-	//mario->MarioAutoGoToX();
+	mario->MarioAutoGoToX();
 	if (!allow_render_second_row_title &&
 		GetTickCount64() - start_count >= 1000 && start_count != 0) {
 		//DebugOut(L"endscene %d\n", mario_end_bonus);
@@ -665,7 +724,9 @@ void CPlayScene::EndScene(DWORD dt)
 
 	}
 	if (time_game == 0 && GetTickCount64() - start_count >= 2000) {
-		DebugOut(L"chuyen scene \n");
+		//DebugOut(L"chuyen scene \n");
+		hide_card = false;
+		// nếu đúng là chuyển qua scene world map nha !!!!!!
 		game->SwitchScene(2);
 	}
 }

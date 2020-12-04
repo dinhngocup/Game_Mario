@@ -93,6 +93,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -176,6 +177,7 @@
     <ClCompile Include="KickingState.cpp" />
     <ClCompile Include="Leaf.cpp" />
     <ClCompile Include="Mushroom.cpp" />
+    <ClCompile Include="PointBonus.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="RandomBonus.cpp" />
     <ClCompile Include="StarEffect.cpp" />
@@ -252,6 +254,7 @@
     <ClInclude Include="Mushroom.h" />
     <ClInclude Include="ObjectType.h" />
     <ClInclude Include="PlayerState.h" />
+    <ClInclude Include="PointBonus.h" />
     <ClInclude Include="Portal.h" />
     <ClInclude Include="RandomBonus.h" />
     <ClInclude Include="RunningState.h" />

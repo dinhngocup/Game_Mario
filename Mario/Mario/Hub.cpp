@@ -1,4 +1,6 @@
 #include "Hub.h"
+#include "Game.h"
+
 CHub* CHub::__instance = NULL;
 CHub* CHub::GetInstance()
 {

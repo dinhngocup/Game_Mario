@@ -41,7 +41,6 @@ void CTiles::ClearTileSet()
 	LPDIRECT3DTEXTURE9 tex = CTextures::GetInstance()->Get(40);
 	if (tex != NULL) tex->Release();
 
-
 }
 
 vector<LPSPRITE> CTiles::GetTiles()

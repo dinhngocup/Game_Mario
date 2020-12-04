@@ -1,6 +1,6 @@
 [SCENE_INFO]
-# world_id	map_id	time_limit
-1	1	300
+# world_id	time_limit
+1	300
 [TILESET]
 40	Resources\map\Final1(48).png	255	255	255	29	30
 [MAP]
