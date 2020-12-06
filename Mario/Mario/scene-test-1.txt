@@ -94,11 +94,3 @@ Resources\map\map.txt
 [OBJECTS]
 # file_path
 Resources\object\object_scene_1.txt
-
-[HUB_PATH]
-
-
-
-[FONT]
-
-

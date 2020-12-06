@@ -86,6 +86,10 @@ void CBrick::CreateBonus()
 		SetState(EMPTY_BRICK);
 		scene->grid->AddObjectIntoGrid(eTYPE::BUTTON_P, x, y - P_BUTTON_DISPARITY, P_BUTTON_W, P_BUTTON_H, BUTTON_P_ANI, eTYPE_OBJECT::ITEM);
 		break;
+	case MUSHROOM_LEVEL_UP:
+		SetState(EMPTY_BRICK);
+		scene->grid->AddObjectIntoGrid(eTYPE::MUSHROOM, x, y, 48, 48, MUSHROOM_ANI, eTYPE_OBJECT::ITEM, 1);
+		break;
 	}
 }
 

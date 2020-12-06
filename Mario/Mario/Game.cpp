@@ -5,6 +5,7 @@
 #include "Utils.h"
 
 #include "PlayScene.h"
+#include "MapScene.h"
 #include "Textures.h"
 #include "Sprites.h"
 #include "Animations.h"
@@ -338,11 +339,15 @@ void CGame::_ParseSection_SCENES(string line)
 {
 	vector<string> tokens = split(line);
 
-	if (tokens.size() < 2) return;
+	if (tokens.size() < 3) return;
 	int id = atoi(tokens[0].c_str());
 	LPCWSTR path = ToLPCWSTR(tokens[1]);
-
-	LPSCENE scene = new CPlayScene(id, path);
+	int type_scene = atoi(tokens[2].c_str());
+	LPSCENE scene;
+	if (type_scene == 0) {
+		scene = new CMapScene(id, path);
+	} else
+		scene = new CPlayScene(id, path);
 	scenes[id] = scene;
 }
 

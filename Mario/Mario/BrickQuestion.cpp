@@ -91,7 +91,15 @@ void CBrickQuestion::IsCollisionWithMario(LPCOLLISIONEVENT e)
 		}
 		mario->vy = 0;
 	}
-	if (e->nx != 0) mario->vx = 0;
+	if (e->nx != 0) {
+		if (mario->is_attacking_by_spinning) {
+			SetState(STATE_EMPTY);
+			mario->vx = 0;
+		}
+		else {
+			mario->vx = 0;
+		}
+	}
 }
 
 void CBrickQuestion::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)

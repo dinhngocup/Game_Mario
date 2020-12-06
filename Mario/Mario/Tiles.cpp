@@ -19,6 +19,8 @@ void CTiles::LoadResources(int texID, LPCWSTR fileTileset, D3DCOLOR transparentC
 	row_tile = row;
 
 	tex = CTextures::GetInstance()->Get(texID);
+	this->texID = texID;
+	DebugOut(L"load resources succesfully\n");
 }
 
 int CTiles::GetFrameWidth()
@@ -38,7 +40,7 @@ void CTiles::ClearTileSet()
 	}
 	tiles.clear();
 
-	LPDIRECT3DTEXTURE9 tex = CTextures::GetInstance()->Get(40);
+	LPDIRECT3DTEXTURE9 tex = CTextures::GetInstance()->Get(this->texID);
 	if (tex != NULL) tex->Release();
 
 }

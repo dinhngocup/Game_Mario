@@ -23,6 +23,7 @@
 #define TOTAL_NUMBER_IN_HUB 14
 #define CARD_SCORE	12000
 
+#define MAP_SCENE 3
 
 class CPlayScene : public CScene
 {
@@ -35,9 +36,6 @@ protected:
 	void _ParseSection_MAP(string line);
 	void _ParseSection_STATIC_OBJECTS(string line);
 	void _ParseSection_TILESET(string line);
-	/*void _ParseSection_HUB(string line);
-	void _ParseSection_FONT(string line);
-	void ReadFileHub(LPCWSTR filePath);*/
 	bool isMoved;
 	int world_id;
 	CTiles *tiles;

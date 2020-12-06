@@ -17,6 +17,7 @@
 
 #define POINT_100 100
 #define POINT_200 200
+#define POINT_1UP 300
 #define POINT_1000 1000
 
 #define VY_POINT_BONUS -0.1f

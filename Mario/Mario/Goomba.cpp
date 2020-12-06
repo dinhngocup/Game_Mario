@@ -350,7 +350,17 @@ void CGoomba::AttackedByShell()
 
 void CGoomba::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 {
-	if (e->obj->type == eTYPE::GOOMBA) {
+	if (e->obj->type == eTYPE::FIRE_FLOWER_WEAPON) {
+		if (e->nx != 0) x += dx;
+
+		if (e->ny != 0) {
+			if (e->ny < 0)
+				y += dy;
+			else y -= dy;
+		}
+
+	}
+	else if (e->obj->type == eTYPE::GOOMBA) {
 		CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 		if (e->nx != 0) {
 			vx *= -1;

@@ -176,6 +176,7 @@
     <ClCompile Include="HoldingState.cpp" />
     <ClCompile Include="KickingState.cpp" />
     <ClCompile Include="Leaf.cpp" />
+    <ClCompile Include="MapScene.cpp" />
     <ClCompile Include="Mushroom.cpp" />
     <ClCompile Include="PointBonus.cpp" />
     <ClCompile Include="Portal.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="Koopa.h" />
     <ClInclude Include="Leaf.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="MapScene.h" />
     <ClInclude Include="Mario.h" />
     <ClInclude Include="MarioConst.h" />
     <ClInclude Include="Mushroom.h" />

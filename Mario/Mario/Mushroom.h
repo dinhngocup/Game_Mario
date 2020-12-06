@@ -13,10 +13,14 @@
 
 #define MUSHROOM_VX 0.08f
 
+#define ANI_RED_MUSHROOM 0
+#define ANI_GREEN_MUSHROOM 1
+
 class CMushroom : public CItem
 {
+	int extra;
 public:
-	CMushroom(float x, float y);
+	CMushroom(float x, float y, int extra = 0);
 	~CMushroom() {};
 
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);

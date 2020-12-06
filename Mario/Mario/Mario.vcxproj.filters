@@ -238,6 +238,9 @@
     <ClCompile Include="PointBonus.cpp">
       <Filter>Objects\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="MapScene.cpp">
+      <Filter>Framework\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -425,6 +428,9 @@
     </ClInclude>
     <ClInclude Include="PointBonus.h">
       <Filter>Objects\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="MapScene.h">
+      <Filter>Framework\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

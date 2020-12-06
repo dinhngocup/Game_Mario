@@ -20,7 +20,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if ((state == MARIO_STATE_DIE && y > game->GetCamY() + 560 ||
 		y > game->GetCamY() + 560) && !scene->time_up) {
 		DebugOut(L"handle mario die\n");
-		MinusLive();
+		if (lives > 0)
+			MinusLive();
+		else
+			ResetLive();
 		scene->mario_die = true;
 		//level = MARIO_LEVEL_SMALL;
 		return;

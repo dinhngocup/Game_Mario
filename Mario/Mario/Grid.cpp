@@ -102,7 +102,7 @@ LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, flo
 		break;
 	}
 	case eTYPE::MUSHROOM: {
-		obj = new CMushroom(x, y);
+		obj = new CMushroom(x, y, extra);
 		obj->type = eTYPE::MUSHROOM;
 		break;
 	}

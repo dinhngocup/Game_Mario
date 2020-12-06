@@ -1,11 +1,12 @@
 ﻿#include "Mushroom.h"
 #include "PlayScene.h"
 
-CMushroom::CMushroom(float x, float y)
+CMushroom::CMushroom(float x, float y, int extra)
 {
 	vy = -0.15f;
 	start_y = y;
 	start_x = x;
+	this->extra = extra;
 	SetState(MUSHROOM_STATE_HIDE);
 }
 
@@ -58,13 +59,26 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<CBrickQuestion*>(e->obj) || dynamic_cast<CBrick*>(e->obj)) {
+			if (dynamic_cast<CItem*>(e->obj)) {
+				if(e->obj->GetType() == eTYPE::BRICK_QUESTION) 
+					IsCollisionWithBrick(e);
+				else {
+					if (e->ny != 0) {
+						if (e->ny < 0)
+							y += dy;
+						else y -= dy;
+					}
+					if (e->nx != 0) x += dx;
+				}
+
+			}
+			else if (dynamic_cast<CBrick*>(e->obj)) {
 				IsCollisionWithBrick(e);
 			}
 			else if (dynamic_cast<CInvisibleObject*>(e->obj)) {
 				IsCollisionWithGhostPlatform(e);
 			}
-			else {
+			else if(dynamic_cast<CMario*>(e->obj)){
 				HandleCollisionWithMario(e);
 			}
 
@@ -78,7 +92,11 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 void CMushroom::Render()
 {
-	animation_set->at(0)->Render(x, y, 255, 1, 0, 0);
+	int ani = 0;
+	if (extra == 0)
+		ani = ANI_RED_MUSHROOM;
+	else ani = ANI_GREEN_MUSHROOM;
+	animation_set->at(ani)->Render(x, y, 255, 1, 0, 0);
 
 	CAnimationSets* sets = CAnimationSets::GetInstance();
 	sets->Get(2)->at(1)->Render(start_x, start_y);
@@ -102,16 +120,22 @@ void CMushroom::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
 	// e is mushroom
 	CMario* mario = CMario::GetInstance();
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	// set tam thời
 	mario->vx = 0;
 	mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
 	SetHealth(false);
 	ableToCheckCollision = false;
-	mario->ChangeState(new CGrowingUpState(mario->GetLevel()));
-	CGame* game = CGame::GetInstance();
-	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
-	CPointBonus* point = new CPointBonus(x, y + h, STATE_1000_POINTS);
-	scene->effects.push_back(point);
+	if (extra == 0) {
+		mario->ChangeState(new CGrowingUpState(mario->GetLevel()));
+		CPointBonus* point = new CPointBonus(x, y + h, STATE_1000_POINTS);
+		scene->effects.push_back(point);
+	}
+	else {
+		CPointBonus* point = new CPointBonus(x, y + h, STATE_1UP);
+		scene->effects.push_back(point);
+	}
 }
 
 void CMushroom::IsCollisionWithBrick(LPCOLLISIONEVENT e)
@@ -127,16 +151,23 @@ void CMushroom::HandleCollisionWithMario(LPCOLLISIONEVENT e)
 {
 	// e is mario
 	CMario* mario = CMario::GetInstance();
+	CGame* game = CGame::GetInstance();
+	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	// set tam thời
 	mario->vx = 0;
 	mario->vy = -MARIO_JUMP_DEFLECT_SPEED;
 	SetHealth(false);
 	ableToCheckCollision = false;
-	mario->ChangeState(new CGrowingUpState(mario->GetLevel()));
-	CGame* game = CGame::GetInstance();
-	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
-	CPointBonus* point = new CPointBonus(x, y + h, STATE_1000_POINTS);
-	scene->effects.push_back(point);
+
+	if (extra == 0) {
+		mario->ChangeState(new CGrowingUpState(mario->GetLevel()));
+		CPointBonus* point = new CPointBonus(x, y + h, STATE_1000_POINTS);
+		scene->effects.push_back(point);
+	}
+	else {
+		CPointBonus* point = new CPointBonus(x, y + h, STATE_1UP);
+		scene->effects.push_back(point);
+	}
 }
 
 void CMushroom::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)

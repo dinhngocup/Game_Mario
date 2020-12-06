@@ -4,6 +4,7 @@
 #include "DefineLibs.h"
 
 CMap::CMap() {
+	DebugOut(L"new map \n");
 };
 
 void CMap::ReadMap(LPCWSTR filePath)
@@ -47,11 +48,9 @@ void CMap::DrawMap(float cam_x, float cam_y)
 	if (begin_row < 0) begin_row = 0;
 
 
-	/*DebugOut(L"begin row %d\n", begin_row);
-	DebugOut(L"end row %d\n", end_row);
-	DebugOut(L"begin c %d\n", begin_column);
-	DebugOut(L"end c %d\n", end_column);*/
+	
 	vector<LPSPRITE> tiles = CTiles::GetInstance()->GetTiles();
+	//DebugOut(L"size %d\n", tiles.size());
 	for (int i = begin_row; i < end_row; i++) {
 		for (int j = begin_column; j < end_column; j++) {
 			if (tile_map[i][j] != 0) {

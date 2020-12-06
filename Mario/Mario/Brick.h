@@ -14,6 +14,7 @@
 #define BLING_BLING_BREAK 2
 #define EMPTY_BRICK 3
 
+
 #define ANI_NORMAL_BRICK 0
 #define ANI_BLING_BLING_BRICK 1
 #define ANI_EMPTY_BRICK 2
@@ -33,8 +34,8 @@
 
 class CBrick : public CGameObject
 {
-	int bonus;
 public:
+	int bonus;
 	CBrick() {};
 	CBrick(float x, float y, float w, float h, int state = NORMAL_BRICK, int bonus = 0);
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx=0, int dy=0);

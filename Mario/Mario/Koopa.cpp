@@ -303,7 +303,7 @@ void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 		{
 			if (mario->is_attacking_by_spinning) {
 				mario->vx = 0;
-				nx =(int) e->nx * -1;
+				nx = (int)e->nx * -1;
 
 				CStarEffect* effect;
 				if (nx > 0) {
@@ -407,7 +407,17 @@ void CKoopa::HandleCollisionWithMario(LPCOLLISIONEVENT e)
 
 void CKoopa::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 {
-	if (e->obj->type == eTYPE::GOOMBA) {
+	if (e->obj->type == eTYPE::FIRE_FLOWER_WEAPON) {
+		if (e->nx != 0) x += dx;
+
+		if (e->ny != 0) {
+			if (e->ny < 0)
+				y += dy;
+			else y -= dy;
+		}
+
+	}
+	else if (e->obj->type == eTYPE::GOOMBA) {
 		CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 
 		if (e->ny != 0) {
@@ -587,14 +597,17 @@ void CKoopa::IsCollisionWithGhostPlatform(LPCOLLISIONEVENT e)
 
 void CKoopa::IsCollisionWithBlingBlingBrick(LPCOLLISIONEVENT e)
 {
-
+	CBrick* blingbling = dynamic_cast<CBrick*>(e->obj);
 	if (e->ny != 0) {
 		vy = 0;
 	}
 	if (e->nx != 0) {
 		vx *= -1;
 		nx *= -1;
-		e->obj->SetState(BLING_BLING_BREAK);
+		if (blingbling->bonus == 0)
+			e->obj->SetState(BLING_BLING_BREAK);
+		else
+			blingbling->CreateBonus();
 	}
 }
 

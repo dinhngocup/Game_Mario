@@ -28,6 +28,7 @@ class CMario : public CGameObject
 	vector <int> cards;
 	int lives = MARIO_DEFAULT_LIVE;
 public:
+	bool up_scene = false;
 	DWORD untouchable_start;
 	DWORD start_press_z = 0;
 	bool press_z;
@@ -67,6 +68,7 @@ public:
 	int GetCoin() { return coin_number; }
 	int GetLives() { return lives; }
 	void AddLive() { this->lives++; }
+	void ResetLive() { this->lives = 4; }
 	void MinusLive() { this->lives--; }
 	void AddScore(int score) { this->score += score; }
 	void AddCoin() { this->coin_number++; }

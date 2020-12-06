@@ -82,79 +82,6 @@ void CPlayScene::_ParseSection_TILESET(string line)
 	tiles->LoadTiles();
 
 }
-//
-//void CPlayScene::_ParseSection_HUB(string line)
-//{
-//	 skip empty line
-//	if (line == "") return;
-//
-//	wstring path = ToWSTR(line);
-//	ReadFileHub(path.c_str());
-//
-//
-//}
-//
-//void CPlayScene::_ParseSection_FONT(string line)
-//{
-//	vector<string> tokens = split(line);
-//	if (tokens.size() < 5) return;
-//
-//	int l = atof(tokens[0].c_str());
-//	int t = atof(tokens[1].c_str());
-//
-//	int w = atof(tokens[2].c_str());
-//	int h = atof(tokens[3].c_str());
-//
-//	int textID = atoi(tokens[4].c_str());
-//
-//	CFont* letter = new CFont(l, t, w, h, textID);
-//	hub->AddFont(letter);
-//
-//}
-//
-//void CPlayScene::ReadFileHub(LPCWSTR filePath)
-//{
-//	ifstream f;
-//	f.open(filePath);
-//	hub
-//	int quantity, card_pos_X;
-//	f >> quantity >> card_pos_X;
-//
-//	hub->SetCardPosX(card_pos_X);
-//
-//	for (int i = 0; i < quantity; i++) {
-//		Number number;
-//		f >> number.x >> number.y >> number.id;
-//		hub->numbers.push_back(number);
-//	}
-//
-//	 end scene title row 1
-//	f >> quantity;
-//	for (int i = 0; i < quantity; i++) {
-//		Number number;
-//		f >> number.x >> number.y >> number.id;
-//		hub->end_scene_letters_1.push_back(number);
-//	}
-//
-//	 end scene title row 2
-//	f >> quantity;
-//	for (int i = 0; i < quantity; i++) {
-//		Number number;
-//		f >> number.x >> number.y >> number.id;
-//		hub->end_scene_letters_2.push_back(number);
-//	}
-//	f >> hub->card_in_title_X >> hub->card_in_title_Y;
-//
-//	 time up title
-//	f >> quantity;
-//	for (int i = 0; i < quantity; i++) {
-//		Number number;
-//		f >> number.x >> number.y >> number.id;
-//		hub->time_up_title.push_back(number);
-//	}
-//	f.close();
-//
-//}
 
 void CPlayScene::_ParseSection_MAP(string line)
 {
@@ -252,8 +179,6 @@ void CPlayScene::LoadSceneResources()
 		if (line == "[MAP]") { section = SCENE_SECTION_MAP; continue; }
 		if (line == "[STATIC_OBJECTS]") { section = SCENE_SECTION_STATIC_OBJECTS; continue; }
 		if (line == "[OBJECTS]") { section = SCENE_SECTION_OBJECTS; continue; }
-		/*if (line == "[HUB_PATH]") { section = SCENE_SECTION_HUB_PATH; continue; }
-		if (line == "[FONT]") { section = SCENE_SECTION_FONT; continue; }*/
 
 		switch (section) {
 		case SCENE_SECTION_INFO:_ParseSection_INFO(line); break;
@@ -261,8 +186,6 @@ void CPlayScene::LoadSceneResources()
 		case SCENE_SECTION_MAP: {_ParseSection_MAP(line); break; }
 		case SCENE_SECTION_STATIC_OBJECTS: {_ParseSection_STATIC_OBJECTS(line); break; }
 		case SCENE_SECTION_OBJECTS:_ParseSection_OBJECTS(line); break;
-		/*case SCENE_SECTION_HUB_PATH:_ParseSection_HUB(line); break;
-		case SCENE_SECTION_FONT:_ParseSection_FONT(line); break;*/
 		}
 	}
 
@@ -375,6 +298,7 @@ void CPlayScene::Update(DWORD dt)
 		else {
 			if (cx <= 0)
 			{
+				//game->SetCamPos(0.0f, 0.0f);
 				game->SetCamPos(0.0f, DEFAULT_CAM_Y);
 			}
 			else if (cx >= sceneWidth - game->GetScreenWidth()) {
@@ -424,7 +348,10 @@ void CPlayScene::Update(DWORD dt)
 	if (time_up && GetTickCount64() - time_up_count >= 3000) {
 		DebugOut(L"handle time up\n");
 		time_up = false;
-		player->MinusLive();
+		if (player->GetLives() > 0)
+			player->MinusLive();
+		else
+			player->ResetLive();
 		// chuyen ve scene map
 		HandleMarioDie();
 		return;
@@ -594,7 +521,6 @@ void CPlayScene::RenderItemHub()
 		CFont* number = hub->GetFont(hub->numbers.at(i).id);
 		number->Draw(hub->numbers.at(i).x + hub_x, hub->numbers.at(i).y + hub_y);
 	}
-	//DebugOut(L"size %d\n", hub->numbers.size());
 	// cards
 	vector<int> cards = player->GetCards();
 	for (int i = 0; i < cards.size(); i++)
@@ -689,7 +615,8 @@ void CPlayScene::HandleMarioDie()
 	mario_die = false;
 	player->SetLevel(MARIO_LEVEL_SMALL);
 	// nếu đúng là chuyển qua scene world map nha !!!!!!
-	game->SwitchScene(game->current_scene);
+	//game->SwitchScene(game->current_scene);
+	game->SwitchScene(MAP_SCENE);
 }
 
 void CPlayScene::EndScene(DWORD dt)
@@ -727,7 +654,8 @@ void CPlayScene::EndScene(DWORD dt)
 		//DebugOut(L"chuyen scene \n");
 		hide_card = false;
 		// nếu đúng là chuyển qua scene world map nha !!!!!!
-		game->SwitchScene(2);
+		mario->up_scene = true;
+		game->SwitchScene(MAP_SCENE);
 	}
 }
 

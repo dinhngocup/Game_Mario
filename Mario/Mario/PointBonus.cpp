@@ -26,6 +26,9 @@ void CPointBonus::SetState(int state)
 	case STATE_1000_POINTS:
 		mario->AddScore(POINT_1000);
 		break;
+	case STATE_1UP:
+		mario->AddLive();
+		break;
 	}
 }
 

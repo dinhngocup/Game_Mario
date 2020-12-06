@@ -17,7 +17,7 @@ class CTiles
 	static CTiles* __instance;
 
 	LPDIRECT3DTEXTURE9 tex;
-
+	int texID;
 public:
 	CTiles();
 
