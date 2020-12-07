@@ -122,6 +122,11 @@
 #define RACCOON_ANI_GO_DOWN			51
 #define FIRE_ANI_GO_DOWN			52
 
+#define MARIO_ANI_SMALL_IN_MAP		53
+#define MARIO_ANI_BIG_IN_MAP			54
+#define RACCOON_ANI_IN_MAP			55
+#define FIRE_ANI_IN_MAP			56
+
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2

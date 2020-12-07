@@ -80,7 +80,7 @@ void CFireFlowerWeapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void CFireFlowerWeapon::Render()
 {
 	animation_set->at(0)->Render(x, y);
-
+	RenderBoundingBox();
 }
 
 void CFireFlowerWeapon::SetState(int state)

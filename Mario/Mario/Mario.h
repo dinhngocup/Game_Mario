@@ -28,6 +28,7 @@ class CMario : public CGameObject
 	vector <int> cards;
 	int lives = MARIO_DEFAULT_LIVE;
 public:
+	int current_map_portal_id = 1;
 	bool up_scene = false;
 	DWORD untouchable_start;
 	DWORD start_press_z = 0;
@@ -51,15 +52,16 @@ public:
 	bool is_underground = false;
 
 	int number_attack = 0;
-
+	bool is_auto_go_in_map = false;
 
 	CMario();
 
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
 	virtual void Render();
 	
+	void UpdateInMapScene(DWORD dt);
+	void RenderInMapScene();
 
-	
 	void SetLevel(int l) { level = l; }
 	int GetLevel() { return level; }
 	void StartUntouchable();
@@ -92,5 +94,6 @@ public:
 	void IsCollisionWithBrick(LPCOLLISIONEVENT e);
 	void IsCollisionWithBlingBlingBrick(LPCOLLISIONEVENT e);
 
-	void MarioAutoGoToX();
+	void MarioAutoGo();
+	void MarioAutoGoInMap(float x, float y);
 };

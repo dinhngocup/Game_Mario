@@ -241,6 +241,9 @@
     <ClCompile Include="MapScene.cpp">
       <Filter>Framework\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="MapPortal.cpp">
+      <Filter>Objects\HiddenObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -431,6 +434,9 @@
     </ClInclude>
     <ClInclude Include="MapScene.h">
       <Filter>Framework\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="MapPortal.h">
+      <Filter>Objects\HiddenObject</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

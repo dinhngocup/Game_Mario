@@ -2,6 +2,8 @@
 
 void CMapSceneKeyHandler::KeyState(BYTE* states)
 {
+
+
 }
 
 void CMapSceneKeyHandler::OnKeyDown(int KeyCode)
@@ -9,14 +11,61 @@ void CMapSceneKeyHandler::OnKeyDown(int KeyCode)
 	// need to custom
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
-	switch (KeyCode) {
-	case DIK_C:
-		if (mario->up_scene)
-			game->SwitchScene(2);
-		else
-			game->SwitchScene(1);
+	CMapScene* scene = (CMapScene*)game->GetCurrentScene();
+	if (!mario->is_auto_go_in_map) {
+		switch (KeyCode) {
+		case DIK_C:
+			if (scene->current_portal->is_portal) {
+				if (mario->up_scene)
+					game->SwitchScene(2);
+				else
+					game->SwitchScene(1);
 
+			}
+			break;
+		case DIK_LEFT:
+			if (scene->current_portal->l != -1) {
+				int id_next_portal = scene->current_portal->l;
+				scene->current_portal = NULL;
+				scene->current_portal = dynamic_cast<CMapPortal*>(scene->map_portals[id_next_portal]);
+				//mario->SetPosition(scene->current_portal->x, scene->current_portal->y);
+				mario->vx = -0.2f;
+				mario->is_auto_go_in_map = true;
+			}
+			break;
+		case DIK_RIGHT:
+			if (scene->current_portal->r != -1) {
+				int id_next_portal = scene->current_portal->r;
+				scene->current_portal = NULL;
+				scene->current_portal = dynamic_cast<CMapPortal*>(scene->map_portals[id_next_portal]);
+				mario->vx = 0.2f;
+				mario->is_auto_go_in_map = true;
+				//mario->SetPosition(scene->current_portal->x, scene->current_portal->y);
+			}
+			break;
+		case DIK_UP:
+			if (scene->current_portal->t != -1) {
+				int id_next_portal = scene->current_portal->t;
+				scene->current_portal = NULL;
+				scene->current_portal = dynamic_cast<CMapPortal*>(scene->map_portals[id_next_portal]);
+				mario->vy = -0.2f;
+				mario->is_auto_go_in_map = true;
+				//mario->SetPosition(scene->current_portal->x, scene->current_portal->y);
+			}
+			break;
+		case DIK_DOWN:
+			if (scene->current_portal->b != -1) {
+				int id_next_portal = scene->current_portal->b;
+				scene->current_portal = NULL;
+				scene->current_portal = dynamic_cast<CMapPortal*>(scene->map_portals[id_next_portal]);
+				mario->vy = 0.2f;
+				mario->is_auto_go_in_map = true;
+				//mario->SetPosition(scene->current_portal->x, scene->current_portal->y);
+			}
+			break;
+		}
 	}
+	
 }
 
 void CMapSceneKeyHandler::OnKeyUp(int KeyCode)
@@ -49,6 +98,7 @@ void CMapScene::LoadSceneResources()
 		if (line == "[TILESET]") { section = SCENE_SECTION_TILESET; continue; }
 		if (line == "[MAP]") { section = SCENE_SECTION_MAP; continue; }
 		if (line == "[STATIC_OBJECTS]") { section = SCENE_SECTION_STATIC_OBJECTS; continue; }
+		if (line == "[MAP_SELECTION]") { section = SCENE_SECTION_MAP_SELECTION; continue; }
 
 
 		switch (section) {
@@ -56,12 +106,13 @@ void CMapScene::LoadSceneResources()
 		case SCENE_SECTION_TILESET:_ParseSection_TILESET(line); break;
 		case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
 		case SCENE_SECTION_STATIC_OBJECTS: _ParseSection_STATIC_OBJECTS(line); break;
+		case SCENE_SECTION_MAP_SELECTION: _ParseSection_MAP_SELECTION(line); break;
 
 		}
 	}
 
 	f.close();
-
+	CTextures::GetInstance()->Add(-100, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 	CTextures::GetInstance()->Add(-200, L"textures\\bbox_black.png", D3DCOLOR_XRGB(255, 255, 255));
 
 
@@ -69,6 +120,18 @@ void CMapScene::LoadSceneResources()
 	hub->SetHubPos(game->GetCamX(), game->GetCamY());
 	// chỉ gọi 1 lần trong load resource vì trong map không có thay đổi thông số của hub
 	GetHubStatistic();
+	if (player->GetLevel() == 0) {
+		player->SetLevel(MARIO_LEVEL_SMALL);
+	}
+	current_portal = dynamic_cast<CMapPortal*>(map_portals[player->current_map_portal_id]);
+
+	player->SetPosition(current_portal->x, current_portal->y);
+
+	player->nx = 1;
+
+	LPANIMATION_SET ani_set = CAnimationSets::GetInstance()->Get(1);
+
+	player->SetAnimationSet(ani_set);
 }
 
 void CMapScene::Update(DWORD dt)
@@ -77,6 +140,11 @@ void CMapScene::Update(DWORD dt)
 	{
 		ghost_platforms[i]->Update(dt);
 	}
+	for (size_t i = 0; i < map_portals.size(); i++)
+	{
+		map_portals[i]->Update(dt);
+	}
+	player->UpdateInMapScene(dt);
 }
 
 void CMapScene::Render()
@@ -88,12 +156,23 @@ void CMapScene::Render()
 	{
 		ghost_platforms[i]->Render();
 	}
+	for (size_t i = 0; i < map_portals.size(); i++)
+	{
+		map_portals[i]->Render();
+	}
 	hub->Render();
 	RenderItemHub();
+	player->RenderInMapScene();
 }
 
 void CMapScene::Unload()
 {
+	for (LPGAMEOBJECT obj : map_portals)
+		delete obj;
+	map_portals.clear();
+
+	current_portal = NULL;
+
 	for (LPGAMEOBJECT obj : ghost_platforms)
 		delete obj;
 	ghost_platforms.clear();
@@ -109,6 +188,8 @@ void CMapScene::Unload()
 
 
 	LPDIRECT3DTEXTURE9 tex = CTextures::GetInstance()->Get(-200);
+	if (tex != NULL) tex->Release();
+	tex = CTextures::GetInstance()->Get(-100);
 	if (tex != NULL) tex->Release();
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
@@ -213,6 +294,32 @@ void CMapScene::_ParseSection_STATIC_OBJECTS(string line)
 	obj->SetAnimationSet(ani_set);
 
 	ghost_platforms.push_back(obj);
+}
+
+void CMapScene::_ParseSection_MAP_SELECTION(string line)
+{
+	vector<string> tokens = split(line);
+
+	if (tokens.size() < 9) return;
+
+
+	int id = atof(tokens[0].c_str());
+	float x = atof(tokens[1].c_str());
+	float y = atof(tokens[2].c_str());
+
+	int is_portal = atof(tokens[3].c_str());
+	int l = atof(tokens[4].c_str());
+
+	int t = atoi(tokens[5].c_str());
+	int r = atoi(tokens[6].c_str());
+	int b = atoi(tokens[7].c_str());
+	int state = atoi(tokens[8].c_str());
+
+	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+
+	CGameObject* obj = new CMapPortal(id, x, y, state, is_portal, l, t, r, b);
+
+	map_portals.push_back(obj);
 }
 
 void CMapScene::GetHubStatistic()

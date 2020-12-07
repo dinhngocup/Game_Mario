@@ -161,6 +161,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationSets.cpp" />
+    <ClCompile Include="MapPortal.cpp" />
     <ClCompile Include="Debris.cpp" />
     <ClCompile Include="FireFlowerWeapon.cpp" />
     <ClCompile Include="FireFlower.cpp" />
@@ -250,6 +251,7 @@
     <ClInclude Include="Koopa.h" />
     <ClInclude Include="Leaf.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="MapPortal.h" />
     <ClInclude Include="MapScene.h" />
     <ClInclude Include="Mario.h" />
     <ClInclude Include="MarioConst.h" />

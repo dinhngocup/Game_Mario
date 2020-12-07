@@ -5,12 +5,13 @@
 #include "Mario.h"
 #include "Game.h"
 #include "PlayScene.h"
+#include "MapScene.h"
 
 CMario* CMario::__instance = NULL;
 CMario::CMario() : CGameObject()
 {
 	untouchable = 0;
-	
+
 }
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -29,7 +30,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		return;
 	}
 	if (state == MARIO_AUTO_GO && x > game->GetCamX() + game->GetScreenWidth()) {
-		DebugOut(L"stop mario\n");
+		//DebugOut(L"stop mario\n");
 		vx = 0;
 		return;
 	}
@@ -61,7 +62,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (untouchable == 1) {
 		if (!dynamic_cast<CGrowingUpState*>(player_state)) {
-		
+
 			if (GetTickCount64() - untouchable_start >= time_flicker
 				&& GetTickCount64() - untouchable_start < MARIO_UNTOUCHABLE_TIME) {
 				if (GetTickCount64() - unhide_start >= 100) {
@@ -232,7 +233,7 @@ void CMario::Render()
 
 		if (dynamic_cast<CRunningState*>(player_state) && level != RACCOON_LEVEL_BIG && level != FIRE_LEVEL)
 			player_state->SetAnimation(level);
-		if(!dynamic_cast<CGrowingUpState*>(player_state))
+		if (!dynamic_cast<CGrowingUpState*>(player_state))
 			this->ani = player_state->GetAnimation();
 
 		if (level == RACCOON_LEVEL_BIG) {
@@ -261,7 +262,7 @@ void CMario::Render()
 		if (state == MARIO_END_GROWING) {
 			if (level == MARIO_LEVEL_SMALL)
 				ani = MARIO_ANI_SMALL_IDLE_RIGHT;
-			else 
+			else
 				ani = MARIO_ANI_BIG_IDLE_RIGHT;
 
 		}
@@ -272,9 +273,59 @@ void CMario::Render()
 	RenderBoundingBox();
 }
 
+void CMario::UpdateInMapScene(DWORD dt)
+{
+	CGame* game = CGame::GetInstance();
+	CMapScene* scene = (CMapScene*)game->GetCurrentScene();
+
+	if (is_auto_go_in_map) {
+		CGameObject::Update(dt);
+		x += dx;
+		y += dy;
+		if (vx != 0) {
+			if (x <= scene->current_portal->x && vx < 0 || x >= scene->current_portal->x && vx > 0) {
+				x = scene->current_portal->x;
+				is_auto_go_in_map = false;
+				vx = 0;
+
+			}
+		} else if (vy != 0) {
+			if (y <= scene->current_portal->y && vy < 0 || y >= scene->current_portal->y && vy > 0) {
+				y = scene->current_portal->y;
+				is_auto_go_in_map = false;
+				vy = 0;
+
+			}
+		}
+
+	}
+}
+
+void CMario::RenderInMapScene()
+{
+	int ani = 0;
+	switch (level) {
+	case MARIO_LEVEL_SMALL:
+		ani = MARIO_ANI_SMALL_IN_MAP;
+		break;
+	case MARIO_LEVEL_BIG:
+		ani = MARIO_ANI_SMALL_IN_MAP;
+		break;
+	case RACCOON_LEVEL_BIG:
+		ani = RACCOON_ANI_IN_MAP;
+		break;
+	case FIRE_LEVEL:
+		ani = FIRE_ANI_IN_MAP;
+		break;
+	}
+
+	animation_set->at(ani)->Render(x, y);
+	RenderBoundingBox();
+}
+
 void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx = 0, int dy = 0)
 {
-
+	CGame* game = CGame::GetInstance();
 	if (level == MARIO_LEVEL_BIG && !dynamic_cast<CGrowingUpState*>(player_state)
 		|| level == FIRE_LEVEL || level == RACCOON_LEVEL_BIG)
 	{
@@ -511,12 +562,16 @@ void CMario::IsCollisionWithBlingBlingBrick(LPCOLLISIONEVENT e)
 {
 }
 
-void CMario::MarioAutoGoToX()
+void CMario::MarioAutoGo()
 {
 	if (dynamic_cast<CStandingState*>(player_state)) {
 		player_state = NULL;
 		SetState(MARIO_AUTO_GO);
 	}
+}
+
+void CMario::MarioAutoGoInMap(float x, float y)
+{
 }
 
 

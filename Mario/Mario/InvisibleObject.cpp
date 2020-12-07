@@ -11,6 +11,7 @@ CInvisibleObject::CInvisibleObject(float x, float y, float width, float height, 
 	this->id = generate_id;
 	if (state == STATE_GUARD)
 		vx = 0.05f;
+	//DebugOut(L"state %d\n", state);
 }
 
 void CInvisibleObject::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)
@@ -55,5 +56,5 @@ void CInvisibleObject::Render()
 	else if (state == STATE_GUARD)
 		ani = ANI_GUARD;
 	animation_set->at(ani)->Render(x, y, 255, nx);
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }

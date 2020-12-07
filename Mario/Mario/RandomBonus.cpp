@@ -3,11 +3,12 @@
 
 CRandomBonus::CRandomBonus(float x, float y)
 {
-	//DebugOut(L"NEW RANDOM BONUS \n");
 	this->x = x;
 	this->y = y;
 	SetState(STATE_RANDOM_BONUS_MUSHROOM);
 	start_ani = GetTickCount64();
+	this->start_x = x;
+	this->start_y = y;
 }
 
 void CRandomBonus::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
@@ -42,7 +43,7 @@ void CRandomBonus::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 			SetHealth(false);
 		}
 	}
-} 
+}
 
 void CRandomBonus::Render()
 {
@@ -59,6 +60,9 @@ void CRandomBonus::Render()
 		ani = ANI_GOT_BONUS_STAR;
 	else if (state == STATE_GOT_BONUS_FIRE_FLOWER)
 		ani = ANI_GOT_BONUS_FIRE_FLOWER;
+
+	CAnimationSets* sets = CAnimationSets::GetInstance();
+	sets->Get(25)->at(0)->Render(start_x - 15, start_y - 15, 255, 1, 0, false, 1, 1);
 
 	animation_set->at(ani)->Render(x, y);
 	RenderBoundingBox();
@@ -98,11 +102,11 @@ void CRandomBonus::IsCollisionWithMario(LPCOLLISIONEVENT e)
 		scene->mario_end_bonus = FIRE_FLOWER_CARD;
 		break;
 	}
-	
+
 
 	got_bonus = true;
 
-	
+
 }
 
 void CRandomBonus::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)

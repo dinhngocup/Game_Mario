@@ -154,7 +154,7 @@ void CPlayScene::LoadSceneResources()
 	if (player->GetLevel() == 0) {
 		player->SetLevel(MARIO_LEVEL_SMALL);
 	}
-	player->SetPosition(100, 1000);
+	player->SetPosition(7000, 1000);
 	player->ChangeState(new CStandingState(player->GetLevel()));
 	player->SetState(MARIO_STATE_IDLE);
 	player->nx = 1;
@@ -624,7 +624,7 @@ void CPlayScene::EndScene(DWORD dt)
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
 	// tí nữa hẳn bật =)))
-	mario->MarioAutoGoToX();
+	mario->MarioAutoGo();
 	if (!allow_render_second_row_title &&
 		GetTickCount64() - start_count >= 1000 && start_count != 0) {
 		//DebugOut(L"endscene %d\n", mario_end_bonus);
