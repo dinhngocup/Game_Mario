@@ -87,6 +87,7 @@ void CBrickQuestion::IsCollisionWithMario(LPCOLLISIONEVENT e)
 	CMario* mario = CMario::GetInstance();
 	if (e->ny != 0) {
 		if (e->ny > 0 && state == STATE_NORMAL) {
+			mario->vy = 0.0f;
 			SetState(STATE_EMPTY);
 		}
 		mario->vy = 0;

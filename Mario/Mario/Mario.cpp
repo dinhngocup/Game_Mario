@@ -11,7 +11,6 @@ CMario* CMario::__instance = NULL;
 CMario::CMario() : CGameObject()
 {
 	untouchable = 0;
-
 }
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -427,6 +426,7 @@ void CMario::KeyState(BYTE* states)
 
 void CMario::ChangeState(CPlayerState* newState)
 {
+	
 	delete player_state;
 	player_state = NULL;
 	player_state = newState;
@@ -546,6 +546,7 @@ void CMario::SetState(int state) {
 		break;
 	case MARIO_AUTO_GO:
 		vx = 0.2f;
+		break;
 	default:
 		break;
 	}
@@ -564,10 +565,14 @@ void CMario::IsCollisionWithBlingBlingBrick(LPCOLLISIONEVENT e)
 
 void CMario::MarioAutoGo()
 {
-	if (dynamic_cast<CStandingState*>(player_state)) {
-		player_state = NULL;
+	player_state = NULL;
 		SetState(MARIO_AUTO_GO);
-	}
+	/*if (state != MARIO_AUTO_GO) {
+		state = MARIO_STATE_IDLE;
+	} else if()
+
+	if (dynamic_cast<CStandingState*>(player_state)) {
+	}*/
 }
 
 void CMario::MarioAutoGoInMap(float x, float y)

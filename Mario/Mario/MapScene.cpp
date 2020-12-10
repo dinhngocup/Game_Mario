@@ -30,6 +30,7 @@ void CMapSceneKeyHandler::OnKeyDown(int KeyCode)
 				scene->current_portal = dynamic_cast<CMapPortal*>(scene->map_portals[id_next_portal]);
 				//mario->SetPosition(scene->current_portal->x, scene->current_portal->y);
 				mario->vx = -0.2f;
+				mario->vy = 0.0f;
 				mario->is_auto_go_in_map = true;
 			}
 			break;
@@ -39,6 +40,8 @@ void CMapSceneKeyHandler::OnKeyDown(int KeyCode)
 				scene->current_portal = NULL;
 				scene->current_portal = dynamic_cast<CMapPortal*>(scene->map_portals[id_next_portal]);
 				mario->vx = 0.2f;
+				mario->vy = 0.0f;
+
 				mario->is_auto_go_in_map = true;
 				//mario->SetPosition(scene->current_portal->x, scene->current_portal->y);
 			}
@@ -49,6 +52,8 @@ void CMapSceneKeyHandler::OnKeyDown(int KeyCode)
 				scene->current_portal = NULL;
 				scene->current_portal = dynamic_cast<CMapPortal*>(scene->map_portals[id_next_portal]);
 				mario->vy = -0.2f;
+				mario->vx = 0.0f;
+
 				mario->is_auto_go_in_map = true;
 				//mario->SetPosition(scene->current_portal->x, scene->current_portal->y);
 			}
@@ -59,6 +64,7 @@ void CMapSceneKeyHandler::OnKeyDown(int KeyCode)
 				scene->current_portal = NULL;
 				scene->current_portal = dynamic_cast<CMapPortal*>(scene->map_portals[id_next_portal]);
 				mario->vy = 0.2f;
+				mario->vx = 0.0f;
 				mario->is_auto_go_in_map = true;
 				//mario->SetPosition(scene->current_portal->x, scene->current_portal->y);
 			}
@@ -82,6 +88,8 @@ void CMapScene::LoadSceneResources()
 {
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
 	player = CMario::GetInstance();
+	player->vx = 0;
+	player->vy = 0;
 	CHub* hub = CHub::GetInstance();
 	CGame* game = CGame::GetInstance();
 	ifstream f;

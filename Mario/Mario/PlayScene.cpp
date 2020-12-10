@@ -154,8 +154,9 @@ void CPlayScene::LoadSceneResources()
 	if (player->GetLevel() == 0) {
 		player->SetLevel(MARIO_LEVEL_SMALL);
 	}
-	player->SetPosition(7000, 1000);
-	player->ChangeState(new CStandingState(player->GetLevel()));
+	//player->SetPosition(7000, 1000);
+	player->SetPosition(100, 1000);
+	player->player_state = new CStandingState(player->GetLevel());
 	player->SetState(MARIO_STATE_IDLE);
 	player->nx = 1;
 
@@ -616,6 +617,7 @@ void CPlayScene::HandleMarioDie()
 	player->SetLevel(MARIO_LEVEL_SMALL);
 	// nếu đúng là chuyển qua scene world map nha !!!!!!
 	//game->SwitchScene(game->current_scene);
+	delete player->player_state;
 	game->SwitchScene(MAP_SCENE);
 }
 
@@ -655,6 +657,8 @@ void CPlayScene::EndScene(DWORD dt)
 		hide_card = false;
 		// nếu đúng là chuyển qua scene world map nha !!!!!!
 		mario->up_scene = true;
+		delete player->player_state;
+
 		game->SwitchScene(MAP_SCENE);
 	}
 }
