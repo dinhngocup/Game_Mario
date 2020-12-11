@@ -17,6 +17,9 @@
 #define SECTION_HUB 6
 #define SECTION_FONT 7
 
+#define TYPE_PLAY_SCENE 1
+#define TYPE_WORLD_MAP 0
+#define TYPE_INTRO 2
 
 #define MAX_SCENE_LINE	1024
 #include <dinput.h>

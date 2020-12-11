@@ -15,3 +15,8 @@
 
 #define MAX_FRAME_RATE 120
 #define TEX_BLACK_BOARD_ID 40040
+
+#define INTRO_SCENE 4
+#define WORLD_MAP 3
+#define SCENE_1 1
+#define SCENE_2 2

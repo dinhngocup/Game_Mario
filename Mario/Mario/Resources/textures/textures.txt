@@ -17,7 +17,8 @@
 105	textures\MapSelection.png	255	255	255
 106	textures\white_box.png	0	183	239
 107	textures\gameover_board.png	1	1	1
-108	textures\arrow_selection	156	252	240
+108	textures\arrow_selection.png	156	252	240
+109	textures\3.png	255	255	255
 
 # id	left	top	width	height	texture_id
 [SPRITES]
@@ -435,6 +436,16 @@
 40125	5	3	118	58	107
 40126	1	2	6	7	108
 
+####################################################
+# 3 in intro
+40127	1	0	42	41	109
+40128	47	0	42	41	109
+40129	94	0	42	41	109
+40130	140	0	42	41	109
+
+
+
+
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 # ==== MARIO =========
@@ -766,6 +777,14 @@
 # ==== gameover board ==== 
 777	40125	100
 778	40126	100
+
+# ==== 3 in intro ==== 
+779	40127	100	40128	100	40129	100	40130	100
+
+
+
+
+
 #
 # id	ani1	ani2	ani3
 #
@@ -818,13 +837,14 @@
 # POINT
 23	755	756	757	758
 # MAP SELECTION
-24	703	759	760	761
+24	703	759	760	761	779	778
 # white box
 25	767
 # map selection
 26	768	769	770	771	772	773	774	775	776
 # game over board
 27	777	778
+
 
 
 

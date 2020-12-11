@@ -12,13 +12,29 @@ void CPlayerState::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_L:
-		game->SetCamYPos(1392);
-		game->SetCamXPos(5904);
-		mario->x = 5904;
-		mario->y = 1500;
+		game->SetCamYPos(145.0f);
+		mario->x = 6770.0f;
+		mario->y = 150.0f;
+		game->SetCamXPos(mario->x - game->GetScreenWidth() / 2);
 		break;
 	case DIK_K:
-		mario->ChangeState(new CGrowingUpState(level));
+		game->SetCamYPos(145.0f);
+		mario->x = 3940.0f;
+		mario->y = 150.0f;
+		mario->is_flying = true;
+		game->SetCamXPos(mario->x - game->GetScreenWidth() / 2);
+		break;
+	case DIK_M:
+		game->SetCamYPos(750.0f);
+		mario->x = 6960.0f;
+		mario->y = 1000.0f;
+		game->SetCamXPos(mario->x - game->GetScreenWidth() / 2);
+		break;
+	case DIK_N:
+		game->SetCamYPos(750.0f);
+		mario->x = 5856.0f;
+		mario->y = 1000.0f;
+		game->SetCamXPos(mario->x - game->GetScreenWidth() / 2);
 		break;
 	case DIK_X:
 		if (!dynamic_cast<CJumpingState*>(player_state) &&

@@ -53,7 +53,7 @@ void CPlayScene::_ParseSection_INFO(string line)
 	if (tokens.size() < 2) return; // skip invalid lines
 
 	world_id = atoi(tokens[0].c_str());
-	
+
 	time_limit = atoi(tokens[1].c_str());
 }
 
@@ -401,6 +401,8 @@ void CPlayScene::Render()
 	hub->Render();
 	RenderItemHub();
 	RenderTitle();
+
+
 }
 
 /*
@@ -464,7 +466,7 @@ void CPlayScene::UpdateHub(DWORD dt)
 			time_up_count = GetTickCount64();
 		}
 	}
-	
+
 	for (int i = 0; i < TOTAL_NUMBER_IN_HUB; i++)
 	{
 		int n = 0;
@@ -616,9 +618,9 @@ void CPlayScene::HandleMarioDie()
 	mario_die = false;
 	player->SetLevel(MARIO_LEVEL_SMALL);
 	// nếu đúng là chuyển qua scene world map nha !!!!!!
-	//game->SwitchScene(game->current_scene);
+
 	delete player->player_state;
-	game->SwitchScene(MAP_SCENE);
+	game->SwitchScene(WORLD_MAP);
 }
 
 void CPlayScene::EndScene(DWORD dt)
@@ -659,7 +661,7 @@ void CPlayScene::EndScene(DWORD dt)
 		mario->up_scene = true;
 		delete player->player_state;
 
-		game->SwitchScene(MAP_SCENE);
+		game->SwitchScene(WORLD_MAP);
 	}
 }
 

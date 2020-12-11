@@ -83,10 +83,10 @@ void CStandingState::OnKeyDown(int KeyCode)
 		}
 		else if (level == FIRE_LEVEL) {
 			if (mario->number_attack == 0 || mario->number_attack == 1) {
-				mario->time_start_attack = GetTickCount();
+				mario->time_start_attack = GetTickCount64();
 			}
 			mario->number_attack++;
-			DWORD count = GetTickCount();
+			DWORD count = GetTickCount64();
 
 			if (count - mario->time_start_attack <= 800 && mario->number_attack <= 2) {
 				mario->ChangeState(new CAttackingState(level));

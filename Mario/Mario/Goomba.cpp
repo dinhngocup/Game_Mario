@@ -263,6 +263,7 @@ void CGoomba::IsCollisionWithMario(LPCOLLISIONEVENT e)
 		// đụng ngang nấm còn đang sống
 		if (state != GOOMBA_STATE_DIE)
 		{
+			//DebugOut(L"cham x\n");
 			if (mario->is_attacking_by_spinning) {
 				mario->vx = 0;
 				// đụng bên phải

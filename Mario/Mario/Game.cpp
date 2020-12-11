@@ -6,6 +6,7 @@
 
 #include "PlayScene.h"
 #include "MapScene.h"
+#include "IntroScene.h"
 #include "Textures.h"
 #include "Sprites.h"
 #include "Animations.h"
@@ -344,9 +345,13 @@ void CGame::_ParseSection_SCENES(string line)
 	LPCWSTR path = ToLPCWSTR(tokens[1]);
 	int type_scene = atoi(tokens[2].c_str());
 	LPSCENE scene;
-	if (type_scene == 0) {
+	if (type_scene == TYPE_WORLD_MAP) {
 		scene = new CMapScene(id, path);
-	} else
+	}
+	else if (type_scene == TYPE_INTRO) {
+		scene = new CIntroScene(id, path);
+	}
+	else
 		scene = new CPlayScene(id, path);
 	scenes[id] = scene;
 }

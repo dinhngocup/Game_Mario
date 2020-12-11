@@ -20,7 +20,7 @@
 
 #define EXPLOSIVE_TIME 240
 
-#define FIRE_BALL_VX 0.9f
+#define FIRE_BALL_VX 0.5f
 #define FIRE_BALL_W 24
 #define FIRE_BALL_H 24
 

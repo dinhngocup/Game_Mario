@@ -23,7 +23,6 @@
 #define TOTAL_NUMBER_IN_HUB 14
 #define CARD_SCORE	12000
 
-#define MAP_SCENE 3
 
 class CPlayScene : public CScene
 {

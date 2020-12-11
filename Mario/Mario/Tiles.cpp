@@ -20,7 +20,7 @@ void CTiles::LoadResources(int texID, LPCWSTR fileTileset, D3DCOLOR transparentC
 
 	tex = CTextures::GetInstance()->Get(texID);
 	this->texID = texID;
-	DebugOut(L"load resources succesfully\n");
+	//DebugOut(L"load resources succesfully\n");
 }
 
 int CTiles::GetFrameWidth()

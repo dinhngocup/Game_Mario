@@ -2,16 +2,21 @@
 #include "GameObject.h"
 #include "Textures.h"
 #include "Game.h"
+#include"IntroScene.h"
 
 #define STATE_GHOST_PLATFORM 0
 #define STATE_CACTUS 1
 #define STATE_HELP_TAG 2
 #define STATE_GUARD 3
+#define STATE_3_INTRO 4
+#define STATE_ARROW 5
 
 #define ANI_GHOST_PLATFORM 0
 #define ANI_CACTUS 1
 #define ANI_HELP_TAG 2
 #define ANI_GUARD 3
+#define ANI_3_INTRO 4
+#define ANI_ARROW 5
 
 class CInvisibleObject : public CGameObject
 {

@@ -4,6 +4,8 @@ CInvisibleObject::CInvisibleObject(float x, float y, float width, float height, 
 {
 	this->x = x;
 	this->y = y;
+	this->start_x = x;
+	this->start_y = y;
 	this->w = width;
 	this->h = height;
 	this->state = state;
@@ -11,7 +13,6 @@ CInvisibleObject::CInvisibleObject(float x, float y, float width, float height, 
 	this->id = generate_id;
 	if (state == STATE_GUARD)
 		vx = 0.05f;
-	//DebugOut(L"state %d\n", state);
 }
 
 void CInvisibleObject::GetBoundingBox(float& left, float& top, float& right, float& bottom, int dx, int dy)
@@ -41,6 +42,16 @@ void CInvisibleObject::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		CGameObject::Update(dt);
 		x += dx;
 
+	} else if (state == STATE_ARROW) {
+		CGame* game = CGame::GetInstance();
+		CIntroScene* scene = (CIntroScene*)game->GetCurrentScene();
+		if (scene->change_level) {
+			if (y == start_y)
+				y += 48;
+			else y = start_y;
+			scene->change_level = false;
+			return;
+		}
 	}
 }
 
@@ -55,6 +66,10 @@ void CInvisibleObject::Render()
 		ani = ANI_HELP_TAG;
 	else if (state == STATE_GUARD)
 		ani = ANI_GUARD;
+	else if (state == STATE_3_INTRO)
+		ani = ANI_3_INTRO;
+	else if (state == STATE_ARROW)
+		ani = ANI_ARROW;
 	animation_set->at(ani)->Render(x, y, 255, nx);
 	RenderBoundingBox();
 }

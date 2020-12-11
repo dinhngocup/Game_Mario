@@ -138,7 +138,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					IsCollisionWithGhostPlatform(e);
 				}
 				else if (dynamic_cast<CEnemy*>(e->obj)) {
-					if (untouchable == 1) {
+					if (false) {
 						if (e->nx != 0)
 							x += dx;
 						if (e->ny != 0) {
@@ -175,8 +175,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								else y -= dy;
 							}
 						}
-						else
+						else {
 							e->obj->IsCollisionWithMario(e);
+							//DebugOut(L"hiii\n");
+						}
 					}
 
 				}

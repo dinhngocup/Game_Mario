@@ -8,18 +8,20 @@ void CMapSceneKeyHandler::KeyState(BYTE* states)
 
 void CMapSceneKeyHandler::OnKeyDown(int KeyCode)
 {
-	// need to custom
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
 	CMapScene* scene = (CMapScene*)game->GetCurrentScene();
 	if (!mario->is_auto_go_in_map) {
 		switch (KeyCode) {
-		case DIK_C:
+		case DIK_ESCAPE:
+			game->SwitchScene(INTRO_SCENE);
+			break;
+		case DIK_S:
 			if (scene->current_portal->is_portal) {
 				if (mario->up_scene)
-					game->SwitchScene(2);
+					game->SwitchScene(SCENE_2);
 				else
-					game->SwitchScene(1);
+					game->SwitchScene(SCENE_1);
 
 			}
 			break;

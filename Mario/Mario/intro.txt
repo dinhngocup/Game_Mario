@@ -1,0 +1,16 @@
+[MAP]
+# file_path
+Resources\map\intro_map.xml
+
+
+[TILESET]
+1	Resources\map\intro_x3.png	1	1	1	28	31
+
+[STATIC_OBJECTS]
+# loai	x	y	w	h	ani_set	state	type_obj
+# state: cactus = 1, help_tag = 2, guard = 3, 3_intro = 4, arrow = 5
+
+5	336	336	0	0	24	4	1
+5	192	508	0	0	24	5	1
+
+

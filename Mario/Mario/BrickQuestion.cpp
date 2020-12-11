@@ -89,6 +89,7 @@ void CBrickQuestion::IsCollisionWithMario(LPCOLLISIONEVENT e)
 		if (e->ny > 0 && state == STATE_NORMAL) {
 			mario->vy = 0.0f;
 			SetState(STATE_EMPTY);
+			mario->ChangeState(new CFallingState(mario->GetLevel()));
 		}
 		mario->vy = 0;
 	}
