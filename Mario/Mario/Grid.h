@@ -16,6 +16,7 @@
 #include "FireFlowerWeapon.h"
 #include "ButtonP.h"
 #include "RandomBonus.h"
+#include "MovingPlatform.h"
 
 //173 186.25
 #define CELL_HEIGHT (692/4.0f)

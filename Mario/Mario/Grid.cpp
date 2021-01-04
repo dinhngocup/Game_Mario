@@ -14,9 +14,15 @@ void CGrid::AddObjectIntoGrid(int object_type, float x, float y, float w, float 
 	int right = (int)((x + w) / CELL_WIDTH);
 
 	LPGAMEOBJECT obj = CreateNewObj(object_type, x, y, w, h, ani_id, type, extra, nx, angle);
-
+	/*DebugOut(L"========================\n");
+	DebugOut(L"object id %d\n", obj->GetId());
+	DebugOut(L"top %d\n", top);
+	DebugOut(L"bottom %d\n", bottom);
+	DebugOut(L"right %d\n", right);
+	DebugOut(L"left %d\n", left);*/
 	for (int i = top; i <= bottom; i++)
 		for (int j = left; j <= right; j++) {
+			//DebugOut(L"push \n");
 			cells[i][j].push_back(obj);
 		}
 }
@@ -144,6 +150,11 @@ LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, flo
 	case eTYPE::RANDOM_BONUS: {
 		obj = new CRandomBonus(x, y);
 		obj->type = eTYPE::RANDOM_BONUS;
+		break;
+	}
+	case eTYPE::MOVING_PLATFORM: {
+		obj = new CMovingPlatform();
+		obj->type = eTYPE::MOVING_PLATFORM;
 		break;
 	}
 	default:

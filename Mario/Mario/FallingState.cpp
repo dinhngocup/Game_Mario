@@ -40,7 +40,9 @@ void CFallingState::Update(float dt)
 		}
 	}
 	//DebugOut(L"collision spinningggg %d\n", mario->is_attacking_by_spinning);
-
+	if (mario->isInMovingPlatform) {
+		mario->ChangeState(new CStandingState(mario->GetLevel()));
+	}
 }
 
 void CFallingState::HandleKeyboard()

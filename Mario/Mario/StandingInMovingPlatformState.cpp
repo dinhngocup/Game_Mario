@@ -1,43 +1,28 @@
-﻿#include "StandingState.h"
+﻿#include "StandingInMovingPlatformState.h"
 
-CStandingState::CStandingState()
-{
-	SetAnimation(level);
-}
-
-CStandingState::CStandingState(int level)
+CStandingInMovingPlatformState::CStandingInMovingPlatformState(int level)
 {
 	CMario* mario = CMario::GetInstance();
-	//OutputDebugString(L"standing\n");
+	OutputDebugString(L"standing in moving platform\n");
 	mario->is_attacking_by_spinning = false;
 	this->level = level;
 
 	mario->vx = 0;
-
 	SetAnimation(level);
-
-
 }
 
-void CStandingState::Update(float dt)
+void CStandingInMovingPlatformState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
 	//DebugOut(L"vy %f\n", mario->vy);
-	if (!mario->isInMovingPlatform) {
-		if (mario->vy > MARIO_GRAVITY) {
-			//DebugOut(L"change to falling\n");
-			mario->ChangeState(new CFallingState(level));
-		}
-
-	}
-	
+		
 }
 
-void CStandingState::HandleKeyboard()
+void CStandingInMovingPlatformState::HandleKeyboard()
 {
 }
 
-void CStandingState::SetAnimation(int level)
+void CStandingInMovingPlatformState::SetAnimation(int level)
 {
 	this->level = level;
 	CMario* mario = CMario::GetInstance();
@@ -63,7 +48,7 @@ void CStandingState::SetAnimation(int level)
 	}
 }
 
-void CStandingState::OnKeyDown(int KeyCode)
+void CStandingInMovingPlatformState::OnKeyDown(int KeyCode)
 {
 	CPlayerState::OnKeyDown(KeyCode);
 	CMario* mario = CMario::GetInstance();
@@ -106,7 +91,11 @@ void CStandingState::OnKeyDown(int KeyCode)
 	}
 }
 
-void CStandingState::KeyState(BYTE* state)
+void CStandingInMovingPlatformState::OnKeyUp(int KeyCode)
+{
+}
+
+void CStandingInMovingPlatformState::KeyState(BYTE* states)
 {
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
@@ -141,5 +130,4 @@ void CStandingState::KeyState(BYTE* state)
 			}
 		}
 	}
-
 }

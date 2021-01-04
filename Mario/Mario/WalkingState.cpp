@@ -5,34 +5,38 @@ CWalkingState::CWalkingState(int level)
 {
 	//OutputDebugString(L"walking\n");
 	this->level = level;
-	
+
 	SetAnimation(level);
 }
 
 void CWalkingState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
-	if (mario->vy > MARIO_GRAVITY && !mario->is_crouching) {
-		mario->ChangeState(new CFallingState(level));
-		return;
-	}
+	if (!mario->isInMovingPlatform) {
+		if (mario->vy > MARIO_GRAVITY && !mario->is_crouching) {
+			mario->ChangeState(new CFallingState(level));
+			return;
+		}
 
-	if (is_slowly) {
-		float speed = abs(mario->vx);
-		mario->vx = (speed - MARIO_WALKING_ACCELERATION * dt) * mario->nx;
-		if (!is_skid) {
-			if (mario->nx > 0 && mario->vx <= 0 || mario->nx < 0 && mario->vx >= 0) {
-				if (mario->is_crouching) {
-					mario->vx = 0;
-					mario->ChangeState(new CCrouchingState(level));
+		if (is_slowly) {
+			float speed = abs(mario->vx);
+			mario->vx = (speed - MARIO_WALKING_ACCELERATION * dt) * mario->nx;
+			if (!is_skid) {
+				if (mario->nx > 0 && mario->vx <= 0 || mario->nx < 0 && mario->vx >= 0) {
+					if (mario->is_crouching) {
+						mario->vx = 0;
+						mario->ChangeState(new CCrouchingState(level));
+					}
+					else {
+						mario->ChangeState(new CStandingState(level));
+					}
+					return;
 				}
-				else {
-					mario->ChangeState(new CStandingState(level));
-				}
-				return;
 			}
 		}
+
 	}
+
 }
 
 void CWalkingState::HandleKeyboard()
@@ -103,7 +107,7 @@ void CWalkingState::KeyState(BYTE* state)
 	CGame* game = CGame::GetInstance();
 
 	if (game->IsKeyDown(DIK_Z)) {
-		if(level == RACCOON_LEVEL_BIG)
+		if (level == RACCOON_LEVEL_BIG)
 			mario->ChangeState(new CSpinningState(level));
 		else if (level == FIRE_LEVEL) {
 			if (GetTickCount64() - mario->start_press_z >= TIME_BLOCK_PRESS_Z || mario->start_press_z == 0) {
@@ -171,8 +175,8 @@ void CWalkingState::KeyState(BYTE* state)
 		}
 		else {
 			is_slowly = true;
-			
-				is_skid = true;
+
+			is_skid = true;
 			if (mario->vx >= 0) {
 				is_skid = false;
 				mario->nx = 1;
@@ -191,8 +195,8 @@ void CWalkingState::KeyState(BYTE* state)
 		}
 		else {
 			is_slowly = true;
-				is_skid = true;
-			
+			is_skid = true;
+
 			if (mario->vx <= 0) {
 				is_skid = false;
 				mario->nx = -1;
@@ -219,12 +223,23 @@ void CWalkingState::KeyState(BYTE* state)
 		}
 	}
 	else {
-		is_slowly = true;
-		if (is_skid) {
-			is_skid = false;
-			mario->nx *= -1;
-			SetAnimation(level);
+		if (!mario->isInMovingPlatform) {
+			is_slowly = true;
+			if (is_skid) {
+				is_skid = false;
+				mario->nx *= -1;
+				SetAnimation(level);
 
+			}
+		}
+		else {
+			if (mario->is_crouching) {
+				mario->vx = 0;
+				mario->ChangeState(new CCrouchingState(level));
+			}
+			else {
+				mario->ChangeState(new CStandingState(level));
+			}
 		}
 
 	}

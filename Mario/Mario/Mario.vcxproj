@@ -179,10 +179,12 @@
     <ClCompile Include="KickingState.cpp" />
     <ClCompile Include="Leaf.cpp" />
     <ClCompile Include="MapScene.cpp" />
+    <ClCompile Include="MovingPlatform.cpp" />
     <ClCompile Include="Mushroom.cpp" />
     <ClCompile Include="PointBonus.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="RandomBonus.cpp" />
+    <ClCompile Include="StandingInMovingPlatformState.cpp" />
     <ClCompile Include="StarEffect.cpp" />
     <ClCompile Include="StaticCoin.cpp" />
     <ClCompile Include="Transform.cpp" />
@@ -257,6 +259,7 @@
     <ClInclude Include="MapScene.h" />
     <ClInclude Include="Mario.h" />
     <ClInclude Include="MarioConst.h" />
+    <ClInclude Include="MovingPlatform.h" />
     <ClInclude Include="Mushroom.h" />
     <ClInclude Include="ObjectType.h" />
     <ClInclude Include="PlayerState.h" />
@@ -267,6 +270,7 @@
     <ClInclude Include="SpinningState.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Sprites.h" />
+    <ClInclude Include="StandingInMovingPlatformState.h" />
     <ClInclude Include="StandingState.h" />
     <ClInclude Include="StarEffect.h" />
     <ClInclude Include="StaticCoin.h" />

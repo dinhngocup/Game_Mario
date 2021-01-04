@@ -41,7 +41,6 @@ void CPlayerState::OnKeyDown(int KeyCode)
 			!dynamic_cast<CHighJumpingState*>(player_state) &&
 			!dynamic_cast<CFallingState*>(player_state)) {
 			mario->time_start_jump = GetTickCount();
-
 			mario->ChangeState(new CJumpingState(level));
 		}
 		break;
@@ -51,6 +50,7 @@ void CPlayerState::OnKeyDown(int KeyCode)
 			!dynamic_cast<CFallingState*>(player_state)) {
 			//DebugOut(L"vx truoc khi nhay %f\n", mario->vx);
 			mario->time_start_jump = GetTickCount();
+			
 			mario->ChangeState(new CHighJumpingState(level));
 		}
 		break;
@@ -122,7 +122,6 @@ void CPlayerState::KeyState(BYTE* states)
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
 	CPlayerState* player_state = mario->GetState();
-
 	if (dynamic_cast<CJumpingState*>(player_state) ||
 		dynamic_cast<CHighJumpingState*>(player_state) ||
 		dynamic_cast<CFallingState*>(player_state)) {

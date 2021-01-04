@@ -11,7 +11,6 @@ void CMap::ReadMap(LPCWSTR filePath)
 	ifstream f;
 	f.open(filePath);
 	f >> row_map >> column_map >> height_board;
-	
 	for (int i = 0; i < row_map; i++) {
 		for (int j = 0; j < column_map; j++) {
 			f >> tile_map[i][j];

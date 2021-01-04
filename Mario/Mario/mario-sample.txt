@@ -1,9 +1,9 @@
 [SETTINGS]
-start	4
+start	2
 #scene list
 [SCENES]
 1	scene-test.txt	1
-2	scene-test-1.txt	1
+2	scene-1-4.txt	1
 3	scene-world-map.txt	0
 4	intro.txt	2
 [RESOURCES]

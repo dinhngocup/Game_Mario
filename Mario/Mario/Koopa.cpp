@@ -240,7 +240,7 @@ void CKoopa::SetState(int state)
 
 void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
-
+	DebugOut(L"hiiiii\n");
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();

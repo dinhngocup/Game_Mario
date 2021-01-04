@@ -1,0 +1,33 @@
+[SCENE_INFO]
+# world_id	time_limit
+1	300
+[TILESET]
+2	Resources\map\Final1(48).png	255	255	255	29	30
+[MAP]
+# file_path
+Resources\map\map-1-4.xml
+
+[STATIC_OBJECTS]
+# gạch dưới cùng
+1	0	1296	7000	48	3	1
+
+# BRICK
+1	-48	0	48	1392	3	1
+
+1	0	1056	480	240	3	1
+
+1	5760	1200	384	96	3	1
+1	6096	0	48	1392	3	1
+
+1	6192	1248	1536	48	3	1
+
+1	7728	0	48	1392	3	1
+
+# pipe
+1	5808	1008	96	192	15	1
+1	6576	1152	96	96	16	1
+
+
+[OBJECTS]
+# file_path
+Resources\object\object_scene_1_4.txt

@@ -37,7 +37,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		start_press_z = GetTickCount64();
 	if (state != MARIO_STATE_DIE && state != MARIO_AUTO_GO)
 		player_state->Update(dt);
-	if (!dynamic_cast<CGoDownState*>(player_state))
+	if (!dynamic_cast<CGoDownState*>(player_state) && !isInMovingPlatform)
 		vy += MARIO_GRAVITY * dt;
 
 	scene->UpdateSpeedBar(abs(vx));
@@ -102,71 +102,48 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (state != MARIO_STATE_DIE && state != MARIO_AUTO_GO) {
-				if (dynamic_cast<CPortal*>(e->obj)) {
+				if (dynamic_cast<CMovingPlatform*>(e->obj)) {
+					e->obj->IsCollisionWithMario(e);
+				}
+				else {
+					isInMovingPlatform = false;
+					if (dynamic_cast<CPortal*>(e->obj)) {
 
-					CPortal* portal = dynamic_cast<CPortal*>(e->obj);
-					if (e->ny != 0) {
-						vy = 0;
-						collide_with_portal = portal->direction_collision;
+						CPortal* portal = dynamic_cast<CPortal*>(e->obj);
+						if (e->ny != 0) {
+							vy = 0;
+							collide_with_portal = portal->direction_collision;
 
-						if (e->ny == portal->direction_collision && e->ny == -1) {
-							if (is_underground) {
+							if (e->ny == portal->direction_collision && e->ny == -1) {
+								if (is_underground) {
+									ChangeState(new CGoDownState(level));
+									CGoDownState* go_down_state = dynamic_cast<CGoDownState*>(player_state);
+									x = portal->x;
+									go_down_state->start_y = portal->y_change;
+									portal->is_activated = true;
+
+									is_underground = false;
+								}
+
+							}
+							else if (e->ny == portal->direction_collision && e->ny == 1) {
 								ChangeState(new CGoDownState(level));
 								CGoDownState* go_down_state = dynamic_cast<CGoDownState*>(player_state);
-								x = portal->x;
-								go_down_state->start_y = portal->y_change;
 								portal->is_activated = true;
-
+								go_down_state->start_y = portal->y_change;
+								x = portal->x;
 								is_underground = false;
+
 							}
-
 						}
-						else if (e->ny == portal->direction_collision && e->ny == 1) {
-							ChangeState(new CGoDownState(level));
-							CGoDownState* go_down_state = dynamic_cast<CGoDownState*>(player_state);
-							portal->is_activated = true;
-							go_down_state->start_y = portal->y_change;
-							x = portal->x;
-							is_underground = false;
 
-						}
+
 					}
-
-
-				}
-				else if (dynamic_cast<CInvisibleObject*>(e->obj)) {
-					IsCollisionWithGhostPlatform(e);
-				}
-				else if (dynamic_cast<CEnemy*>(e->obj)) {
-					if (false) {
-						if (e->nx != 0)
-							x += dx;
-						if (e->ny != 0) {
-							if (e->ny < 0)
-								y += dy;
-							else y -= dy;
-						}
+					else if (dynamic_cast<CInvisibleObject*>(e->obj)) {
+						IsCollisionWithGhostPlatform(e);
 					}
-					else {
-						if (is_holding && e->obj->state == KOOPA_STATE_HOLD) {
-
-						}
-						else if (e->obj->GetType() == eTYPE::FIRE_FLOWER_WEAPON) {
-							if (e->nx != 0) {
-								x += dx;
-							}
-							if (e->ny != 0) {
-								if (e->ny < 0)
-									y += dy;
-								else y -= dy;
-							}
-							e->obj->IsCollisionWithMario(e);
-
-						}
-						else if (e->obj->GetType() == eTYPE::FIRE_FLOWER) {
-
-							e->obj->IsCollisionWithMario(e);
-
+					else if (dynamic_cast<CEnemy*>(e->obj)) {
+						if (false) {
 							if (e->nx != 0)
 								x += dx;
 							if (e->ny != 0) {
@@ -176,22 +153,51 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							}
 						}
 						else {
-							e->obj->IsCollisionWithMario(e);
-							//DebugOut(L"hiii\n");
-						}
-					}
+							if (is_holding && e->obj->state == KOOPA_STATE_HOLD) {
 
-				}
-				else if (dynamic_cast<CItem*>(e->obj)) {
-					e->obj->IsCollisionWithMario(e);
-				}
-				else if (dynamic_cast<CBrick*>(e->obj)) {
-					CBrick* brick = dynamic_cast<CBrick*>(e->obj);
-					if (brick->state == BLING_BLING_BRICK) {
-						brick->IsCollisionWithMario(e);
+							}
+							else if (e->obj->GetType() == eTYPE::FIRE_FLOWER_WEAPON) {
+								if (e->nx != 0) {
+									x += dx;
+								}
+								if (e->ny != 0) {
+									if (e->ny < 0)
+										y += dy;
+									else y -= dy;
+								}
+								e->obj->IsCollisionWithMario(e);
+
+							}
+							else if (e->obj->GetType() == eTYPE::FIRE_FLOWER) {
+
+								e->obj->IsCollisionWithMario(e);
+
+								if (e->nx != 0)
+									x += dx;
+								if (e->ny != 0) {
+									if (e->ny < 0)
+										y += dy;
+									else y -= dy;
+								}
+							}
+							else {
+								e->obj->IsCollisionWithMario(e);
+								//DebugOut(L"hiii\n");
+							}
+						}
+
 					}
-					else
-						IsCollisionWithBrick(e);
+					else if (dynamic_cast<CItem*>(e->obj)) {
+						e->obj->IsCollisionWithMario(e);
+					}
+					else if (dynamic_cast<CBrick*>(e->obj)) {
+						CBrick* brick = dynamic_cast<CBrick*>(e->obj);
+						if (brick->state == BLING_BLING_BRICK) {
+							brick->IsCollisionWithMario(e);
+						}
+						else
+							IsCollisionWithBrick(e);
+					}
 				}
 			}
 			else if (state == MARIO_AUTO_GO) {
@@ -271,7 +277,7 @@ void CMario::Render()
 	//DebugOut(L"ani%d", ani);
 	animation_set->at(ani)->Render(x, y, alpha, nx, offset, spinningFlag);
 
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CMario::UpdateInMapScene(DWORD dt)
@@ -290,7 +296,8 @@ void CMario::UpdateInMapScene(DWORD dt)
 				vx = 0;
 
 			}
-		} else if (vy != 0) {
+		}
+		else if (vy != 0) {
 			if (y <= scene->current_portal->y && vy < 0 || y >= scene->current_portal->y && vy > 0) {
 				y = scene->current_portal->y;
 				is_auto_go_in_map = false;
@@ -428,11 +435,10 @@ void CMario::KeyState(BYTE* states)
 
 void CMario::ChangeState(CPlayerState* newState)
 {
-	
+
 	delete player_state;
 	player_state = NULL;
 	player_state = newState;
-
 	if (((dynamic_cast<CSpinningState*>(player_state) ||
 		dynamic_cast<CRunningState*>(player_state))) && level == RACCOON_LEVEL_BIG) {
 		ani = RACCOON_ANI_SPINNING_BIG;
@@ -449,6 +455,10 @@ void CMario::ChangeState(CPlayerState* newState)
 		ani = player_state->GetAnimation();
 		animation_set->at(ani)->ResetFlagLastFrame();
 		player_state->SetAnimation(animation_set->at(ani));
+	}
+	if (dynamic_cast<CJumpingState*>(player_state) ||
+		dynamic_cast<CHighJumpingState*>(player_state)) {
+		isInMovingPlatform = false;
 	}
 }
 
@@ -568,12 +578,12 @@ void CMario::IsCollisionWithBlingBlingBrick(LPCOLLISIONEVENT e)
 void CMario::MarioAutoGo()
 {
 	player_state = NULL;
-		SetState(MARIO_AUTO_GO);
+	SetState(MARIO_AUTO_GO);
 	/*if (state != MARIO_AUTO_GO) {
 		state = MARIO_STATE_IDLE;
 	} else if()
 
-	if (dynamic_cast<CStandingState*>(player_state)) {
+	if (dynamic_cast<CfState*>(player_state)) {
 	}*/
 }
 

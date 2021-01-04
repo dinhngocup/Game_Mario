@@ -13,6 +13,8 @@
 #include "Item.h"
 #include "KickingState.h"
 #include "GoDownState.h"
+#include "StandingInMovingPlatformState.h"
+#include "MovingPlatform.h"
 
 class CMario : public CGameObject
 {
@@ -28,6 +30,7 @@ class CMario : public CGameObject
 	vector <int> cards;
 	int lives = MARIO_DEFAULT_LIVE;
 public:
+	bool isInMovingPlatform = false;
 	int current_map_portal_id = 1;
 	bool up_scene = false;
 	DWORD untouchable_start;
