@@ -36,6 +36,11 @@ void CPlayerState::OnKeyDown(int KeyCode)
 		mario->y = 1000.0f;
 		game->SetCamXPos(mario->x - game->GetScreenWidth() / 2);
 		break;
+	case DIK_B:
+		game->SetCamXPos(6100);
+		mario->x = 6000.0f;
+		mario->y = 1000.0f;
+		break;
 	case DIK_X:
 		if (!dynamic_cast<CJumpingState*>(player_state) &&
 			!dynamic_cast<CHighJumpingState*>(player_state) &&

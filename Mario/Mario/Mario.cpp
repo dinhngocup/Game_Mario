@@ -17,6 +17,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGame* game = CGame::GetInstance();
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+	
 	if ((state == MARIO_STATE_DIE && y > game->GetCamY() + 560 ||
 		y > game->GetCamY() + 560) && !scene->time_up) {
 		DebugOut(L"handle mario die\n");
@@ -39,7 +40,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		player_state->Update(dt);
 	if (!dynamic_cast<CGoDownState*>(player_state) && !isInMovingPlatform)
 		vy += MARIO_GRAVITY * dt;
-
+	if (x < game->GetCamX() && !dynamic_cast<CAutoGoState*>(player_state)
+		&& game->GetCamX() < 6192) {
+		ChangeState(new CAutoGoState(level));
+	}
 	scene->UpdateSpeedBar(abs(vx));
 	CGameObject::Update(dt);
 
@@ -84,7 +88,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		x += dx;
 		y += dy;
-		if (x <= 0) x = 0;
+		if (x <= game->GetCamX()) vx = 0;
 	}
 	else
 	{
@@ -108,20 +112,20 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else {
 					isInMovingPlatform = false;
 					if (dynamic_cast<CPortal*>(e->obj)) {
-
 						CPortal* portal = dynamic_cast<CPortal*>(e->obj);
 						if (e->ny != 0) {
 							vy = 0;
 							collide_with_portal = portal->direction_collision;
 
-							if (e->ny == portal->direction_collision && e->ny == -1) {
+							if ((portal->direction_collision == -1 || portal->direction_collision == 2)
+								&& e->ny == -1) {
+								DebugOut(L"hi\n");
 								if (is_underground) {
 									ChangeState(new CGoDownState(level));
 									CGoDownState* go_down_state = dynamic_cast<CGoDownState*>(player_state);
 									x = portal->x;
 									go_down_state->start_y = portal->y_change;
 									portal->is_activated = true;
-
 									is_underground = false;
 								}
 

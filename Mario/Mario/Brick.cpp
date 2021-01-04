@@ -24,7 +24,7 @@ void CBrick::Render()
 	else {
 		animation_set->at(ANI_EMPTY_BRICK)->Render(x, y);
 	}
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 
@@ -62,8 +62,10 @@ void CBrick::IsCollisionWithMario(LPCOLLISIONEVENT e)
 		if (e->ny > 0){
 			if (bonus == 0)
 				e->obj->SetState(BLING_BLING_BREAK);
-			else
+			else {
 				CreateBonus();
+				mario->ChangeState(new CFallingState(mario->GetLevel()));
+			}
 		}
 		mario->vy = 0;
 	}
@@ -89,6 +91,17 @@ void CBrick::CreateBonus()
 	case MUSHROOM_LEVEL_UP:
 		SetState(EMPTY_BRICK);
 		scene->grid->AddObjectIntoGrid(eTYPE::MUSHROOM, x, y, 48, 48, MUSHROOM_ANI, eTYPE_OBJECT::ITEM, 1);
+		break;
+	case LEAF_BONUS:
+		SetState(EMPTY_BRICK);
+		scene->grid->AddObjectIntoGrid(eTYPE::LEAF, x, y - 30, 48, 48, LEAF_ANI, eTYPE_OBJECT::ITEM);
+		break;
+	case COIN_BONUS:
+		index++;
+		DebugOut(L"index %d\n", index);
+		if(index == 5)
+			SetState(EMPTY_BRICK);
+			scene->grid->AddObjectIntoGrid(eTYPE::COIN, x + w / 4, y - 10, 0, 0, COIN_ANI, eTYPE_OBJECT::ITEM);
 		break;
 	}
 }

@@ -37,6 +37,21 @@ void CGoDownState::Update(float dt)
 			mario->ChangeState(new CFallingState(level));
 		}
 	}
+	else if (mario->collide_with_portal == 2) {
+		if (!mario->is_hide) {
+			mario->vy = GO_DOWN_SPEED;
+		}
+		else {
+			mario->vy = -GO_DOWN_SPEED;
+			if (mario->y + mario->h <= start_y) {
+				mario->collide_with_portal = 0;
+				CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
+				scene->time_scale = 1;
+				mario->is_hide = false;
+				mario->ChangeState(new CFallingState(level));
+			}
+		}
+	}
 }
 
 void CGoDownState::SetAnimation(int level)

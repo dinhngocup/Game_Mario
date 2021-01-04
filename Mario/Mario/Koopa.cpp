@@ -44,7 +44,19 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	}
 	CMario* mario = CMario::GetInstance();
-	vy += KOOPA_GRAVITY * dt;
+	if(state != KOOPA_STATE_FLYING_UP && state != KOOPA_STATE_FLYING_DOWN)
+		vy += KOOPA_GRAVITY * dt;
+	else {
+		if (start_flying == 0)
+			start_flying = GetTickCount64();
+		if (GetTickCount64() - start_flying > 2000) {
+			start_flying = GetTickCount64();
+			if (state == KOOPA_STATE_FLYING_DOWN)
+				SetState(KOOPA_STATE_FLYING_UP);
+			else
+				SetState(KOOPA_STATE_FLYING_DOWN);
+		}
+	}
 	if (state == KOOPA_STATE_HOLD) {
 		if (!mario->is_holding) {
 			SetState(KOOPA_STATE_UNHOLD);
@@ -168,7 +180,9 @@ void CKoopa::Render()
 		ani = KOOPA_ANI_DIE;
 	else if (state == KOOPA_STATE_WALKING)
 		ani = KOOPA_ANI_WALKING;
-	else if (state == KOOPA_STATE_WALKING_SWINGS)
+	else if (state == KOOPA_STATE_WALKING_SWINGS ||
+		state == KOOPA_STATE_FLYING_DOWN || 
+		state == KOOPA_STATE_FLYING_UP)
 		ani = KOOPA_ANI_WALKING_SWINGS;
 	else if (state == KOOPA_STATE_SPIN)
 		ani = KOOPA_ANI_SPIN;
@@ -234,24 +248,32 @@ void CKoopa::SetState(int state)
 		y += KOOPA_UNHOLD;
 		x += KOOPA_UNHOLD * nx;
 		break;
+	case KOOPA_STATE_FLYING_DOWN:
+		vx = 0;
+		vy = 0.1f;
+		break;
+	case KOOPA_STATE_FLYING_UP:
+		vx = 0;
+		vy = -0.1f;
+		break;
 	}
 
 }
 
 void CKoopa::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
-	DebugOut(L"hiiiii\n");
 	CMario* mario = CMario::GetInstance();
 	CGame* game = CGame::GetInstance();
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	if (e->ny != 0) {
-
 		if (e->ny < 0)
 		{
 			if (state != KOOPA_STATE_DIE)
 			{
 				// rùa có cánh
-				if (state == KOOPA_STATE_WALKING_SWINGS) {
+				if (state == KOOPA_STATE_WALKING_SWINGS ||
+					state == KOOPA_STATE_FLYING_DOWN || 
+					state == KOOPA_STATE_FLYING_UP ) {
 					CPointBonus* point = new CPointBonus(x, y, STATE_100_POINTS);
 					scene->effects.push_back(point);
 					SetState(KOOPA_STATE_WALKING);

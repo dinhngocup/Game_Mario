@@ -1,6 +1,6 @@
 [SCENE_INFO]
-# world_id	time_limit
-1	300
+# world_id	time_limit	auto_go
+1	300	0
 
 [TILESET]
 1	Resources\map\Final1(48).png	255	255	255	29	30
@@ -87,7 +87,7 @@ Resources\map\map.txt
 #portal
 50	6792	336	48	96	3	1	5904	1392	6338	1488	-1	1488
 #50	400	1000	48	96	3	1	5904	1392	6338	1440	-1	1488
-50	7032	1440	48	48	3	1	5904	750	6984	1152	1	1152
+50	7032	1440	48	48	3	1	5904	750	6984	1200	1	1152
 
 #brick around portal
 1	6768	336	24	48	15	1

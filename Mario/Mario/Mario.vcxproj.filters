@@ -253,6 +253,9 @@
     <ClCompile Include="StandingInMovingPlatformState.cpp">
       <Filter>Objects\Player</Filter>
     </ClCompile>
+    <ClCompile Include="AutoGoState.cpp">
+      <Filter>Objects\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -454,6 +457,9 @@
       <Filter>Objects\Ground</Filter>
     </ClInclude>
     <ClInclude Include="StandingInMovingPlatformState.h">
+      <Filter>Objects\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoGoState.h">
       <Filter>Objects\Player</Filter>
     </ClInclude>
   </ItemGroup>

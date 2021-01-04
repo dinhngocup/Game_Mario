@@ -9,6 +9,7 @@
 #include "ObjectType.h"
 #include "MarioConst.h"
 #include "StandingState.h"
+#include "AutoGoState.h"
 #include "Font.h"
 #include "Hub.h"
 using namespace std;
@@ -50,11 +51,13 @@ void CPlayScene::_ParseSection_INFO(string line)
 {
 	vector<string> tokens = split(line);
 
-	if (tokens.size() < 2) return; // skip invalid lines
+	if (tokens.size() < 3) return; // skip invalid lines
 
 	world_id = atoi(tokens[0].c_str());
 
 	time_limit = atoi(tokens[1].c_str());
+
+	auto_go = atoi(tokens[2].c_str());
 }
 
 void CPlayScene::_ParseSection_TILESET(string line)
@@ -81,6 +84,100 @@ void CPlayScene::_ParseSection_TILESET(string line)
 	tiles->LoadResources(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B), column, row);
 	tiles->LoadTiles();
 
+}
+
+void CPlayScene::UpdateCamera(DWORD dt)
+{
+	CGame* game = CGame::GetInstance();
+	float cx, cy;
+	player->GetPosition(cx, cy);
+	cx -= game->GetScreenWidth() / 2;
+	cy -= game->GetScreenHeight() / 2;
+	if (auto_go) {
+		isMoved = true;
+		game->SetCamYPos(DEFAULT_CAM_Y);
+		if (game->GetCamX() >= 6144 - game->GetScreenWidth()
+			&& game->GetCamX() < 6144) {
+			game->SetCamPos(6144 - game->GetScreenWidth(), DEFAULT_CAM_Y);
+		}
+		else if (game->GetCamX() >= 6192) {
+
+			if (cx >= sceneWidth - game->GetScreenWidth()) {
+				game->SetCamPos(sceneWidth - game->GetScreenWidth(), DEFAULT_CAM_Y);
+			}
+			else {
+				player->GetPosition(cx, cy);
+				cx -= 384;
+				if(cx > 6192)
+					game->SetCamXPos(cx);
+				else {
+					game->SetCamXPos(6192.0f);
+				}
+			}
+		}
+		else {
+			game->SetCamXPos(game->GetCamX() + 0.09f * dt);
+		}
+		
+
+	}
+	else {
+		if (player->state != MARIO_STATE_DIE) {
+			CMario* mario = CMario::GetInstance();
+			if (mario->GetLevel() == RACCOON_LEVEL_BIG || mario->y < DEFAULT_CAM_Y) {
+				if (dynamic_cast<CFallingState*>(mario->player_state) && cy >= DEFAULT_CAM_Y)
+					mario->is_flying = false;
+
+				if (mario->is_flying && cy < DEFAULT_CAM_Y) {
+					if (cy <= 145.0f) {
+						game->SetCamYPos(145.0f);
+					}
+					else
+						game->SetCamYPos(cy);
+				}
+				else {
+					if (game->GetCamY() == DEFAULT_CAM_Y)
+						game->SetCamYPos(DEFAULT_CAM_Y);
+				}
+
+				if (cx <= 0)
+				{
+					game->SetCamXPos(0.0f);
+				}
+				else if (cx >= sceneWidth - game->GetScreenWidth()) {
+					game->SetCamXPos(sceneWidth - game->GetScreenWidth());
+				}
+				else
+				{
+					game->SetCamXPos(cx);
+					isMoved = true;
+				}
+			}
+			else {
+				if (cx <= 0)
+				{
+					game->SetCamPos(0.0f, DEFAULT_CAM_Y);
+				}
+				else if (cx >= sceneWidth - game->GetScreenWidth()) {
+					game->SetCamPos(sceneWidth - game->GetScreenWidth(), DEFAULT_CAM_Y);
+				}
+				else
+				{
+					game->SetCamXPos(cx);
+					isMoved = true;
+				}
+				if (mario->is_flying) {
+					if (cy < DEFAULT_CAM_Y) {
+						game->SetCamYPos(cy);
+					}
+					else {
+						game->SetCamYPos(DEFAULT_CAM_Y);
+						mario->is_flying = false;
+					}
+				}
+			}
+		}
+	}
 }
 
 void CPlayScene::_ParseSection_MAP(string line)
@@ -251,7 +348,9 @@ void CPlayScene::Update(DWORD dt)
 	{
 		effects[i]->Update(dt);
 	}
+
 	player->Update(dt);
+
 	UpdateHub(dt_after);
 
 	grid->UpdatePositionInGrid(game->GetCamX(), DEFAULT_CAM_Y);
@@ -266,61 +365,11 @@ void CPlayScene::Update(DWORD dt)
 	cy -= game->GetScreenHeight() / 2;
 
 	CMario* mario = CMario::GetInstance();
-	if (player->state != MARIO_STATE_DIE) {
-		if (mario->GetLevel() == RACCOON_LEVEL_BIG || mario->y < DEFAULT_CAM_Y) {
-			if (dynamic_cast<CFallingState*>(mario->player_state) && cy >= DEFAULT_CAM_Y)
-				mario->is_flying = false;
 
-			if (mario->is_flying && cy < DEFAULT_CAM_Y) {
-				if (cy <= 145.0f) {
-					game->SetCamYPos(145.0f);
-				}
-				else
-					game->SetCamYPos(cy);
-			}
-			else {
-				if (game->GetCamY() == DEFAULT_CAM_Y)
-					game->SetCamYPos(DEFAULT_CAM_Y);
-			}
 
-			if (cx <= 0)
-			{
-				game->SetCamXPos(0.0f);
-			}
-			else if (cx >= sceneWidth - game->GetScreenWidth()) {
-				game->SetCamXPos(sceneWidth - game->GetScreenWidth());
-			}
-			else
-			{
-				game->SetCamXPos(cx);
-				isMoved = true;
-			}
-		}
-		else {
-			if (cx <= 0)
-			{
-				//game->SetCamPos(0.0f, 0.0f);
-				game->SetCamPos(0.0f, DEFAULT_CAM_Y);
-			}
-			else if (cx >= sceneWidth - game->GetScreenWidth()) {
-				game->SetCamPos(sceneWidth - game->GetScreenWidth(), DEFAULT_CAM_Y);
-			}
-			else
-			{
-				game->SetCamXPos(cx);
-				isMoved = true;
-			}
-			if (mario->is_flying) {
-				if (cy < DEFAULT_CAM_Y) {
-					game->SetCamYPos(cy);
-				}
-				else {
-					game->SetCamYPos(DEFAULT_CAM_Y);
-					mario->is_flying = false;
-				}
-			}
-		}
-	}
+	UpdateCamera(dt);
+
+
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
 		if (!enemies[i]->GetHealth()) {
@@ -546,17 +595,17 @@ void CPlayScene::RenderTitle()
 		for (int i = 0; i < hub->end_scene_letters_1.size(); i++)
 		{
 			CFont* end_scene_letter = hub->GetFont(hub->end_scene_letters_1.at(i).id);
-			end_scene_letter->Draw(hub->end_scene_letters_1.at(i).x, hub->end_scene_letters_1.at(i).y);
+			end_scene_letter->Draw(game->GetCamX()+hub->end_scene_letters_1.at(i).x, hub->end_scene_letters_1.at(i).y);
 		}
 	if (allow_render_second_row_title) {
 		for (int i = 0; i < hub->end_scene_letters_2.size(); i++)
 		{
 			CFont* end_scene_letter = hub->GetFont(hub->end_scene_letters_2.at(i).id);
-			end_scene_letter->Draw(hub->end_scene_letters_2.at(i).x, hub->end_scene_letters_2.at(i).y);
+			end_scene_letter->Draw(game->GetCamX() + hub->end_scene_letters_2.at(i).x, hub->end_scene_letters_2.at(i).y);
 
 		}
 		int card_sprite_id = hub->GetCardId(mario_end_bonus);
-		CSprites::GetInstance()->Get(card_sprite_id)->DrawFlipX(hub->card_in_title_X, hub->card_in_title_Y);
+		CSprites::GetInstance()->Get(card_sprite_id)->DrawFlipX(game->GetCamX() + hub->card_in_title_X, hub->card_in_title_Y);
 
 	}
 	if (time_up) {

@@ -28,9 +28,11 @@ void CPortal::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	mario->GetHeightMario();
 	if (is_activated) {
 		if (direction_collision == -1 && mario->y > y ||
-			direction_collision == 1 && mario->y + mario->h < y + h) {
+			direction_collision == 1 && mario->y + mario->h < y + h ||
+			direction_collision == 2 && mario->y > y) {
 			mario->x = start_x_mario;
 			mario->y = start_y_mario;
+			mario->is_hide = true;
 			MoveCamera();
 		}
 	}

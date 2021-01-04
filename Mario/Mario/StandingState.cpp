@@ -22,6 +22,7 @@ CStandingState::CStandingState(int level)
 void CStandingState::Update(float dt)
 {
 	CMario* mario = CMario::GetInstance();
+	CGame* game = CGame::GetInstance();
 	//DebugOut(L"vy %f\n", mario->vy);
 	if (!mario->isInMovingPlatform) {
 		if (mario->vy > MARIO_GRAVITY) {
@@ -30,6 +31,7 @@ void CStandingState::Update(float dt)
 		}
 
 	}
+	
 	
 }
 
@@ -122,11 +124,12 @@ void CStandingState::KeyState(BYTE* state)
 	else if (game->IsKeyDown(DIK_RIGHT) || game->IsKeyDown(DIK_LEFT)) {
 		mario->ChangeState(new CWalkingState(level));
 	}
-	else if (game->IsKeyDown(DIK_DOWN) && level != MARIO_LEVEL_SMALL) {
-		if (mario->collide_with_portal == 0) {
-			mario->ChangeState(new CCrouchingState(level));
+	else if (game->IsKeyDown(DIK_DOWN)) {
+		if (mario->collide_with_portal == 0 ) {
+			if(level != MARIO_LEVEL_SMALL)
+				mario->ChangeState(new CCrouchingState(level));
 		}
-		else if (mario->collide_with_portal == -1)
+		else if (mario->collide_with_portal == -1 || mario->collide_with_portal == 2)
 			mario->is_underground = true;
 
 	}

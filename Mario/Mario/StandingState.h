@@ -4,6 +4,7 @@
 #include "MarioConst.h"
 #include "Game.h"
 #include "WalkingState.h"
+#include "AutoGoState.h"
 #include "CrouchingState.h"
 #include "AttackingState.h"
 class CStandingState : public CPlayerState

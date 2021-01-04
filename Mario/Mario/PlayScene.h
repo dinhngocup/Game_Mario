@@ -39,7 +39,7 @@ protected:
 	int world_id;
 	CTiles *tiles;
 	CMap* map;
-	
+	void UpdateCamera(DWORD dt);
 	
 	DWORD previousTime;
 	DWORD previousTimeUpdateSpeedBar;
@@ -48,6 +48,7 @@ protected:
 	int time_limit;
 	DWORD time_up_count;
 public:
+	bool auto_go = 0;
 	bool time_up = false;
 	bool mario_die = false;
 	DWORD start_count = 0;

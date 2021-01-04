@@ -25,6 +25,8 @@
 #define KOOPA_STATE_HOLD 105
 #define KOOPA_STATE_UNHOLD 106
 #define KOOPA_STATE_DIE_BY_TAIL 107
+#define KOOPA_STATE_FLYING_DOWN 108
+#define KOOPA_STATE_FLYING_UP 109
 
 #define KOOPA_ANI_WALKING 0
 #define KOOPA_ANI_DIE 1
@@ -50,6 +52,7 @@ class CKoopa : public CEnemy
 {
 	int koopa_ny = 1;
 	DWORD start_revival;
+	DWORD start_flying;
 	bool revival = false;
 public:
 	CKoopa(int state);

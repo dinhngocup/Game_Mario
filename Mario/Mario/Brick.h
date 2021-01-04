@@ -23,6 +23,8 @@
 
 #define P_BUTTON 1
 #define MUSHROOM_LEVEL_UP 2
+#define LEAF_BONUS 3
+#define COIN_BONUS 4
 
 #define BUTTON_P_ANI	21
 
@@ -35,6 +37,7 @@
 class CBrick : public CGameObject
 {
 public:
+	int index = 0;
 	int bonus;
 	CBrick() {};
 	CBrick(float x, float y, float w, float h, int state = NORMAL_BRICK, int bonus = 0);
