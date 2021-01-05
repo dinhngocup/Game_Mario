@@ -3,7 +3,7 @@
 
 CAutoGoState::CAutoGoState(int level)
 {
-	OutputDebugString(L"au to go\n");
+	//OutputDebugString(L"au to go\n");
 	this->level = level;
 
 	SetAnimation(level);

@@ -119,7 +119,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 							if ((portal->direction_collision == -1 || portal->direction_collision == 2)
 								&& e->ny == -1) {
-								DebugOut(L"hi\n");
 								if (is_underground) {
 									ChangeState(new CGoDownState(level));
 									CGoDownState* go_down_state = dynamic_cast<CGoDownState*>(player_state);

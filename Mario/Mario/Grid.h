@@ -17,6 +17,8 @@
 #include "ButtonP.h"
 #include "RandomBonus.h"
 #include "MovingPlatform.h"
+#include "BoomerangBro.h"
+#include "Boomerang.h"
 
 //173 186.25
 #define CELL_HEIGHT (692/4.0f)

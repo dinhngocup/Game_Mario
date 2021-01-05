@@ -2,6 +2,7 @@
 #include "Mario.h"
 #include "GrowingUpState.h"
 #include "Game.h"
+#include "PlayScene.h"
 void CPlayerState::OnKeyDown(int KeyCode)
 {
 	CMario* mario = CMario::GetInstance();
@@ -9,8 +10,13 @@ void CPlayerState::OnKeyDown(int KeyCode)
 	float current_y = mario->GetY();
 	CPlayerState* player_state = mario->GetState();
 	CGame* game = CGame::GetInstance();
+		CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
 	switch (KeyCode)
 	{
+	case DIK_0:
+		scene->grid->AddObjectIntoGrid(eTYPE::BOOMERANG, mario->x + 100, mario->y - 100, 0, 0, 30, eTYPE_OBJECT::ENEMY);
+
+		break;
 	case DIK_L:
 		game->SetCamYPos(145.0f);
 		mario->x = 6770.0f;

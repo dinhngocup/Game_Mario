@@ -157,6 +157,17 @@ LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, flo
 		obj->type = eTYPE::MOVING_PLATFORM;
 		break;
 	}
+	case eTYPE::BOOMERANG_BRO: {
+		obj = new CBoomerangBro();
+		obj->type = eTYPE::BOOMERANG_BRO;
+		obj->SetStartPosition(x, y);
+		break;
+	}
+	case eTYPE::BOOMERANG: {
+		obj = new CBoomerang(x, y);
+		obj->type = eTYPE::BOOMERANG;
+		break;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return NULL;

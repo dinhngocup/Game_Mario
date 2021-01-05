@@ -256,6 +256,12 @@
     <ClCompile Include="AutoGoState.cpp">
       <Filter>Objects\Player</Filter>
     </ClCompile>
+    <ClCompile Include="BoomerangBro.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Boomerang.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -461,6 +467,12 @@
     </ClInclude>
     <ClInclude Include="AutoGoState.h">
       <Filter>Objects\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="BoomerangBro.h">
+      <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Boomerang.h">
+      <Filter>Objects\Enemies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
