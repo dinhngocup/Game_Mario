@@ -6,6 +6,14 @@ CGrid::CGrid(LPCWSTR objFilePath)
 	this->objFilePath = objFilePath;
 }
 
+void CGrid::AddObjectIntoGridByFile(int object_type, float x, float y, float w, float h, int ani_id, int top, int bottom, int right, int left, int type, int extra, int nx, int angle)
+{
+	LPGAMEOBJECT obj = CreateNewObj(object_type, x, y, w, h, ani_id, type, extra, nx, angle);
+	for (int i = top; i <= bottom; i++)
+		for (int j = left; j <= right; j++) {
+			cells[i][j].push_back(obj);
+		}
+}
 void CGrid::AddObjectIntoGrid(int object_type, float x, float y, float w, float h, int ani_id, int type, int extra, int nx, int angle)
 {
 	int top = (int)(y / CELL_HEIGHT);
@@ -14,19 +22,12 @@ void CGrid::AddObjectIntoGrid(int object_type, float x, float y, float w, float 
 	int right = (int)((x + w) / CELL_WIDTH);
 
 	LPGAMEOBJECT obj = CreateNewObj(object_type, x, y, w, h, ani_id, type, extra, nx, angle);
-	/*DebugOut(L"========================\n");
-	DebugOut(L"object id %d\n", obj->GetId());
-	DebugOut(L"top %d\n", top);
-	DebugOut(L"bottom %d\n", bottom);
-	DebugOut(L"right %d\n", right);
-	DebugOut(L"left %d\n", left);*/
+	
 	for (int i = top; i <= bottom; i++)
 		for (int j = left; j <= right; j++) {
-			//DebugOut(L"push \n");
 			cells[i][j].push_back(obj);
 		}
 }
-
 void CGrid::GetListObjInGrid(float cam_x, float cam_y)
 {
 	CGame* game = CGame::GetInstance();
@@ -359,7 +360,7 @@ void CGrid::UpdatePositionInGrid(float cam_x, float cam_y)
 				cells[i][j].push_back(item);
 			}
 	}
-	
+
 	ResetListObj(cam_x, cam_y);
 
 }
@@ -386,14 +387,20 @@ void CGrid::ReadFileObj()
 		float h = atof(tokens[4].c_str());
 
 		int ani_id = atoi(tokens[5].c_str());
-		int type = atoi(tokens[6].c_str());
+
+		int t = atoi(tokens[6].c_str());
+		int b = atoi(tokens[7].c_str());
+		int r = atoi(tokens[8].c_str());
+		int l = atoi(tokens[9].c_str());
+
+		int type = atoi(tokens[10].c_str());
 		int extra = 0;
 		if (object_type == 2 || object_type == 3 ||
 			object_type == 6 || object_type == 11 ||
 			object_type == 1)
-			extra = atoi(tokens[7].c_str());
+			extra = atoi(tokens[11].c_str());
 
-		AddObjectIntoGrid(object_type, x, y, w, h, ani_id, type, extra);
+		AddObjectIntoGridByFile(object_type, x, y, w, h, ani_id, t, b, r, l, type, extra, 1, 0);
 	}
 
 	f.close();

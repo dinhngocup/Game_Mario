@@ -54,9 +54,9 @@ void CMovingPlatform::IsCollisionWithMario(LPCOLLISIONEVENT e)
 		}
 		else {
 			mario->isInMovingPlatform = true;
-			mario->vy = 0.1f;
+			mario->vy = 0.2f;
 			vx = 0;
-			vy = 0.1f;
+			vy = 0.2f;
 		}
 	}
 	if (e->nx != 0) {

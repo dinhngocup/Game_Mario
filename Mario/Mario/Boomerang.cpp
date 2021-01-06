@@ -27,7 +27,7 @@ void CBoomerang::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (vx > 0)
 			vx *= -1;
 	}
-	else if (GetTickCount64() - start_count >= 1000) {
+	else if (GetTickCount64() - start_count >= 900) {
 		if (vy < 0)
 			vy += 0.2f;
 	}

@@ -186,7 +186,6 @@ void CAutoGoState::KeyState(BYTE* state)
 		SetAnimation(level);
 	}
 	else if (game->IsKeyDown(DIK_DOWN) && !game->IsKeyDown(DIK_RIGHT) && !game->IsKeyDown(DIK_LEFT)) {
-		//DebugOut(L"hiii %d\n", mario->change_bounding_box_crouching);
 		if (!mario->is_crouching) {
 			if (level != MARIO_LEVEL_SMALL) {
 				is_slowly = true;
