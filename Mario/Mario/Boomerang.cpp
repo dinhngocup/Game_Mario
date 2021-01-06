@@ -20,6 +20,7 @@ void CBoomerang::GetBoundingBox(float& left, float& top, float& right, float& bo
 
 void CBoomerang::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	CMario* mario = CMario::GetInstance();
 	if (start_count == 0)
 		start_count = GetTickCount64();
 	if (GetTickCount64() - start_count >= 1200) {
@@ -37,8 +38,44 @@ void CBoomerang::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	}
 	CGameObject::Update(dt);
-	x += dx;
-	y += dy;
+	if (mario->untouchable == 0) {
+		vector<LPCOLLISIONEVENT> coEvents;
+		vector<LPCOLLISIONEVENT> coEventsResult;
+
+		vector<LPGAMEOBJECT> obj;
+		obj.clear();
+		obj.push_back(mario);
+
+		coEvents.clear();
+
+
+		CalcPotentialCollisions(&obj, coEvents);
+
+
+		if (coEvents.size() == 0)
+		{
+			x += dx;
+			y += dy;
+		}
+		else
+		{
+			float min_tx, min_ty, nx = 0, ny;
+			float rdx = 0;
+			float rdy = 0;
+			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+			//DebugOut(L"cham weapon boomerang\n");
+
+			HandleCollisionWithMario(coEventsResult[0]);
+			x += dx;
+			y += dy;
+			// clean up collision events
+			for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+		}
+	}
+	else {
+		x += dx;
+		y += dy;
+	}
 }
 
 void CBoomerang::Render()
@@ -53,8 +90,14 @@ void CBoomerang::SetState(int state)
 
 void CBoomerang::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
+	CMario* mario = CMario::GetInstance();
+	ableToCheckCollision = false;
+	mario->StartUntouchable();
 }
 
 void CBoomerang::HandleCollisionWithMario(LPCOLLISIONEVENT e)
 {
+	CMario* mario = CMario::GetInstance();
+	ableToCheckCollision = false;
+	mario->StartUntouchable();
 }

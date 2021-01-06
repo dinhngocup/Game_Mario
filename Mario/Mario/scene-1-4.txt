@@ -1,6 +1,6 @@
 [SCENE_INFO]
 # world_id	time_limit	auto_go
-1	300	0
+1	300	1
 [TILESET]
 2	Resources\map\Final1(48).png	255	255	255	29	30
 [MAP]
@@ -9,7 +9,7 @@ Resources\map\map-1-4.xml
 
 [STATIC_OBJECTS]
 # gạch dưới cùng
-1	0	1296	7000	48	3	1
+#1	0	1296	7000	48	3	1
 
 # BRICK
 1	-48	0	48	1392	3	1

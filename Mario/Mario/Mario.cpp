@@ -17,7 +17,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGame* game = CGame::GetInstance();
 	CPlayScene* scene = (CPlayScene*)game->GetCurrentScene();
-	
+	//DebugOut(L"y %f\n", y);
 	if ((state == MARIO_STATE_DIE && y > game->GetCamY() + 560 ||
 		y > game->GetCamY() + 560) && !scene->time_up) {
 		DebugOut(L"handle mario die\n");
@@ -62,10 +62,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		CalcPotentialCollisions(&enemies, coEvents);
 		CalcPotentialCollisions(&items, coEvents);
 	}
-
 	if (untouchable == 1) {
 		if (!dynamic_cast<CGrowingUpState*>(player_state)) {
-
 			if (GetTickCount64() - untouchable_start >= time_flicker
 				&& GetTickCount64() - untouchable_start < MARIO_UNTOUCHABLE_TIME) {
 				if (GetTickCount64() - unhide_start >= 100) {
@@ -159,7 +157,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							if (is_holding && e->obj->state == KOOPA_STATE_HOLD) {
 
 							}
-							else if (e->obj->GetType() == eTYPE::FIRE_FLOWER_WEAPON) {
+							else if (e->obj->GetType() == eTYPE::FIRE_FLOWER_WEAPON ||
+								e->obj->GetType() == eTYPE::BOOMERANG) {
 								if (e->nx != 0) {
 									x += dx;
 								}
@@ -169,10 +168,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 									else y -= dy;
 								}
 								e->obj->IsCollisionWithMario(e);
-
 							}
 							else if (e->obj->GetType() == eTYPE::FIRE_FLOWER) {
-
 								e->obj->IsCollisionWithMario(e);
 
 								if (e->nx != 0)
@@ -185,7 +182,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							}
 							else {
 								e->obj->IsCollisionWithMario(e);
-								//DebugOut(L"hiii\n");
 							}
 						}
 

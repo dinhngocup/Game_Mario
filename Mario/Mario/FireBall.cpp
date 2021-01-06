@@ -53,7 +53,7 @@ void CFireBall::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 		CalcPotentialCollisions(&bricks, coEvents);
 		CalcPotentialCollisions(&enemies, coEvents);
-
+		
 		// No collision occured, proceed normally
 		if (coEvents.size() == 0)
 		{
@@ -109,6 +109,7 @@ void CFireBall::Render()
 	if (state == FIRE_BALL_STATE_FLY) ani = FIRE_BALL_ANI_FLY;
 	else ani = FIRE_BALL_ANI_EXPLODE;
 	animation_set->at(ani)->Render(x, y);
+	RenderBoundingBox();
 }
 
 void CFireBall::SetState(int state)
@@ -159,6 +160,11 @@ void CFireBall::IsCollisionWithEnemy(LPCOLLISIONEVENT e)
 		case eTYPE::GOOMBA: {
 			CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 			goomba->SetState(GOOMBA_STATE_DIE_BY_WEAPON);
+			break;
+		}
+		case eTYPE::BOOMERANG_BRO: {
+			CBoomerangBro* boomerang_bro = dynamic_cast<CBoomerangBro*>(e->obj);
+			boomerang_bro->SetState(BOOMERANG_BRO_STATE_DIE);
 			break;
 		}
 		case eTYPE::FLOWER: 
