@@ -11,8 +11,8 @@ CStandingState::CStandingState(int level)
 	//OutputDebugString(L"standing\n");
 	mario->is_attacking_by_spinning = false;
 	this->level = level;
-
-	mario->vx = 0;
+	//if(!mario->lock_right)
+		mario->vx = 0;
 
 	SetAnimation(level);
 
@@ -121,7 +121,7 @@ void CStandingState::KeyState(BYTE* state)
 	if (game->IsKeyDown(DIK_X)) {
 		mario->ChangeState(new CJumpingState(level));
 	}
-	else if (game->IsKeyDown(DIK_RIGHT) || game->IsKeyDown(DIK_LEFT)) {
+	else if ((game->IsKeyDown(DIK_RIGHT) &&!mario->lock_right) || game->IsKeyDown(DIK_LEFT)) {
 		mario->ChangeState(new CWalkingState(level));
 	}
 	else if (game->IsKeyDown(DIK_DOWN)) {

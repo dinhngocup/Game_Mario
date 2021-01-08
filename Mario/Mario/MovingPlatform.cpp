@@ -49,17 +49,17 @@ void CMovingPlatform::IsCollisionWithMario(LPCOLLISIONEVENT e)
 	CMario* mario = CMario::GetInstance();
 	if (e->ny != 0) {
 		if (e->ny > 0) {
-			mario->isInMovingPlatform = false;
-			mario->vy = 0;
+			mario->y += mario->dy;
 		}
 		else {
 			mario->isInMovingPlatform = true;
-			mario->vy = 0.2f;
+			mario->vy = 0.25f;
 			vx = 0;
-			vy = 0.2f;
+			vy = 0.25f;
 		}
 	}
 	if (e->nx != 0) {
-		mario->vx = 0;
+		mario->vx = vx;
+		mario->lock_right = true;
 	}
 }

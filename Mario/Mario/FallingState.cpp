@@ -8,6 +8,8 @@ CFallingState::CFallingState(int level)
 	this->level = level;
 	mario->collide_with_portal = 0;
 	SetAnimation(level);
+	mario->lock_right = false;
+
 }
 
 void CFallingState::Update(float dt)

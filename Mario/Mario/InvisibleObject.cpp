@@ -71,5 +71,5 @@ void CInvisibleObject::Render()
 	else if (state == STATE_ARROW)
 		ani = ANI_ARROW;
 	animation_set->at(ani)->Render(x, y, 255, nx);
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }

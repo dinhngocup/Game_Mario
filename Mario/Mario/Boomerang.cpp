@@ -90,9 +90,13 @@ void CBoomerang::SetState(int state)
 
 void CBoomerang::IsCollisionWithMario(LPCOLLISIONEVENT e)
 {
+
 	CMario* mario = CMario::GetInstance();
-	ableToCheckCollision = false;
-	mario->StartUntouchable();
+	if (mario->untouchable != 1) {
+		ableToCheckCollision = false;
+		mario->StartUntouchable();
+
+	}
 }
 
 void CBoomerang::HandleCollisionWithMario(LPCOLLISIONEVENT e)

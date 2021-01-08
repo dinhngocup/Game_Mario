@@ -44,6 +44,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		&& game->GetCamX() < 6192) {
 		ChangeState(new CAutoGoState(level));
 	}
+	if (x+60 >= game->GetCamX() + game->GetScreenWidth())
+		x = game->GetCamX() + game->GetScreenWidth() - 60;
+
 	scene->UpdateSpeedBar(abs(vx));
 	CGameObject::Update(dt);
 
@@ -59,8 +62,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	// turn off collision when die 
 	if (state != MARIO_STATE_DIE && !dynamic_cast<CGoDownState*>(player_state)) {
 		CalcPotentialCollisions(&bricks, coEvents);
-		CalcPotentialCollisions(&enemies, coEvents);
 		CalcPotentialCollisions(&items, coEvents);
+		CalcPotentialCollisions(&enemies, coEvents);
 	}
 	if (untouchable == 1) {
 		if (!dynamic_cast<CGrowingUpState*>(player_state)) {

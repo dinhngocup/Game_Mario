@@ -30,6 +30,7 @@ class CMario : public CGameObject
 	vector <int> cards;
 	int lives = MARIO_DEFAULT_LIVE;
 public:
+	bool lock_right = false;
 	bool is_hide = false;
 	bool isInMovingPlatform = false;
 	int current_map_portal_id = 1;

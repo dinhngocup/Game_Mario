@@ -153,7 +153,7 @@ void CBoomerangBro::SetState(int state)
 		vx = -BOOMERANG_BRO_WALKING_SPEED;
 		break;
 	case BOOMERANG_BRO_STATE_DIE:
-		vx = GOOMBA_SPEED_X_DIE_BY_WEAPON * nx;
+		vx = 0;
 		vy = -GOOMBA_SPEED_Y_DIE_BY_WEAPON;
 		ableToCheckCollision = false;
 		break;

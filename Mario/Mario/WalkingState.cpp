@@ -3,7 +3,7 @@
 
 CWalkingState::CWalkingState(int level)
 {
-	//OutputDebugString(L"walking\n");
+	OutputDebugString(L"walking\n");
 	this->level = level;
 
 	SetAnimation(level);
@@ -167,24 +167,26 @@ void CWalkingState::KeyState(BYTE* state)
 	}
 	else if (game->IsKeyDown(DIK_RIGHT))
 	{
-		is_right = true;
-		is_slowly = false;
-		if (!is_left) {
-			mario->vx = MARIO_WALKING_SPEED;
-			mario->nx = 1;
-		}
-		else {
-			is_slowly = true;
-
-			is_skid = true;
-			if (mario->vx >= 0) {
-				is_skid = false;
-				mario->nx = 1;
+		if (!mario->lock_right) {
+			is_right = true;
+			is_slowly = false;
+			if (!is_left) {
 				mario->vx = MARIO_WALKING_SPEED;
-				is_slowly = false;
+				mario->nx = 1;
 			}
+			else {
+				is_slowly = true;
+
+				is_skid = true;
+				if (mario->vx >= 0) {
+					is_skid = false;
+					mario->nx = 1;
+					mario->vx = MARIO_WALKING_SPEED;
+					is_slowly = false;
+				}
+			}
+			SetAnimation(level);
 		}
-		SetAnimation(level);
 	}
 	else if (game->IsKeyDown(DIK_LEFT)) {
 		is_left = true;
@@ -243,8 +245,7 @@ void CWalkingState::KeyState(BYTE* state)
 		}
 
 	}
-
-
-
+	if (!game->IsKeyDown(DIK_RIGHT))
+		mario->lock_right = false;
 
 }

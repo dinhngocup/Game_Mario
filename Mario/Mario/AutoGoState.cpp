@@ -5,7 +5,8 @@ CAutoGoState::CAutoGoState(int level)
 {
 	//OutputDebugString(L"au to go\n");
 	this->level = level;
-
+	CMario* mario = CMario::GetInstance();
+	mario->lock_right = false;
 	SetAnimation(level);
 }
 
