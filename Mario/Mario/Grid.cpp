@@ -1,19 +1,13 @@
 ﻿#include "Grid.h"
 #include "PlayScene.h"
 
-CGrid::CGrid(LPCWSTR objFilePath)
+CGrid::CGrid(LPCWSTR objFilePath, LPCWSTR gridFilePath)
 {
+	DebugOut(L"new\n");
 	this->objFilePath = objFilePath;
+	this->gridFilePath = gridFilePath;
 }
 
-void CGrid::AddObjectIntoGridByFile(int object_type, float x, float y, float w, float h, int ani_id, int top, int bottom, int right, int left, int type, int extra, int nx, int angle)
-{
-	LPGAMEOBJECT obj = CreateNewObj(object_type, x, y, w, h, ani_id, type, extra, nx, angle);
-	for (int i = top; i <= bottom; i++)
-		for (int j = left; j <= right; j++) {
-			cells[i][j].push_back(obj);
-		}
-}
 void CGrid::AddObjectIntoGrid(int object_type, float x, float y, float w, float h, int ani_id, int type, int extra, int nx, int angle)
 {
 	int top = (int)(y / CELL_HEIGHT);
@@ -30,6 +24,22 @@ void CGrid::AddObjectIntoGrid(int object_type, float x, float y, float w, float 
 }
 void CGrid::GetListObjInGrid(float cam_x, float cam_y)
 {
+	/*DebugOut(L"******************\n");
+
+	for (int i = 1; i <= 7; i++)
+		for (int j = 1; j <= 41; j++) {
+			if (cells[i][j].size() != 0) {
+				DebugOut(L"%d\t", i);
+				DebugOut(L"%d\t", j);
+				for (int k = 0; k < cells[i][j].size(); k++)
+					if(k == cells[i][j].size() - 1)
+					DebugOut(L"%d", cells[i][j].at(k)->id_grid);
+					else
+					DebugOut(L"%d\t", cells[i][j].at(k)->id_grid);
+				DebugOut(L"\n");
+			}
+		}*/
+
 	CGame* game = CGame::GetInstance();
 	// clear toàn bộ các vector chứa obj trước
 	enemies.clear();
@@ -43,16 +53,16 @@ void CGrid::GetListObjInGrid(float cam_x, float cam_y)
 	int left = (int)((cam_x) / CELL_WIDTH);
 	int right = (int)((cam_x + game->GetScreenWidth()) / CELL_WIDTH);
 
-	/*DebugOut(L"bottom %d\n", bottom);
-	DebugOut(L"top %d\n", top);
-	DebugOut(L"r %d\n", right);
-	DebugOut(L"l %d\n", left);*/
 	for (int i = top - 1; i <= bottom + 1; i++)
 		for (int j = left - 1; j <= right + 1; j++) {
 			if (j < 0) j = 0;
 			if (i < 0) i = 0;
+				/*DebugOut(L"i %d\n", i);
+				DebugOut(L"j %d\n", j);
+				DebugOut(L"size %d\n", cells[i][j].size());*/
 
 			for (int k = 0; k < cells[i][j].size(); k++) {
+				//DebugOut(L"id %d\n", cells[i][j].at(k)->GetId());
 				if (cells[i][j].at(k)->GetHealth()) {
 					if (j >= left && j <= right)
 						cells[i][j].at(k)->is_appeared = true;
@@ -67,14 +77,14 @@ void CGrid::GetListObjInGrid(float cam_x, float cam_y)
 	for (LPGAMEOBJECT obj : bonus)
 		items.push_back(obj);
 	bonus.clear();
+	//DebugOut(L"size %d\n", items.size());
 	game->GetCurrentScene()->SetEnemiesInScene(enemies);
 	game->GetCurrentScene()->SetItemsInScene(items);
 
 }
 
-LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, float h, int ani_id, int type, int extra, int nx, int angle)
+LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, float h, int ani_id, int type, int extra, int nx, int angle,int id_grid)
 {
-	//DebugOut(L"insert\n");
 	CGameObject* obj = NULL;
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 	switch (object_type)
@@ -180,7 +190,8 @@ LPGAMEOBJECT CGrid::CreateNewObj(int object_type, float x, float y, float w, flo
 	obj->h = h;
 	obj->w = w;
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_id);
-
+	if (id_grid != 0)
+		obj->id_grid = id_grid;
 	obj->SetAnimationSet(ani_set);
 	return obj;
 }
@@ -378,29 +389,58 @@ void CGrid::ReadFileObj()
 		if (line[0] == '#') {
 			continue;
 		}
-		if (tokens.size() < 7) continue;
-		int object_type = atoi(tokens[0].c_str());
-		float x = atof(tokens[1].c_str());
-		float y = atof(tokens[2].c_str());
+		if (tokens.size() < 8) continue;
+		int id_grid = atoi(tokens[0].c_str());
+		int object_type = atoi(tokens[1].c_str());
+		float x = atof(tokens[2].c_str());
+		float y = atof(tokens[3].c_str());
 
-		float w = atof(tokens[3].c_str());
-		float h = atof(tokens[4].c_str());
+		float w = atof(tokens[4].c_str());
+		float h = atof(tokens[5].c_str());
 
-		int ani_id = atoi(tokens[5].c_str());
+		int ani_id = atoi(tokens[6].c_str());
 
-		int t = atoi(tokens[6].c_str());
-		int b = atoi(tokens[7].c_str());
-		int r = atoi(tokens[8].c_str());
-		int l = atoi(tokens[9].c_str());
 
-		int type = atoi(tokens[10].c_str());
+		int type = atoi(tokens[7].c_str());
 		int extra = 0;
 		if (object_type == 2 || object_type == 3 ||
 			object_type == 6 || object_type == 11 ||
 			object_type == 1)
-			extra = atoi(tokens[11].c_str());
+			extra = atoi(tokens[8].c_str());
 
-		AddObjectIntoGridByFile(object_type, x, y, w, h, ani_id, t, b, r, l, type, extra, 1, 0);
+		//AddObjectIntoGrid(object_type, x, y, w, h, ani_id, type, extra);
+		LPGAMEOBJECT obj = CreateNewObj(object_type, x, y, w, h, ani_id, type, extra,1,1,id_grid);
+		total_obj.push_back(obj);
+	}
+
+	f.close();
+}
+
+void CGrid::ReadFileGrid()
+{
+	//objs.clear();
+	ifstream f;
+	f.open(gridFilePath);
+	char str[MAX_SCENE_LINE];
+
+	while (f.getline(str, MAX_SCENE_LINE))
+	{
+		string line(str);
+		vector<string> tokens = split(line);
+		if (line[0] == '#') {
+			continue;
+		}
+		if (tokens.size() < 3) continue;
+		int i = atoi(tokens[0].c_str());
+		int j = atoi(tokens[1].c_str());
+		for (int k = 2; k < tokens.size(); k++) {
+			int id = atoi(tokens[k].c_str());
+			for (LPGAMEOBJECT obj : total_obj)
+				if (obj->id_grid == id) {
+					cells[i][j].push_back(obj);
+				}
+			
+		}
 	}
 
 	f.close();
@@ -477,6 +517,7 @@ void CGrid::ResetListObj(float cam_x, float cam_y)
 
 void CGrid::ClearGrid()
 {
+	total_obj.clear();
 
 	enemies.clear();
 

@@ -97,6 +97,6 @@ Resources\map\map.txt
 
 [OBJECTS]
 # file_path
-Resources\object\object_scene_1.txt
+Resources\object\object_scene_1.txt	Resources\object\grid_scene_1.txt
 
 

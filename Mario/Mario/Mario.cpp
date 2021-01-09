@@ -44,7 +44,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		&& game->GetCamX() < 6192) {
 		ChangeState(new CAutoGoState(level));
 	}
-	if (x+60 >= game->GetCamX() + game->GetScreenWidth())
+	if (x+60 >= game->GetCamX() + game->GetScreenWidth() && state != MARIO_AUTO_GO)
 		x = game->GetCamX() + game->GetScreenWidth() - 60;
 
 	scene->UpdateSpeedBar(abs(vx));

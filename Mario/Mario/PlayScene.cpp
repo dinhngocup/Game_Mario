@@ -41,10 +41,15 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 */
 void CPlayScene::_ParseSection_OBJECTS(string line)
 {
-	if (line == "") return;
-	wstring path = ToWSTR(line);
-	grid = new CGrid(path.c_str());
+	vector<string> tokens = split(line);
+
+	if (tokens.size() < 2) return; // skip invalid lines
+	wstring objPath = ToWSTR(tokens[0].c_str());
+	wstring gridPath = ToWSTR(tokens[1].c_str());
+
+	grid = new CGrid(objPath.c_str(), gridPath.c_str());
 	grid->ReadFileObj();
+	grid->ReadFileGrid();
 }
 
 void CPlayScene::_ParseSection_INFO(string line)
@@ -96,11 +101,11 @@ void CPlayScene::UpdateCamera(DWORD dt)
 	if (auto_go) {
 		isMoved = true;
 		game->SetCamYPos(DEFAULT_CAM_Y);
-		if (game->GetCamX() >= 6144 - game->GetScreenWidth()
-			&& game->GetCamX() < 6144) {
-			game->SetCamPos(6144 - game->GetScreenWidth(), DEFAULT_CAM_Y);
+		if (game->GetCamX() >= LOCK_CAM_X - game->GetScreenWidth()
+			&& game->GetCamX() < LOCK_CAM_X) {
+			game->SetCamPos(LOCK_CAM_X - game->GetScreenWidth(), DEFAULT_CAM_Y);
 		}
-		else if (game->GetCamX() >= 6192) {
+		else if (game->GetCamX() >= BOUNDARY_X) {
 
 			if (cx >= sceneWidth - game->GetScreenWidth()) {
 				game->SetCamPos(sceneWidth - game->GetScreenWidth(), DEFAULT_CAM_Y);
@@ -108,10 +113,10 @@ void CPlayScene::UpdateCamera(DWORD dt)
 			else {
 				player->GetPosition(cx, cy);
 				cx -= 384;
-				if(cx > 6192)
+				if(cx > BOUNDARY_X)
 					game->SetCamXPos(cx);
 				else {
-					game->SetCamXPos(6192.0f);
+					game->SetCamXPos(BOUNDARY_X);
 				}
 			}
 		}

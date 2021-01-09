@@ -24,7 +24,7 @@ void CBrick::Render()
 	else {
 		animation_set->at(ANI_EMPTY_BRICK)->Render(x, y);
 	}
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 

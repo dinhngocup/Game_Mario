@@ -23,6 +23,8 @@
 #define TOTAL_NUMBER_IN_HUB 14
 #define CARD_SCORE	12000
 
+#define BOUNDARY_X 6192.0f
+#define LOCK_CAM_X 6144.0f
 
 class CPlayScene : public CScene
 {

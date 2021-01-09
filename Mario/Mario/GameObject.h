@@ -37,7 +37,6 @@ class CGameObject
 public:
 	static int generate_id;
 	int id;
-
 	eTYPE type;
 	int type_object;
 
@@ -57,6 +56,7 @@ public:
 	int nx;
 
 	int state;
+	int id_grid;
 
 	DWORD dt;
 
